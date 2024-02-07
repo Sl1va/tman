@@ -2,38 +2,33 @@
 -- Like add, delete, list task IDs and so on.
 -- @module TaskID
 
-
 local TaskID = {}
 TaskID.__index = TaskID
 
 local TaskIDPrivate = {}
 TaskIDPrivate.__index = TaskIDPrivate
 
-
 --[[ TODO
     1. Make a function to create files for current and previous taskid's
     2. Set and update vars curr and prev not to calculate 'em all over again.
 ]]
-
 
 local function log(fmt, ...)
     local msg = "taskid: " .. fmt:format(...)
     print(msg)
 end
 
-
 --- Class TaskIDPrivate
 -- type TaskIDPrivate
-
 
 --- Init class TaskIDPrivate.
 -- @param gtaskpath path where tasks are located
 function TaskIDPrivate.new()
     local self = setmetatable({
         taskpath = "/home/roach/work/tasks",
-        meta  = "/home/roach/work/tasks" .. "/.tasks",
-        curr  = nil,
-        prev  = nil,
+        meta = "/home/roach/work/tasks" .. "/.tasks",
+        curr = nil,
+        prev = nil,
     }, TaskIDPrivate)
     self.curr = self:getcurr()
     self.prev = self:getprev()
@@ -86,10 +81,8 @@ function TaskIDPrivate:_settaskid(id, type)
     return true
 end
 
-
 --- Class TaskID
 -- type TaskID
-
 
 local taskid_pr = TaskIDPrivate.new()
 

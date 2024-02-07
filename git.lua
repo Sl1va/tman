@@ -3,7 +3,6 @@
 
 local posix = require("posix")
 
-
 local Git = {}
 Git.__index = Git
 
@@ -17,7 +16,6 @@ end
 
 --- Class Git
 -- type Git
-
 
 --- Init Git class.
 -- @param taskid task ID
@@ -75,7 +73,9 @@ function Git:branch_create()
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo
         os.execute("git -C " .. repopath .. " checkout --quiet develop")
-        os.execute("git -C " .. repopath .. " checkout --quiet -b " .. self.branch)
+        os.execute(
+            "git -C " .. repopath .. " checkout --quiet -b " .. self.branch
+        )
     end
 end
 
@@ -91,12 +91,13 @@ function Git:branch_delete()
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo
         os.execute("git -C " .. repopath .. " checkout --quiet develop")
-        os.execute("git -C " .. repopath .. " branch --quiet -D " .. self.branch)
+        os.execute(
+            "git -C " .. repopath .. " branch --quiet -D " .. self.branch
+        )
     end
 end
 
-function Git:check_commit()
-end
+function Git:check_commit() end
 
 --- Create repo symlinks for task unit.
 function Git:repolink()

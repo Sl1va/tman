@@ -5,12 +5,8 @@
 local posix = require("posix")
 local git = require("git")
 
-
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
-
-
-
 
 local function log(fmt, ...)
     local msg = "taskunit: " .. fmt:format(...)
@@ -43,7 +39,6 @@ local function check_tasktype(type)
     return found
 end
 
-
 --- Class TaskUnit
 -- type TaskUnit
 
@@ -59,19 +54,18 @@ function TaskUnit.newobj(gtaskpath)
     return self
 end
 
-
 --- Create a new unit for a task.
 -- @param id task id
 function TaskUnit:new(id)
-    local file    = nil
+    local file = nil
     local taskdir = self.taskpath .. "/" .. id
-    local fname   = taskdir .. "/.note"
+    local fname = taskdir .. "/.note"
 
     local unit = {
-        id     = { mark = false, inptext = "ID",     value = id },
-        type   = { mark = true,  inptext = "Type",   value = "" },
-        desc   = { mark = true,  inptext = "Desc",   value = "" },
-        date   = { mark = false, inptext = "Date",   value = os.date("%Y%m%d") },
+        id = { mark = false, inptext = "ID", value = id },
+        type = { mark = true, inptext = "Type", value = "" },
+        desc = { mark = true, inptext = "Desc", value = "" },
+        date = { mark = false, inptext = "Date", value = os.date("%Y%m%d") },
         branch = { mark = false, inptext = "Branch", value = "" },
         status = { mark = false, inptext = "Status", value = "progress" },
     }
@@ -171,13 +165,9 @@ local val = "backlog"
 taskunit:setunit("DE-me", key, val)
 ]]
 
-
-
-
 --- Amend task unit.
 -- Like branch name, ID, etc.
-function TaskUnit:amend(id)
-end
+function TaskUnit:amend(id) end
 
 --- Show task unit metadata.
 -- @param id task ID

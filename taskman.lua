@@ -2,9 +2,8 @@
 -- Create a new unit, move to diff statuses and so on.
 -- @module TaskMan
 
-
-local taskid    = require("taskid")
-local taskunit  = require("taskunit")
+local taskid = require("taskid")
+local taskunit = require("taskunit")
 local git = require("git")
 
 local function log(fmt, ...)
@@ -44,7 +43,6 @@ For developer:
 ]]):format("tman"))
 end
 
-
 --- Class TaskMan
 -- type TaskMan
 
@@ -52,7 +50,7 @@ end
 function TaskMan.init()
     local taskpath = "/home/roach/work/tasks"
     local self = setmetatable({
-        taskid   = taskid.new(taskpath),
+        taskid = taskid.new(taskpath),
         taskunit = taskunit.newobj(taskpath),
     }, TaskMan)
     return self
@@ -115,7 +113,6 @@ function TaskMan:move(status, id)
         self.taskunit:setunit(self.taskid.curr, "Status", "backlog")
         self.taskunit:setunit(id, "Status", "progress")
         self.taskid:setcurr(id)
-
     elseif id and status == "progress" then
         print("new task to progress")
         local gitobj = git.new(id, self.taskunit:getunit(id, "branch"))
@@ -125,21 +122,21 @@ function TaskMan:move(status, id)
         end
         self.taskunit:setunit(id, "Status", status)
         self.taskid:setcurr(id)
-
     elseif id and status ~= "progress" then
         print("new task to somewhere else:", id)
         self.taskunit:setunit(id, "Status", status)
-
     elseif self.taskid.curr and status ~= "progress" then
         print("move current task to somewhere else")
-        local gitobj = git.new(self.taskid.curr, self.taskunit:getunit(self.taskid.curr, "branch"))
+        local gitobj = git.new(
+            self.taskid.curr,
+            self.taskunit:getunit(self.taskid.curr, "branch")
+        )
         if not gitobj:branch_switch() then
             log("repo has uncommited changes")
             os.exit(1)
         end
         self.taskunit:setunit(self.taskid.curr, "Status", status)
         self.taskid:unsetcurr()
-
     else
         log("no current task exists")
         os.exit(1)
@@ -157,7 +154,9 @@ end
 
 --- List all task IDs.
 function TaskMan:list()
-    self.taskid:list(function() return "" end)
+    self.taskid:list(function()
+        return ""
+    end)
 end
 
 --- Show task unit metadata.
@@ -178,8 +177,7 @@ end
 
 --- Amend task unit.
 -- @param id task ID
-function TaskMan:amend(id)
-end
+function TaskMan:amend(id) end
 
 --- Delete task unit.
 -- @param id task ID
@@ -194,8 +192,7 @@ end
 
 --- Move task to done directory.
 -- @param id task ID
-function TaskMan:done(id)
-end
+function TaskMan:done(id) end
 
 --- Interface.
 function TaskMan:main(arg)
