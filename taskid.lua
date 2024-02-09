@@ -2,8 +2,11 @@
 -- Like add, delete, list task IDs and so on.
 -- @module TaskID
 
+local taskunit = require("taskunit")
+
 local TaskID = {}
 TaskID.__index = TaskID
+taskunit = taskunit.newobj()
 
 local TaskIDPrivate = {}
 TaskIDPrivate.__index = TaskIDPrivate
@@ -212,19 +215,20 @@ function TaskID:unsetprev()
 end
 
 --- List all task IDs from the database.
--- @param fn callback function
-function TaskID:list(fn)
+function TaskID:list()
     local f = io.open(taskid_pr.meta)
     if not f then
         log("could not open meta file")
         return
     end
     if self.curr then
-        print(("* %-8s %s"):format(self.curr, fn()))
+        local desc = taskunit:getunit(self.curr, "desc")
+        print(("* %-8s %s"):format(self.curr, desc))
     end
     for id in f:lines() do
         if self.curr ~= id then
-            print(("  %-8s %s"):format(id, fn()))
+            local desc = taskunit:getunit(id, "desc")
+            print(("  %-8s %s"):format(id, desc))
         end
     end
     f:close()

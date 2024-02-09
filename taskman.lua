@@ -154,9 +154,7 @@ end
 
 --- List all task IDs.
 function TaskMan:list()
-    self.taskid:list(function()
-        return ""
-    end)
+    self.taskid:list()
 end
 
 --- Show task unit metadata.
@@ -212,6 +210,8 @@ function TaskMan:main(arg)
         self:del(arg[2])
     elseif arg[1] == "done" then
         self:done(arg[2])
+    elseif arg[1] == "help" then
+        usage()
     elseif not arg[1] then
         print("tman: command expected")
     else
