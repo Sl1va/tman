@@ -1,5 +1,5 @@
 test:
-	lua taskunit.lua
+	lua taskman.lua
 
 git:
 	lua git.lua
@@ -14,4 +14,4 @@ lua_fmt:
 
 lua_lint:
 	echo "===> Linting"
-	luacheck lua/ --globals vim
+	luacheck .

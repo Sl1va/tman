@@ -8,184 +8,180 @@ local TaskID = {}
 TaskID.__index = TaskID
 taskunit = taskunit.newobj()
 
-local TaskIDPrivate = {}
-TaskIDPrivate.__index = TaskIDPrivate
-
---[[ TODO
-    1. Make a function to create files for current and previous taskid's
-    2. Set and update vars curr and prev not to calculate 'em all over again.
-]]
+--- Types of task IDs.
+local types = {
+    CURR = 0, -- current task
+    PREV = 1, -- previous task
+    ACTV = 2, -- active task
+    COMP = 3, -- complete task
+}
 
 local function log(fmt, ...)
     local msg = "taskid: " .. fmt:format(...)
     print(msg)
 end
 
---- Class TaskIDPrivate
--- type TaskIDPrivate
+--- Class TaskID
+-- type TaskID
 
---- Init class TaskIDPrivate.
--- @param gtaskpath path where tasks are located
-function TaskIDPrivate.new()
+--- Load task iDs from the file.
+-- @treturn table table like {id, type}
+function TaskID:load_taskids()
+    local f = io.open(self.meta)
+    local taskids = {}
+    if not f then
+        print("error: couldn't open file", self.meta)
+        return taskids
+    end
+    for line in f:lines() do
+        local id, idtype = string.match(line, "(.*)%s(.*)")
+        table.insert(taskids, { id = id, type = tonumber(idtype) })
+    end
+    f:close()
+    table.sort(taskids, function(a, b)
+        return a.type < b.type
+    end)
+    return taskids
+end
+
+--- Save task iDs to the file.
+function TaskID:save_taskids()
+    local f = io.open(self.meta, "w")
+    if not f then
+        log("couldn't open meta file")
+        return false
+    end
+    for _, unit in pairs(self.taskids) do
+        f:write(unit.id, " ", unit.type, "\n")
+    end
+    f:close()
+end
+
+--- Init class TaskID.
+function TaskID.new()
     local self = setmetatable({
         taskpath = "/home/roach/work/tasks",
-        meta = "/home/roach/work/tasks" .. "/.tasks",
-        curr = nil,
-        prev = nil,
-    }, TaskIDPrivate)
+    }, TaskID)
+    self.meta = self.taskpath .. "/.tasks"
+    self.taskids = self:load_taskids()
     self.curr = self:getcurr()
     self.prev = self:getprev()
     return self
 end
 
---- Get task ID (private).
--- @param val `curr` or `prev` for current or previous task id
--- @return task ID or nil if task doesn't exist
-function TaskIDPrivate:_gettaskid(type)
-    local id = nil
-    local fname = self.taskpath .. "/." .. type
-    local f = io.open(fname)
-    if not f then
-        log("could not open file", fname)
-        return nil
-    end
-    id = f:read("*l")
-    f:close()
-    return id
-end
-
---- Get current task ID (private).
--- @return current task ID.
-function TaskIDPrivate:getcurr()
-    return self:_gettaskid("curr")
-end
-
---- Get previous task ID (private).
--- @returtn previous task ID.
-function TaskIDPrivate:getprev()
-    return self:_gettaskid("prev")
-end
-
---- Set task ID (private).
--- @param taskid task ID to set
--- @param val `curr` or `prev` for current or previous task id
--- @treturn bool true if task id was set, otherwise false
-function TaskIDPrivate:_settaskid(id, type)
-    local fname = self.taskpath .. "/." .. type
-    local f = io.open(fname, "w")
-    if not f then
-        log("could not open file", fname)
-        return false
-    end
-    if id then
-        f:write(id, "\n")
-    end
-    f:close()
-    return true
-end
-
---- Class TaskID
--- type TaskID
-
-local taskid_pr = TaskIDPrivate.new()
-
---- Init class TaskID.
-function TaskID.new()
-    local self = setmetatable({
-        curr = taskid_pr:getcurr(),
-        prev = taskid_pr:getprev(),
-    }, TaskID)
-    return self
-end
-
 --- Add a new task ID.
--- @param taskid task ID to add to database
--- @treturn bool true if task ID was adde, otherwise false
-function TaskID:add(taskid)
-    local f = io.open(taskid_pr.meta, "a+")
-    if self:exist(taskid) then
-        log(("task '%s' already exists"):format(taskid))
+-- @param id task ID to add to database
+-- @treturn bool true on success, otherwise false
+function TaskID:add(id)
+    local curr = self:getcurr()
+    if self:exist(id) then
+        log(("task '%s' already exists"):format(id))
         return false
     end
-    if not f then
-        log("could not open meta file")
-        return false
-    end
-    f:write(taskid, "\n")
-    f:close()
-
-    self:setcurr(taskid)
-    self.curr = taskid_pr:getcurr()
-    if self.curr then
-        self:setprev(self.curr)
-    end
+    table.insert(self.taskids, { id = id, type = types.CURR })
+    self:setcurr(id)
+    self:setprev(curr)
+    self:save_taskids()
     return true
 end
 
---- Check that task ID exist in database (private).
--- @param taskid task ID to look up
--- @treturn bool true if task ID exist, otherwise false
-function TaskID:exist(taskid)
-    local res = false
-    local f = io.open(taskid_pr.meta, "r")
-    if not f then
-        log("could not open meta file")
-        return
+--- Delete a task ID.
+-- @param id task ID
+-- @treturn bool true if deleting task ID was successful, otherwise false
+function TaskID:del(id)
+    if not self:exist(id) then
+        log(("task '%s' doesn't exist"):format(id))
+        return false
     end
-    for line in f:lines() do
-        if line == taskid then
+    for i, unit in pairs(self.taskids) do
+        if unit.id == id then
+            table.remove(self.taskids, i)
+        end
+    end
+    self:save_taskids()
+    self.curr = self:getcurr()
+    self.prev = self:getprev()
+    return true
+end
+
+--- List task IDs.
+-- @param all if true then show active and complete task. Default: active only
+function TaskID:list(all)
+    local logmsg = "  %-8s %s"
+    local logmsg_curr = "* %-8s %s"
+    for _, unit in pairs(self.taskids) do
+        local desc = taskunit:getunit(unit.id, "desc")
+        if unit.type == types.CURR then
+            print((logmsg_curr):format(unit.id, desc))
+        elseif all then
+            print((logmsg):format(unit.id, desc))
+        elseif not all and unit.type ~= types.COMP then
+            print((logmsg):format(unit.id, desc))
+        end
+    end
+end
+
+--- Check that task ID exist.
+-- @param id task ID to look up
+-- @treturn bool true if task ID exist, otherwise false
+function TaskID:exist(id)
+    local res = false
+    for _, unit in pairs(self.taskids) do
+        if unit.id == id then
             res = true
             break
         end
     end
-    f:close()
     return res
 end
 
---- Delete a task ID.
--- @treturn bool true if deleting task ID was successful, otherwise false
-function TaskID:del(taskid)
-    local f = io.open(taskid_pr.meta, "r")
-    local lines = {}
-    if not self:exist(taskid) then
-        log("task '%s' doesn't exist", taskid)
-        return false
-    end
-    if not f then
-        log("could not open meta file")
-        return false
-    end
-    for line in f:lines() do
-        if line ~= taskid then
-            table.insert(lines, line)
+--- Get current task ID.
+-- @return task ID
+function TaskID:getcurr()
+    local id = nil
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.CURR then
+            id = unit.id
+            break
         end
     end
-    f:close()
+    return id
+end
 
-    -- Update database file
-    f = io.open(taskid_pr.meta, "w")
-    if not f then
-        log("could not open meta file")
-        return false
+--- Get previous task ID.
+-- @return task ID
+function TaskID:getprev()
+    local id = nil
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.PREV then
+            id = unit.id
+            break
+        end
     end
-    for _, line in pairs(lines) do
-        f:write(line, "\n")
-    end
-    f:close()
-    self:unsetcurr()
-    return true
+    return id
 end
 
 --- Set current task ID.
 -- @param id task ID
--- @treturn bool true if current task is set, otherwise false
+-- @return true on success, otherwise false
 function TaskID:setcurr(id)
     if not self:exist(id) then
-        log("can't set current task ID '%s' (doesn't exist in database)", id)
+        log("setcurr: task ID '%s' doesn't exist", id)
         return false
     end
-    taskid_pr.curr = id
-    return taskid_pr:_settaskid(id, "/.curr")
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.CURR then
+            unit.type = types.ACTV
+        end
+    end
+    for _, unit in pairs(self.taskids) do
+        if unit.id == id then
+            unit.type = types.CURR
+        end
+    end
+    self:save_taskids()
+    self.curr = id
+    return true
 end
 
 --- Set previous task ID.
@@ -193,49 +189,50 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 function TaskID:setprev(id)
     if not self:exist(id) then
-        log("can't set previous task ID '%s' (doesn't exist in database)", id)
+        log("setprev: task ID '%s' doesn't exist", id)
         return false
     end
-    taskid_pr.prev = id
-    return taskid_pr:_settaskid(id, "/.prev")
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.PREV then
+            unit.type = types.ACTV
+            break
+        end
+    end
+    for _, unit in pairs(self.taskids) do
+        if unit.id == id then
+            unit.type = types.PREV
+            break
+        end
+    end
+    self:save_taskids()
+    self.prev = id
+    return true
 end
 
 --- Clear current task ID.
 -- @treturn bool true if current task is unset, otherwise false
 function TaskID:unsetcurr()
-    taskid_pr.curr = nil
-    return taskid_pr:_settaskid(nil, "/.curr")
-end
-
---- Clear current task ID.
--- @treturn bool true if previous task is unset, otherwise false
-function TaskID:unsetprev()
-    taskid_pr.prev = nil
-    return taskid_pr:_settaskid(nil, "/.prev")
-end
-
---- List all task IDs from the database.
-function TaskID:list()
-    local f = io.open(taskid_pr.meta)
-    if not f then
-        log("could not open meta file")
-        return
-    end
-    if self.curr then
-        local desc = taskunit:getunit(self.curr, "desc")
-        print(("* %-8s %s"):format(self.curr, desc))
-    end
-    if self.prev then
-        local desc = taskunit:getunit(self.prev, "desc")
-        print(("  %-8s %s"):format(self.prev, desc))
-    end
-    for id in f:lines() do
-        if self.curr ~= id and self.prev ~= id then
-            local desc = taskunit:getunit(id, "desc")
-            print(("  %-8s %s"):format(id, desc))
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.CURR then
+            unit.type = types.ACTV
+            self.curr = nil
+            break
         end
     end
-    f:close()
+    return true
+end
+
+--- Clear previous task ID.
+-- @treturn bool true if previous task is unset, otherwise false
+function TaskID:unsetprev()
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.PREV then
+            unit.type = types.ACTV
+            self.curr = nil
+            break
+        end
+    end
+    return true
 end
 
 return TaskID

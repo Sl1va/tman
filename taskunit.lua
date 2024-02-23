@@ -158,13 +158,6 @@ function TaskUnit:setunit(id, key, val)
     return true
 end
 
---[[
-local taskunit = TaskUnit.newobj()
-local key = "Status"
-local val = "backlog"
-taskunit:setunit("DE-me", key, val)
-]]
-
 --- Amend task unit.
 -- Like branch name, ID, etc.
 function TaskUnit:amend(id) end

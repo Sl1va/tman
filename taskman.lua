@@ -112,7 +112,9 @@ function TaskMan:move(status, id)
         end
         self.taskunit:setunit(self.taskid.curr, "Status", "backlog")
         self.taskunit:setunit(id, "Status", "progress")
+        local oldcurr = self.taskid.curr
         self.taskid:setcurr(id)
+        self.taskid:setprev(oldcurr)
     elseif id and status == "progress" then
         print("new task to progress")
         local gitobj = git.new(id, self.taskunit:getunit(id, "branch"))
@@ -147,14 +149,15 @@ end
 --- Switch to previous task.
 function TaskMan:prev()
     self:move("progress", self.taskid.prev)
-    local prev = self.taskid.prev
-    self.taskid:setprev(self.taskid.curr)
-    self.taskid:setcurr(prev)
 end
 
 --- List all task IDs.
 function TaskMan:list()
-    self.taskid:list()
+    if arg[2] == "-a" then
+        self.taskid:list(true)
+    else
+        self.taskid:list()
+    end
 end
 
 --- Show task unit metadata.
@@ -221,5 +224,3 @@ end
 
 local tman = TaskMan.init()
 tman:main(arg)
-
-return TaskMan
