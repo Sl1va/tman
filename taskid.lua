@@ -225,8 +225,12 @@ function TaskID:list()
         local desc = taskunit:getunit(self.curr, "desc")
         print(("* %-8s %s"):format(self.curr, desc))
     end
+    if self.prev then
+        local desc = taskunit:getunit(self.prev, "desc")
+        print(("  %-8s %s"):format(self.prev, desc))
+    end
     for id in f:lines() do
-        if self.curr ~= id then
+        if self.curr ~= id and self.prev ~= id then
             local desc = taskunit:getunit(id, "desc")
             print(("  %-8s %s"):format(id, desc))
         end
