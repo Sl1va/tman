@@ -152,11 +152,16 @@ function TaskMan:prev()
 end
 
 --- List all task IDs.
+-- By default show only active task IDs.
 function TaskMan:list()
-    if arg[2] == "-a" then
-        self.taskid:list(true)
+    if arg[2] == "-A" then
+        self.taskid:list(true, true)
+    elseif arg[2] == "-a" then
+        self.taskid:list(true, false)
+    elseif arg[2] == "-c" then
+        self.taskid:list(false, true)
     else
-        self.taskid:list()
+        self.taskid:list(true)
     end
 end
 

@@ -105,17 +105,19 @@ function TaskID:del(id)
 end
 
 --- List task IDs.
--- @param all if true then show active and complete task. Default: active only
-function TaskID:list(all)
+-- @param active list only active task IDs
+-- @param complete list only complete task IDs
+function TaskID:list(active, complete)
     local logmsg = "  %-8s %s"
     local logmsg_curr = "* %-8s %s"
+
     for _, unit in pairs(self.taskids) do
         local desc = taskunit:getunit(unit.id, "desc")
-        if unit.type == types.CURR then
+        if unit.type == types.CURR and (active and complete or active) then
             print((logmsg_curr):format(unit.id, desc))
-        elseif all then
+        elseif active and unit.type ~= types.COMP then
             print((logmsg):format(unit.id, desc))
-        elseif not all and unit.type ~= types.COMP then
+        elseif complete and unit.type == types.COMP then
             print((logmsg):format(unit.id, desc))
         end
     end
