@@ -13,19 +13,26 @@ function tman()
     if [ $RET -eq 0 ] && [ "$1" = "new" ]; then
         cd $TASKS/${2}
         wd -q rm task
-        wd add task
+        wd -q add task
         wd task
 
     elif [ $RET -eq 0 ] && [ "$1" = "use" ]; then
         cd $TASKS/${2}
         wd -q rm task
-        wd add task
+        wd -q add task
+        wd task
+
+    elif [ $RET -eq 0 ] && [ "$1" = "prev" ]; then
+        TASKID=$(lua taskman.lua getcurr)
+        cd $TASKS/${TASKID}
+        wd -q rm task
+        wd -q add task
         wd task
 
     elif [ $RET -eq 0 ] && [ "$1" = "move" ]; then
         if [ ! -z "$3" ] && [ "$2" = "progress" ]; then
             cd $TASKS/${3}
-            wd -f add task
+            wd -q -f add task
             wd task
         fi
 
