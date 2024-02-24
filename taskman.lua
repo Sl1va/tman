@@ -178,7 +178,7 @@ end
 
 --- Amend task unit.
 -- @param id task ID
-function TaskMan:amend(id) end
+--function TaskMan:amend(id) end
 
 --- Delete task unit.
 -- @param id task ID
@@ -193,7 +193,7 @@ end
 
 --- Move task to done directory.
 -- @param id task ID
-function TaskMan:done(id) end
+--function TaskMan:done(id) end
 
 --- Interface.
 function TaskMan:main(arg)
