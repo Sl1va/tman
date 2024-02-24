@@ -13,8 +13,8 @@ local function log(fmt, ...)
     print(msg)
 end
 
-local function get_input(promtp)
-    io.write(promtp, ": ")
+local function get_input(prompt)
+    io.write(prompt, ": ")
     return io.read("*line")
 end
 
