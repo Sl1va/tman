@@ -161,16 +161,16 @@ end
 
 --- Switch to previous task.
 function TaskMan:prev()
-    local newcurr = self.taskid.curr
+    local prev = self.taskid.prev
     local branch = nil
     local gitobj = nil
 
-    if not self.taskid:exist(newcurr) then
-        log("task ID '%s' either missing or doesn't exist", newcurr or "")
+    if not self.taskid:exist(prev) then
+        log("task ID '%s' either missing or doesn't exist", prev or "")
         return 1
     end
-    branch = self.taskunit:getunit(newcurr, "branch")
-    gitobj = git.new(newcurr, branch)
+    branch = self.taskunit:getunit(prev, "branch")
+    gitobj = git.new(prev, branch)
     if not gitobj:branch_switch() then
         log("repo has uncommited changes")
         return 1
