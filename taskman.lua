@@ -230,9 +230,18 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskMan:del(id)
+    local confirmation = nil
+
     if not self.taskid:exist(id) then
         log("'%s': no such task ID", id)
         os.exit(1)
+    end
+
+    io.write("Do you want to continue? [Y/n] ")
+    confirmation = io.read("*line")
+    if confirmation ~= "Y" then
+        print("tman: deletion is cancelled")
+        return 1
     end
     self.taskunit:del(id)
     self.taskid:del(id)
