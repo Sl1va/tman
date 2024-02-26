@@ -165,11 +165,7 @@ function TaskMan:prev()
     local prev = self.taskid.prev
 
     if not prev then
-        log("previous task ID '%s' missing")
-        return 1
-    end
-    if not self.taskid:exist(prev) then
-        log("task ID '%s' doesn't exist", prev)
+        log("no previous task ID")
         return 1
     end
     local branch = self.taskunit:getunit(prev, "branch")
