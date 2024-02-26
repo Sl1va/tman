@@ -137,9 +137,6 @@ end
 --- Switch to new task.
 -- @param id task ID
 function TaskMan:use(id)
-    local branch = nil
-    local gitobj = nil
-
     if not id then
         log("previous task ID '%s' missing")
         return 1
@@ -153,8 +150,8 @@ function TaskMan:use(id)
         return 1
     end
 
-    branch = self.taskunit:getunit(id, "branch")
-    gitobj = gitmod.new(id, branch)
+    local branch = self.taskunit:getunit(id, "branch")
+    local gitobj = gitmod.new(id, branch)
     if not gitobj:branch_switch() then
         log("repo has uncommited changes")
         return 1
@@ -166,8 +163,6 @@ end
 --- Switch to previous task.
 function TaskMan:prev()
     local prev = self.taskid.prev
-    local branch = nil
-    local gitobj = nil
 
     if not prev then
         log("previous task ID '%s' missing")
@@ -177,8 +172,8 @@ function TaskMan:prev()
         log("task ID '%s' doesn't exist", prev)
         return 1
     end
-    branch = self.taskunit:getunit(prev, "branch")
-    gitobj = gitmod.new(prev, branch)
+    local branch = self.taskunit:getunit(prev, "branch")
+    local gitobj = gitmod.new(prev, branch)
     if not gitobj:branch_switch() then
         log("repo has uncommited changes")
         return 1
@@ -230,16 +225,14 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskMan:del(id)
-    local confirmation = nil
-
     if not self.taskid:exist(id) then
         log("'%s': no such task ID", id)
         os.exit(1)
     end
 
     io.write("Do you want to continue? [Y/n] ")
-    confirmation = io.read("*line")
-    if confirmation ~= "Y" then
+    local confirm = io.read("*line")
+    if confirm ~= "Y" then
         print("tman: deletion is cancelled")
         return 1
     end
