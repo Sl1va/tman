@@ -189,12 +189,16 @@ end
 -- @param opt list option
 function TaskMan:list(opt)
     if opt == "-A" then
+        print("All task IDs")
         self.taskid:list(true, true)
     elseif opt == "-a" then
+        print("Active task IDs")
         self.taskid:list(true, false)
     elseif opt == "-c" then
+        print("Complete task IDs")
         self.taskid:list(false, true)
     else
+        print("Active task IDs")
         self.taskid:list(true)
     end
 end
