@@ -186,12 +186,13 @@ end
 
 --- List all task IDs.
 -- By default show only active task IDs.
-function TaskMan:list()
-    if arg[2] == "-A" then
+-- @param opt list option
+function TaskMan:list(opt)
+    if opt == "-A" then
         self.taskid:list(true, true)
-    elseif arg[2] == "-a" then
+    elseif opt == "-a" then
         self.taskid:list(true, false)
-    elseif arg[2] == "-c" then
+    elseif opt == "-c" then
         self.taskid:list(false, true)
     else
         self.taskid:list(true)
@@ -249,7 +250,7 @@ function TaskMan:main(arg)
     elseif arg[1] == "move" then
         self:move(arg[2], arg[3])
     elseif arg[1] == "list" then
-        self:list()
+        self:list(arg[2])
     elseif arg[1] == "show" then
         self:show(arg[2])
     elseif arg[1] == "prev" then
