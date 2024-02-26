@@ -162,7 +162,7 @@ public:
     list()
     updcurr() - update current and previous task ID
     unsetcurr()
-    swapspec()
+    swap()
 
 private:
     getcurr()
@@ -194,7 +194,7 @@ function TaskID:updcurr(id)
 end
 
 --- Swap current and previous task IDs.
-function TaskID:swapspec()
+function TaskID:swap()
     local prev = self.prev
     local curr = self.curr
 

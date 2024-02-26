@@ -174,7 +174,7 @@ function TaskMan:prev()
         log("repo has uncommited changes")
         return 1
     end
-    self.taskid:swapspec()
+    self.taskid:swap()
     return 0
 end
 
