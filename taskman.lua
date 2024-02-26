@@ -93,8 +93,8 @@ function TaskMan:move(status, id)
 
     if (id and self.taskid.curr) and status == "progress" then
         print("replace new task with current one (in progress)")
-        local gitobj = gitmod.new(id, self.taskunit:getunit(id, "branch"))
-        if not gitobj:branch_switch() then
+        local git = gitmod.new(id, self.taskunit:getunit(id, "branch"))
+        if not git:branch_switch() then
             log("repo has uncommited changes")
             os.exit(1)
         end
@@ -105,8 +105,8 @@ function TaskMan:move(status, id)
         self.taskid:setprev(oldcurr)
     elseif id and status == "progress" then
         print("new task to progress")
-        local gitobj = gitmod.new(id, self.taskunit:getunit(id, "branch"))
-        if not gitobj:branch_switch() then
+        local git = gitmod.new(id, self.taskunit:getunit(id, "branch"))
+        if not git:branch_switch() then
             log("repo has uncommited changes")
             os.exit(1)
         end
@@ -117,11 +117,11 @@ function TaskMan:move(status, id)
         self.taskunit:setunit(id, "Status", status)
     elseif self.taskid.curr and status ~= "progress" then
         print("move current task to somewhere else")
-        local gitobj = gitmod.new(
+        local git = gitmod.new(
             self.taskid.curr,
             self.taskunit:getunit(self.taskid.curr, "branch")
         )
-        if not gitobj:branch_switch() then
+        if not git:branch_switch() then
             log("repo has uncommited changes")
             os.exit(1)
         end
@@ -151,8 +151,8 @@ function TaskMan:use(id)
     end
 
     local branch = self.taskunit:getunit(id, "branch")
-    local gitobj = gitmod.new(id, branch)
-    if not gitobj:branch_switch() then
+    local git = gitmod.new(id, branch)
+    if not git:branch_switch() then
         log("repo has uncommited changes")
         return 1
     end
@@ -169,8 +169,8 @@ function TaskMan:prev()
         return 1
     end
     local branch = self.taskunit:getunit(prev, "branch")
-    local gitobj = gitmod.new(prev, branch)
-    if not gitobj:branch_switch() then
+    local git = gitmod.new(prev, branch)
+    if not git:branch_switch() then
         log("repo has uncommited changes")
         return 1
     end
