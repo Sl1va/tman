@@ -8,7 +8,6 @@ local TaskID = {}
 TaskID.__index = TaskID
 taskunit = taskunit.newobj()
 
-
 --- Types of task IDs.
 local types = {
     CURR = 0, -- current task
@@ -40,7 +39,9 @@ function TaskID:load_taskids()
         table.insert(taskids, { id = id, type = tonumber(idtype) })
     end
     f:close()
-    table.sort(taskids, function(a, b) return a.type < b.type end)
+    table.sort(taskids, function(a, b)
+        return a.type < b.type
+    end)
     return taskids
 end
 
@@ -151,11 +152,6 @@ function TaskID:unsetprev()
     return true
 end
 
-
-
-
-
-
 --[[
 
 public:
@@ -173,7 +169,6 @@ private:
     getprev()
     exist()
 ]]
-
 
 --- Init class TaskID.
 function TaskID.new()
@@ -264,10 +259,8 @@ function TaskID:list(active, complete)
 
         if unit.type == types.CURR and (active and complete or active) then
             print((fmt_curr):format(unit.id, desc))
-
         elseif active and unit.type ~= types.COMP then
             print((fmt):format(unit.id, desc))
-
         elseif complete and unit.type == types.COMP then
             print((fmt):format(unit.id, desc))
         end

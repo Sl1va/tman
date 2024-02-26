@@ -255,37 +255,26 @@ end
 function TaskMan:main(arg)
     if arg[1] == "new" then
         self:new(arg[2])
-
     elseif arg[1] == "use" then
         self:use(arg[2])
-
     elseif arg[1] == "move" then
         self:move(arg[2], arg[3])
-
     elseif arg[1] == "list" then
         self:list()
-
     elseif arg[1] == "show" then
         self:show(arg[2])
-
     elseif arg[1] == "prev" then
         self:prev()
-
     elseif arg[1] == "getcurr" then
         self:getcurr()
-
     elseif arg[1] == "del" then
         self:del(arg[2])
-
     elseif arg[1] == "done" then
         self:done(arg[2])
-
     elseif arg[1] == "help" then
         usage()
-
     elseif not arg[1] then
         log("command expected")
-
     else
         log("no such command: %s", arg[1])
     end
