@@ -202,7 +202,6 @@ end
 --- Show task unit metadata.
 -- @param id task ID
 function TaskMan:show(id)
-    -- roachme: taskunit should check that id exists
     id = id or self.taskid.curr
     if not id then
         log("neither task ID passed nor current exists")

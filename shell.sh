@@ -4,7 +4,7 @@ function tman()
     TASKS="$HOME/work/tasks"
     CURRTASK=$(cat "$HOME/work/tasks/.curr")
     cd ${HOME}/personal/prjs/tman
-    lua taskman.lua $@
+    lua tman.lua $@
     RET=$?
 
     # tman new DE-me
@@ -23,7 +23,7 @@ function tman()
         wd task
 
     elif [ $RET -eq 0 ] && [ "$1" = "prev" ]; then
-        TASKID=$(lua taskman.lua getcurr)
+        TASKID=$(lua tman.lua getcurr)
         cd $TASKS/${TASKID}
         wd -q rm task
         wd -q add task
@@ -35,6 +35,10 @@ function tman()
             wd -q -f add task
             wd task
         fi
+
+    elif [ $RET -eq 0 ] && [ "$1" = "done" ]; then
+        cd $TASKS
+        wd -q -f add task
 
     elif [ "$1" = "del" ]; then
         cd $TASKS
