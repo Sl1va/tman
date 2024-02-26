@@ -23,9 +23,9 @@ end
 function Git.new(taskid, branch)
     local self = setmetatable({
         repos = {
-            "cpeagent",
-            "lede-feeds",
-            "wmsnmpd",
+            { name = "lede-feeds", branch = "develop" },
+            { name = "cpeagent", branch = "master" },
+            { name = "wmsnmpd", branch = "master" },
         },
         taskid = taskid,
         branch = branch,
@@ -33,6 +33,9 @@ function Git.new(taskid, branch)
     return self
 end
 
+--- Check that repo has no uncommited changes.
+-- @param repo repo name
+-- @return true on success, otherwise false
 function Git:uncommited(repo)
     local repopath = codebase .. "/" .. repo
     local cmd = ("git -C %s diff --quiet --exit-code"):format(repopath)
@@ -44,19 +47,35 @@ end
 
 --- Switch to another git branch.
 -- @param branch branch to switch to. Default: task unit branch
-function Git:branch_switch(branch)
-    branch = branch or self.branch
+function Git:branch_switch()
     -- check no repo has uncommited changes
     for _, repo in pairs(self.repos) do
-        if self:uncommited(repo) then
+        if self:uncommited(repo.name) then
             log("repo '%s' has uncommited changes", repo)
             return false
         end
     end
     --- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = codebase .. "/" .. repo
-        os.execute("git -C " .. repopath .. " checkout --quiet " .. branch)
+        local repopath = codebase .. "/" .. repo.name
+        os.execute("git -C " .. repopath .. " checkout --quiet " .. self.branch)
+    end
+    return true
+end
+
+--- Switch to repo default branch.
+function Git:branch_default()
+    -- check no repo has uncommited changes
+    for _, repo in pairs(self.repos) do
+        if self:uncommited(repo.name) then
+            log("repo '%s' has uncommited changes", repo)
+            return false
+        end
+    end
+    --- actually switch to specified branch
+    for _, repo in pairs(self.repos) do
+        local repopath = codebase .. "/" .. repo.name
+        os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
     end
     return true
 end
@@ -72,7 +91,7 @@ function Git:branch_create()
     --- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo
-        os.execute("git -C " .. repopath .. " checkout --quiet develop")
+        os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         os.execute(
             "git -C " .. repopath .. " checkout --quiet -b " .. self.branch
         )
@@ -90,7 +109,7 @@ function Git:branch_delete()
     --- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo
-        os.execute("git -C " .. repopath .. " checkout --quiet develop")
+        os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         os.execute(
             "git -C " .. repopath .. " branch --quiet -D " .. self.branch
         )

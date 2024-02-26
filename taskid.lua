@@ -171,9 +171,11 @@ private:
 ]]
 
 --- Init class TaskID.
-function TaskID.new()
+-- @param taskpath path where all tasks are located
+-- @return new object
+function TaskID.new(taskpath)
     local self = setmetatable({
-        taskpath = "/home/roach/work/tasks",
+        taskpath = taskpath,
     }, TaskID)
     self.meta = self.taskpath .. "/.tasks"
     self.taskids = self:load_taskids()

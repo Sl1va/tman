@@ -1,5 +1,5 @@
 test:
-	lua taskman.lua
+	lua tman.lua
 
 git:
 	lua git.lua

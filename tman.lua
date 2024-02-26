@@ -1,6 +1,6 @@
---- Manage task units.
+--- Task manager.
 -- Create a new unit, move to diff statuses and so on.
--- @module TaskMan
+-- @module TMan
 
 local taskid = require("taskid")
 local taskunit = require("taskunit")
@@ -11,124 +11,58 @@ local function log(fmt, ...)
     print(msg)
 end
 
-local TaskMan = {}
-TaskMan.__index = TaskMan
+local TMan = {}
+TMan.__index = TMan
 
 local function usage()
     print(([[
-Usage: %s cmd [TASKID] [STATUS]
-Task items related commands:
-  new   - create new task item
+Usage: %s COMMAND [ID]
+Basic:
+  new   - create new task
   use   - mark a task as current
-  move  - move a task to new status. Default: backlog
   prev  - switch to previous task
-  list  - list all tasks
-  show  - show task info. Default: current task (if exists)
-  amend - amend task description and branch
+  list  - list all tasks. Default: active tasks
+  show  - show task info. Default: current task
+  time  - time spent on task
+  amend - amend task unit
+
+Contribute:
   review- push commits for review
-  done  - move task unit to .done directory
-
-Task specificly related commands:
-  check - check git commit, rebase/ merge, CHANGELOG.md and pass task code through tests in MakefileWimark
-  time  - time you spent on task
-  dline - show updated deadline
-
-General:
-  help  - show this message
-  info  - show inner things as list of statuses and other info
+  done  - move task to status complete
 
 For developer:
-  init  - download repos and create symlinks for all them
-  del   - delete task dir, branch, and meta
-]]):format("tman"))
+  init  - download repos and create symlinks for all of them
+  del   - delete task unit]]):format("tman"))
 end
 
---- Class TaskMan
--- type TaskMan
+--- Class TMan
+-- type TMan
 
---- Init class TaskMan.
-function TaskMan.init()
-    local taskpath = "/home/roach/work/tasks"
+--- Init class TMan.
+function TMan.init(taskpath)
+    taskpath = taskpath or "/home/roach/work/tasks"
     local self = setmetatable({
         taskid = taskid.new(taskpath),
         taskunit = taskunit.newobj(taskpath),
-    }, TaskMan)
+    }, TMan)
     return self
 end
 
---- Create a new task unit.
+--- Create a new task.
 -- @param id task ID
 -- @treturn true if new task unit is created, otherwise false
-function TaskMan:new(id)
+function TMan:new(id)
     if not id then
-        print("tman: missing task ID")
+        log("task ID required")
         os.exit(1)
     end
     if not self.taskid:add(id) then
-        log("task ID '%s' exists already", id)
+        log("'%s': already exists", id)
         os.exit(1)
     end
-    --[[
     if not self.taskunit:new(id) then
-        print("taskman: colud not create new task unit")
+        log("colud not create new task unit")
         self.taskid:del(id)
-        os.exit(1)
-    end
-    ]]
-    return true
-end
-
---- Move task to new status.
--- FIXME: case: when new ID and current task ID are the same
--- @param status status to move task to
--- @param id task ID. Default: current task ID
-function TaskMan:move(status, id)
-    if not status then
-        log("missing status")
-        os.exit(1)
-    end
-    if id and id == self.taskid.curr then
-        id = nil
-    end
-
-    if (id and self.taskid.curr) and status == "progress" then
-        print("replace new task with current one (in progress)")
-        local git = gitmod.new(id, self.taskunit:getunit(id, "branch"))
-        if not git:branch_switch() then
-            log("repo has uncommited changes")
-            os.exit(1)
-        end
-        self.taskunit:setunit(self.taskid.curr, "Status", "backlog")
-        self.taskunit:setunit(id, "Status", "progress")
-        local oldcurr = self.taskid.curr
-        self.taskid:setcurr(id)
-        self.taskid:setprev(oldcurr)
-    elseif id and status == "progress" then
-        print("new task to progress")
-        local git = gitmod.new(id, self.taskunit:getunit(id, "branch"))
-        if not git:branch_switch() then
-            log("repo has uncommited changes")
-            os.exit(1)
-        end
-        self.taskunit:setunit(id, "Status", status)
-        self.taskid:setcurr(id)
-    elseif id and status ~= "progress" then
-        print("new task to somewhere else:", id)
-        self.taskunit:setunit(id, "Status", status)
-    elseif self.taskid.curr and status ~= "progress" then
-        print("move current task to somewhere else")
-        local git = gitmod.new(
-            self.taskid.curr,
-            self.taskunit:getunit(self.taskid.curr, "branch")
-        )
-        if not git:branch_switch() then
-            log("repo has uncommited changes")
-            os.exit(1)
-        end
-        self.taskunit:setunit(self.taskid.curr, "Status", status)
-        self.taskid:unsetcurr()
-    else
-        log("no current task exists")
         os.exit(1)
     end
     return true
@@ -136,17 +70,17 @@ end
 
 --- Switch to new task.
 -- @param id task ID
-function TaskMan:use(id)
+function TMan:use(id)
     if not id then
-        log("previous task ID '%s' missing")
+        log("no previous task")
         return 1
     end
     if not self.taskid:exist(id) then
-        log("task ID '%s' doesn't exist", id)
+        log("'%s': does not exist", id)
         return 1
     end
     if self.taskid.curr == id then
-        log("task ID '%s' already in use", id)
+        log("'%s': already in use", id)
         return 1
     end
 
@@ -161,11 +95,11 @@ function TaskMan:use(id)
 end
 
 --- Switch to previous task.
-function TaskMan:prev()
+function TMan:prev()
     local prev = self.taskid.prev
 
     if not prev then
-        log("no previous task ID")
+        log("no previous task")
         return 1
     end
     local branch = self.taskunit:getunit(prev, "branch")
@@ -180,39 +114,36 @@ end
 
 --- Get cucrent task ID.
 -- @return currentn task ID
-function TaskMan:getcurr()
+function TMan:getcurr()
     print(self.taskid.curr)
 end
 
 --- List all task IDs.
 -- By default show only active task IDs.
 -- @param opt list option
-function TaskMan:list(opt)
+function TMan:list(opt)
     if opt == "-A" then
         print("All task IDs")
         self.taskid:list(true, true)
-    elseif opt == "-a" then
+    elseif not opt or opt == "-a" then
         print("Active task IDs")
         self.taskid:list(true, false)
     elseif opt == "-c" then
         print("Complete task IDs")
         self.taskid:list(false, true)
-    else
-        print("Active task IDs")
-        self.taskid:list(true)
     end
 end
 
 --- Show task unit metadata.
 -- @param id task ID
-function TaskMan:show(id)
+function TMan:show(id)
     id = id or self.taskid.curr
     if not id then
-        log("neither task ID passed nor current exists")
+        log("no current task")
         os.exit(1)
     end
     if not self.taskid:exist(id) then
-        log("'%s': no such task ID", id)
+        log("'%s': no such task", id)
         os.exit(1)
     end
     self.taskunit:show(id)
@@ -220,34 +151,35 @@ end
 
 --- Amend task unit.
 -- @param id task ID
---function TaskMan:amend(id) end
+--function TMan:amend(id) end
 
---- Delete task unit.
+--- Delete task.
 -- @param id task ID
-function TaskMan:del(id)
+function TMan:del(id)
     if not self.taskid:exist(id) then
-        log("'%s': no such task ID", id)
+        log("'%s': no such task", id)
         os.exit(1)
     end
 
     io.write("Do you want to continue? [Y/n] ")
     local confirm = io.read("*line")
     if confirm ~= "Y" then
-        print("tman: deletion is cancelled")
+        print("deletion is cancelled")
         return 1
     end
     self.taskunit:del(id)
     self.taskid:del(id)
+    return 0
 end
 
 --- Check task and push branch for review.
 -- @param id task ID. Default: current task
-function TaskMan:review(id)
+function TMan:review(id)
     id = id or self.taskid.curr
 end
 
 --- Move current task to done status.
-function TaskMan:done()
+function TMan:done()
     local id = self.taskid.curr
 
     if not id then
@@ -255,7 +187,7 @@ function TaskMan:done()
         return 1
     end
     local git = gitmod.new(id, "develop")
-    if not git:branch_switch() then
+    if not git:branch_default() then
         log("repo has uncommited changes")
         return 1
     end
@@ -263,15 +195,13 @@ function TaskMan:done()
 end
 
 --- Interface.
-function TaskMan:main(arg)
-    local cmd = arg[1]
+function TMan:main(arg)
+    local cmd = arg[1] or "help"
 
     if cmd == "new" then
         self:new(arg[2])
     elseif cmd == "use" then
         self:use(arg[2])
-    elseif cmd == "move" then
-        self:move(arg[2], arg[3])
     elseif cmd == "list" then
         self:list(arg[2])
     elseif cmd == "show" then
@@ -288,12 +218,10 @@ function TaskMan:main(arg)
         self:done()
     elseif cmd == "help" then
         usage()
-    elseif not cmd then
-        log("command expected")
     else
-        log("no such command: %s", cmd)
+        log("'%s': no such command", cmd)
     end
 end
 
-local tman = TaskMan.init()
+local tman = TMan.init()
 return tman:main(arg)
