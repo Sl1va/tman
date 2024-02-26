@@ -4,7 +4,7 @@
 
 local taskid = require("taskid")
 local taskunit = require("taskunit")
-local git = require("git")
+local gitmod = require("git")
 
 local function log(fmt, ...)
     local msg = "tman: " .. fmt:format(...)
@@ -93,7 +93,7 @@ function TaskMan:move(status, id)
 
     if (id and self.taskid.curr) and status == "progress" then
         print("replace new task with current one (in progress)")
-        local gitobj = git.new(id, self.taskunit:getunit(id, "branch"))
+        local gitobj = gitmod.new(id, self.taskunit:getunit(id, "branch"))
         if not gitobj:branch_switch() then
             log("repo has uncommited changes")
             os.exit(1)
@@ -105,7 +105,7 @@ function TaskMan:move(status, id)
         self.taskid:setprev(oldcurr)
     elseif id and status == "progress" then
         print("new task to progress")
-        local gitobj = git.new(id, self.taskunit:getunit(id, "branch"))
+        local gitobj = gitmod.new(id, self.taskunit:getunit(id, "branch"))
         if not gitobj:branch_switch() then
             log("repo has uncommited changes")
             os.exit(1)
@@ -117,7 +117,7 @@ function TaskMan:move(status, id)
         self.taskunit:setunit(id, "Status", status)
     elseif self.taskid.curr and status ~= "progress" then
         print("move current task to somewhere else")
-        local gitobj = git.new(
+        local gitobj = gitmod.new(
             self.taskid.curr,
             self.taskunit:getunit(self.taskid.curr, "branch")
         )
@@ -154,7 +154,7 @@ function TaskMan:use(id)
     end
 
     branch = self.taskunit:getunit(id, "branch")
-    gitobj = git.new(id, branch)
+    gitobj = gitmod.new(id, branch)
     if not gitobj:branch_switch() then
         log("repo has uncommited changes")
         return 1
@@ -178,7 +178,7 @@ function TaskMan:prev()
         return 1
     end
     branch = self.taskunit:getunit(prev, "branch")
-    gitobj = git.new(prev, branch)
+    gitobj = gitmod.new(prev, branch)
     if not gitobj:branch_switch() then
         log("repo has uncommited changes")
         return 1
