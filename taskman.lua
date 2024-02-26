@@ -243,30 +243,32 @@ end
 
 --- Interface.
 function TaskMan:main(arg)
-    if arg[1] == "new" then
+    local cmd = arg[1]
+
+    if cmd == "new" then
         self:new(arg[2])
-    elseif arg[1] == "use" then
+    elseif cmd == "use" then
         self:use(arg[2])
-    elseif arg[1] == "move" then
+    elseif cmd == "move" then
         self:move(arg[2], arg[3])
-    elseif arg[1] == "list" then
+    elseif cmd == "list" then
         self:list(arg[2])
-    elseif arg[1] == "show" then
+    elseif cmd == "show" then
         self:show(arg[2])
-    elseif arg[1] == "prev" then
+    elseif cmd == "prev" then
         self:prev()
-    elseif arg[1] == "getcurr" then
+    elseif cmd == "getcurr" then
         self:getcurr()
-    elseif arg[1] == "del" then
+    elseif cmd == "del" then
         self:del(arg[2])
-    elseif arg[1] == "done" then
+    elseif cmd == "done" then
         self:done(arg[2])
-    elseif arg[1] == "help" then
+    elseif cmd == "help" then
         usage()
-    elseif not arg[1] then
+    elseif not cmd then
         log("command expected")
     else
-        log("no such command: %s", arg[1])
+        log("no such command: %s", cmd)
     end
 end
 
