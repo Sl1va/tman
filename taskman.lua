@@ -140,8 +140,12 @@ function TaskMan:use(id)
     local branch = nil
     local gitobj = nil
 
+    if not id then
+        log("previous task ID '%s' missing")
+        return 1
+    end
     if not self.taskid:exist(id) then
-        log("task ID '%s' either missing or doesn't exist", id or "")
+        log("task ID '%s' doesn't exist", id)
         return 1
     end
     if self.taskid.curr == id then
@@ -165,8 +169,12 @@ function TaskMan:prev()
     local branch = nil
     local gitobj = nil
 
+    if not prev then
+        log("previous task ID '%s' missing")
+        return 1
+    end
     if not self.taskid:exist(prev) then
-        log("task ID '%s' either missing or doesn't exist", prev or "")
+        log("task ID '%s' doesn't exist", prev)
         return 1
     end
     branch = self.taskunit:getunit(prev, "branch")
