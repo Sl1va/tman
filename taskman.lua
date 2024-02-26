@@ -237,9 +237,27 @@ function TaskMan:del(id)
     self.taskid:del(id)
 end
 
---- Move task to done directory.
--- @param id task ID
---function TaskMan:done(id) end
+--- Check task and push branch for review.
+-- @param id task ID. Default: current task
+function TaskMan:review(id)
+    id = id or self.taskid.curr
+end
+
+--- Move current task to done status.
+function TaskMan:done()
+    local id = self.taskid.curr
+
+    if not id then
+        log("no current task")
+        return 1
+    end
+    local git = gitmod.new(id, "develop")
+    if not git:branch_switch() then
+        log("repo has uncommited changes")
+        return 1
+    end
+    self.taskid:unsetcurr(true)
+end
 
 --- Interface.
 function TaskMan:main(arg)
@@ -261,8 +279,10 @@ function TaskMan:main(arg)
         self:getcurr()
     elseif cmd == "del" then
         self:del(arg[2])
+    elseif cmd == "review" then
+        self:review()
     elseif cmd == "done" then
-        self:done(arg[2])
+        self:done()
     elseif cmd == "help" then
         usage()
     elseif not cmd then

@@ -203,11 +203,16 @@ function TaskID:swap()
 end
 
 --- Clear current task ID.
+-- @tparam bool isdone if set move task to done, otherwise to active
 -- @treturn bool true if current task is unset, otherwise false
-function TaskID:unsetcurr()
+function TaskID:unsetcurr(isdone)
+    local tasktype = types.ACTV
+    if isdone then
+        tasktype = types.COMP
+    end
     for _, unit in pairs(self.taskids) do
         if unit.type == types.CURR then
-            unit.type = types.ACTV
+            unit.type = tasktype
             self.curr = nil
             break
         end
