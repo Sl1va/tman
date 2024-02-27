@@ -18,22 +18,24 @@ local function usage()
     print(([[
 Usage: %s COMMAND [ID]
 Basic:
-  new   - create new task
-  use   - mark a task as current
-  prev  - switch to previous task
-  list  - list all tasks. Default: active tasks
-  show  - show task info. Default: current task
-  time  - time spent on task
-  amend - amend task unit
-  update- git pull for all repos
+  new     - create new task
+  use     - mark a task as current
+  prev    - switch to previous task
+  list    - list all tasks. Default: active tasks
+  show    - show task info. Default: current task
+  time    - time spent on task
+  amend   - amend task unit
+  update  - git pull for all repos
 
 Contribute:
-  review- push commits for review
-  done  - move task to status complete
+  review  - push commits for review
+  done    - move task to status complete
 
 For developer:
-  init  - download repos and create symlinks for all of them
-  del   - delete task unit]]):format("tman"))
+  init    - download repos and create symlinks for all of them
+  del     - delete task unit
+  getcurr - get current task ID
+]]):format("tman"))
 end
 
 
