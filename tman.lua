@@ -6,6 +6,8 @@ local taskid = require("taskid")
 local taskunit = require("taskunit")
 local gitmod = require("git")
 
+local version = "v0.1"
+
 local function log(fmt, ...)
     local msg = "tman: " .. fmt:format(...)
     print(msg)
@@ -252,6 +254,8 @@ function TMan:main(arg)
         self:done()
     elseif cmd == "help" then
         usage()
+    elseif cmd == "ver" then
+        print(("tman version: %s"):format(version))
     else
         log("'%s': no such command", cmd)
     end
