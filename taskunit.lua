@@ -107,8 +107,8 @@ end
 
 --- Get unit from task metadata.
 -- @param id task ID
--- @param unit unit key we need value of
--- @treturn string unit value
+-- @param key unit key
+-- @return unit value
 function TaskUnit:getunit(id, key)
     local res = nil
     local fname = self.taskpath .. "/" .. id .. "/.note"

@@ -35,8 +35,9 @@ For developer:
   del   - delete task unit]]):format("tman"))
 end
 
+
 --- Class TMan
--- type TMan
+-- @type TMan
 
 --- Init class TMan.
 function TMan.init(taskpath)
@@ -151,7 +152,7 @@ end
 
 --- Amend task unit.
 -- @param id task ID
---function TMan:amend(id) end
+function TMan:amend(id) end
 
 --- Delete task.
 -- @param id task ID

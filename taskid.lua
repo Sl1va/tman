@@ -22,7 +22,7 @@ local function log(fmt, ...)
 end
 
 --- Class TaskID
--- type TaskID
+-- @type TaskID
 
 --- Load task iDs from the file.
 -- @treturn table table like {id, type}
@@ -260,12 +260,15 @@ end
 function TaskID:list(active, complete)
     local fmt = "  %-8s %s"
     local fmt_curr = "* %-8s %s"
+    local fmt_prev = "- %-8s %s"
 
     for _, unit in pairs(self.taskids) do
         local desc = taskunit:getunit(unit.id, "desc")
 
         if unit.type == types.CURR and (active and complete or active) then
             print((fmt_curr):format(unit.id, desc))
+        elseif unit.type == types.PREV and (active and complete or active) then
+            print((fmt_prev):format(unit.id, desc))
         elseif active and unit.type ~= types.COMP then
             print((fmt):format(unit.id, desc))
         elseif complete and unit.type == types.COMP then

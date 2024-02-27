@@ -15,7 +15,8 @@ local function log(fmt, ...)
 end
 
 --- Class Git
--- type Git
+-- @type Git
+
 
 --- Init Git class.
 -- @param taskid task ID
@@ -55,7 +56,7 @@ function Git:branch_switch()
             return false
         end
     end
-    --- actually switch to specified branch
+    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. self.branch)
@@ -72,7 +73,7 @@ function Git:branch_default()
             return false
         end
     end
-    --- actually switch to specified branch
+    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
@@ -88,7 +89,7 @@ function Git:branch_create()
             return false
         end
     end
-    --- actually switch to specified branch
+    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
@@ -106,7 +107,7 @@ function Git:branch_delete()
             return false
         end
     end
-    --- actually switch to specified branch
+    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = codebase .. "/" .. repo
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)

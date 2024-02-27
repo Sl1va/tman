@@ -15,3 +15,7 @@ lua_fmt:
 lua_lint:
 	echo "===> Linting"
 	luacheck .
+
+lua_docs:
+	echo "===> Docs"
+	ldoc .
