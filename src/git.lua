@@ -43,15 +43,21 @@ function Git:uncommited(reponame)
     return true -- error
 end
 
---- Switch to task branch.
--- @param branch branch to switch to. Default: task unit branch
-function Git:branch_switch()
-    -- check no repo has uncommited changes
+--- Check repos for uncommited chanegs.
+function Git:check_uncommited()
     for _, repo in pairs(self.repos) do
         if self:uncommited(repo.name) then
             log("repo '%s' has uncommited changes", repo)
             return false
         end
+    end
+end
+
+--- Switch to task branch.
+-- @param branch branch to switch to. Default: task unit branch
+function Git:branch_switch()
+    if self:check_uncommited() then
+        return false
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
@@ -63,12 +69,8 @@ end
 
 --- Switch to repo default branch.
 function Git:branch_default()
-    -- check no repo has uncommited changes
-    for _, repo in pairs(self.repos) do
-        if self:uncommited(repo.name) then
-            log("repo '%s' has uncommited changes", repo)
-            return false
-        end
+    if self:check_uncommited() then
+        return false
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
@@ -81,14 +83,9 @@ end
 --- Git pull command.
 -- @param all true pull all branches, otherwise only default branch
 function Git:pull(all)
-    -- check no repo has uncommited changes
-    for _, repo in pairs(self.repos) do
-        if self:uncommited(repo.name) then
-            log("repo '%s' has uncommited changes", repo)
-            return false
-        end
+    if self:check_uncommited() then
+        return false
     end
-    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
@@ -101,14 +98,9 @@ function Git:pull(all)
 end
 
 function Git:branch_create()
-    -- check no repo has uncommited changes
-    for _, repo in pairs(self.repos) do
-        if self:uncommited(repo.name) then
-            log("repo '%s' has uncommited changes", repo.name)
-            return false
-        end
+    if self:check_uncommited() then
+        return false
     end
-    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
@@ -119,14 +111,9 @@ function Git:branch_create()
 end
 
 function Git:branch_delete()
-    -- check no repo has uncommited changes
-    for _, repo in pairs(self.repos) do
-        if self:uncommited(repo.name) then
-            log("repo '%s' has uncommited changes", repo.name)
-            return false
-        end
+    if self:check_uncommited() then
+        return false
     end
-    -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
         local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
