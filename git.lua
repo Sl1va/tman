@@ -46,7 +46,7 @@ function Git:uncommited(repo)
     return true -- error
 end
 
---- Switch to another git branch.
+--- Switch to task branch.
 -- @param branch branch to switch to. Default: task unit branch
 function Git:branch_switch()
     -- check no repo has uncommited changes
@@ -79,6 +79,28 @@ function Git:branch_default()
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
     end
     return true
+end
+
+--- Git pull command.
+-- @param all true pull all branches, otherwise only default branch
+function Git:pull(all)
+    -- check no repo has uncommited changes
+    for _, repo in pairs(self.repos) do
+        if self:uncommited(repo.name) then
+            log("repo '%s' has uncommited changes", repo)
+            return false
+        end
+    end
+    -- actually switch to specified branch
+    for _, repo in pairs(self.repos) do
+        local repopath = codebase .. "/" .. repo.name
+        os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
+        if all then
+            os.execute("git -C " .. repopath .. " pull --quiet")
+        else
+            os.execute("git -C " .. repopath .. " pull --quiet origin " .. repo.branch)
+        end
+    end
 end
 
 function Git:branch_create()

@@ -25,6 +25,7 @@ Basic:
   show  - show task info. Default: current task
   time  - time spent on task
   amend - amend task unit
+  update- git pull for all repos
 
 Contribute:
   review- push commits for review
@@ -152,7 +153,27 @@ end
 
 --- Amend task unit.
 -- @param id task ID
-function TMan:amend(id) end
+function TMan:amend(id)
+    print("under development:", id or "no task ID")
+end
+
+--- Update git branch task.
+function TMan:update()
+    local id = self.taskid.curr
+    if not id then
+        log("no current task")
+        return 1
+    end
+    if not self.taskid:exist(id) then
+        log("'%s': does not exist", id)
+        return 1
+    end
+
+    local git = gitmod.new(id, "")
+    git:branch_default()
+    git:pull(true)
+    git:branch_switch()
+end
 
 --- Delete task.
 -- @param id task ID
@@ -211,6 +232,10 @@ function TMan:main(arg)
         self:prev()
     elseif cmd == "getcurr" then
         self:getcurr()
+    elseif cmd == "amend" then
+        self:amend()
+    elseif cmd == "update" then
+        self:update()
     elseif cmd == "del" then
         self:del(arg[2])
     elseif cmd == "review" then
