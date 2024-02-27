@@ -49,7 +49,7 @@ end
 function Git:check_uncommited()
     for _, repo in pairs(self.repos) do
         if self:uncommited(repo.name) then
-            log("repo '%s' has uncommited changes", repo)
+            log("repo '%s' has uncommited changes", repo.name)
             return true
         end
     end
