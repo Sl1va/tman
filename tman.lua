@@ -1,5 +1,5 @@
 --- Task manager.
--- Create a new unit, move to diff statuses and so on.
+-- Simplify workflow when working with many repos.
 -- @module TMan
 
 local taskid = require("taskid")
@@ -31,10 +31,10 @@ Contribute:
   review  - push commits for review
   done    - move task to status complete
 
-For developer:
+For developers:
   init    - download repos and create symlinks for all of them
   del     - delete task unit
-  getcurr - get current task ID
+  curr    - get current task ID
 ]]):format("tman"))
 end
 
@@ -129,7 +129,7 @@ end
 
 --- Get cucrent task ID.
 -- @return currentn task ID
-function TMan:getcurr()
+function TMan:curr()
     print(self.taskid.curr)
 end
 
@@ -238,8 +238,8 @@ function TMan:main(arg)
         self:show(arg[2])
     elseif cmd == "prev" then
         self:prev()
-    elseif cmd == "getcurr" then
-        self:getcurr()
+    elseif cmd == "curr" then
+        self:curr()
     elseif cmd == "amend" then
         self:amend(arg[2], arg[3])
     elseif cmd == "update" then
