@@ -32,6 +32,7 @@ function Git.new(taskid, branch)
 end
 
 --- Check that repo has no uncommited changes.
+-- roachme: it's discombabulated: true's false and vice versa
 -- @param repo repo name
 -- @return true on success, otherwise false
 function Git:uncommited(reponame)
@@ -44,13 +45,15 @@ function Git:uncommited(reponame)
 end
 
 --- Check repos for uncommited chanegs.
+-- roachme: it's discombabulated: true's false and vice versa
 function Git:check_uncommited()
     for _, repo in pairs(self.repos) do
         if self:uncommited(repo.name) then
             log("repo '%s' has uncommited changes", repo)
-            return false
+            return true
         end
     end
+    return false
 end
 
 --- Switch to task branch.
