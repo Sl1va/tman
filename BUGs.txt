@@ -1,1 +1,2 @@
 1. `tman` for some reason create file with task ID in task_new()
+2. Main script always returns 0???
