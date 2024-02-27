@@ -6,9 +6,6 @@ local posix = require("posix")
 local Git = {}
 Git.__index = Git
 
-local codebase = "/home/roach/work/codebase"
-local taskbase = "/home/roach/work/tasks"
-
 local function log(fmt, ...)
     local msg = "git: " .. fmt:format(...)
     print(msg)
@@ -37,8 +34,8 @@ end
 --- Check that repo has no uncommited changes.
 -- @param repo repo name
 -- @return true on success, otherwise false
-function Git:uncommited(repo)
-    local repopath = codebase .. "/" .. repo
+function Git:uncommited(reponame)
+    local repopath = G_codebasepath .. reponame
     local cmd = ("git -C %s diff --quiet --exit-code"):format(repopath)
     if os.execute(cmd) == 0 then
         return false -- ok
@@ -58,7 +55,7 @@ function Git:branch_switch()
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = codebase .. "/" .. repo.name
+        local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. self.branch)
     end
     return true
@@ -75,7 +72,7 @@ function Git:branch_default()
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = codebase .. "/" .. repo.name
+        local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
     end
     return true
@@ -93,7 +90,7 @@ function Git:pull(all)
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = codebase .. "/" .. repo.name
+        local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         if all then
             os.execute("git -C " .. repopath .. " pull --quiet")
@@ -106,14 +103,14 @@ end
 function Git:branch_create()
     -- check no repo has uncommited changes
     for _, repo in pairs(self.repos) do
-        if self:uncommited(repo) then
-            log("repo '%s' has uncommited changes", repo)
+        if self:uncommited(repo.name) then
+            log("repo '%s' has uncommited changes", repo.name)
             return false
         end
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = codebase .. "/" .. repo
+        local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         os.execute(
             "git -C " .. repopath .. " checkout --quiet -b " .. self.branch
@@ -124,14 +121,14 @@ end
 function Git:branch_delete()
     -- check no repo has uncommited changes
     for _, repo in pairs(self.repos) do
-        if self:uncommited(repo) then
-            log("repo '%s' has uncommited changes", repo)
+        if self:uncommited(repo.name) then
+            log("repo '%s' has uncommited changes", repo.name)
             return false
         end
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = codebase .. "/" .. repo
+        local repopath = G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         os.execute(
             "git -C " .. repopath .. " branch --quiet -D " .. self.branch
@@ -144,8 +141,8 @@ function Git:check_commit() end
 --- Create repo symlinks for task unit.
 function Git:repolink()
     for _, repo in pairs(self.repos) do
-        local src = codebase .. "/" .. repo
-        local dst = taskbase .. "/" .. self.taskid .. "/" .. repo
+        local src = G_codebasepath .. repo.name
+        local dst = G_taskpath .. self.taskid .. "/" .. repo.name
         posix.link(src, dst, true)
     end
 end

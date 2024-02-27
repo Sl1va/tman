@@ -2,6 +2,8 @@
 -- Simplify workflow when working with many repos.
 -- @module TMan
 
+require("globals")
+
 local taskid = require("taskid")
 local taskunit = require("taskunit")
 local gitmod = require("git")

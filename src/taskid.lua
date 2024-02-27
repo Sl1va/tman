@@ -177,7 +177,7 @@ function TaskID.new(taskpath)
     local self = setmetatable({
         taskpath = taskpath,
     }, TaskID)
-    self.meta = self.taskpath .. "/.tasks"
+    self.meta = G_tmanpath .. "taskids"
     self.taskids = self:load_taskids()
     self.curr = self:getcurr()
     self.prev = self:getprev()

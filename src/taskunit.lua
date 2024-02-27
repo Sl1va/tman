@@ -31,6 +31,7 @@ end
 local function check_tasktype(type)
     local tasktypes = { "bugfix", "feature", "hotfix" }
     local found = false
+
     for _, dtype in pairs(tasktypes) do
         if type == dtype then
             found = true
@@ -39,11 +40,12 @@ local function check_tasktype(type)
     return found
 end
 
+
 --- Class TaskUnit
 -- type TaskUnit
 
 function TaskUnit:formnote(id)
-    return self.taskpath .. "/" .. id .. "/.note"
+    return G_tmanpath .. id
 end
 
 --- Init class TaskUnit.
@@ -58,8 +60,8 @@ end
 -- @param id task id
 function TaskUnit:new(id)
     local file = nil
-    local taskdir = self.taskpath .. "/" .. id
-    local fname = taskdir .. "/.note"
+    local taskdir = G_taskpath .. id
+    local fname = G_tmanpath .. id
 
     local unit = {
         id = { mark = false, inptext = "ID", value = id },
@@ -111,7 +113,7 @@ end
 -- @return unit value
 function TaskUnit:getunit(id, key)
     local res = nil
-    local fname = self.taskpath .. "/" .. id .. "/.note"
+    local fname = G_tmanpath .. id
     local f = io.open(fname)
     if not f then
         log("could not open task unit file")
@@ -165,7 +167,7 @@ function TaskUnit:amend(id) end
 --- Show task unit metadata.
 -- @param id task ID
 function TaskUnit:show(id)
-    local fname = self.taskpath .. "/" .. id .. "/.note"
+    local fname = G_tmanpath .. id
     local f = io.open(fname)
     if not f then
         print("taskunit: could not open file", fname)
@@ -183,7 +185,7 @@ end
 function TaskUnit:del(id)
     git = git.new(id, self:getunit(id, "branch"))
     git:branch_delete()
-    os.execute("rm -rf " .. self.taskpath .. "/" .. id)
+    os.execute("rm -rf " .. G_taskpath .. id)
     return true
 end
 

@@ -1,8 +1,7 @@
 function tman()
 {
     CWD=$(pwd)
-    TASKS="$HOME/work/tasks"
-    CURRTASK=$(cat "$HOME/work/tasks/.curr")
+    TASKS="$HOME/work/tman/tasks"
     cd ${HOME}/personal/prjs/tman/src
     lua tman.lua $@
     RET=$?
@@ -42,9 +41,6 @@ function tman()
 
     elif [ "$1" = "del" ]; then
         cd $TASKS
-
-    elif [ $RET -ne 0 ]; then
-        echo $CURRTASK > $CURRTASK
 
     else
         cd $CWD
