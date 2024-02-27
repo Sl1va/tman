@@ -8,11 +8,6 @@ local gitmod = require("git")
 
 local version = "v0.1"
 
-local function log(fmt, ...)
-    local msg = "tman: " .. fmt:format(...)
-    print(msg)
-end
-
 local TMan = {}
 TMan.__index = TMan
 
@@ -40,6 +35,10 @@ For developers:
 ]]):format("tman"))
 end
 
+local function log(fmt, ...)
+    local msg = "tman: " .. fmt:format(...)
+    print(msg)
+end
 
 --- Class TMan
 -- @type TMan
