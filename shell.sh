@@ -3,7 +3,7 @@ function tman()
     CWD=$(pwd)
     TASKS="$HOME/work/tasks"
     CURRTASK=$(cat "$HOME/work/tasks/.curr")
-    cd ${HOME}/personal/prjs/tman
+    cd ${HOME}/personal/prjs/tman/src
     lua tman.lua $@
     RET=$?
 
