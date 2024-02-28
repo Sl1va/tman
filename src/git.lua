@@ -14,7 +14,6 @@ end
 --- Class Git
 -- @type Git
 
-
 --- Init Git class.
 -- @param taskid task ID
 -- @param branch branch name
@@ -95,7 +94,9 @@ function Git:pull(all)
         if all then
             os.execute("git -C " .. repopath .. " pull --quiet")
         else
-            os.execute("git -C " .. repopath .. " pull --quiet origin " .. repo.branch)
+            os.execute(
+                "git -C " .. repopath .. " pull --quiet origin " .. repo.branch
+            )
         end
     end
 end

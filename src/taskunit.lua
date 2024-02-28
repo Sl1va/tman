@@ -40,7 +40,6 @@ local function check_tasktype(type)
     return found
 end
 
-
 --- Class TaskUnit
 -- type TaskUnit
 
