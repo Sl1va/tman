@@ -169,12 +169,15 @@ function TaskUnit:amend(id) end
 function TaskUnit:show(id)
     local fname = G_tmanpath .. id
     local f = io.open(fname)
+    local unitregex = "([A-Za-z]*): ([A-Za-z0-9-_/ ]*)"
+
     if not f then
         print("taskunit: could not open file", fname)
         return false
     end
     for line in f:lines() do
-        print(line)
+        local key, val = string.match(line, unitregex)
+        print(("%-8s: %s"):format(key, val))
     end
     f:close()
     return true

@@ -207,10 +207,9 @@ function TMan:del(id)
     return 0
 end
 
---- Check task and push branch for review.
--- @param id task ID. Default: current task
-function TMan:review(id)
-    id = id or self.taskid.curr
+--- Check current task and push branch for review.
+function TMan:review()
+    local id = self.taskid.curr
 end
 
 --- Move current task to done status.
