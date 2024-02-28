@@ -171,12 +171,9 @@ private:
 ]]
 
 --- Init class TaskID.
--- @param taskpath path where all tasks are located
 -- @return new object
-function TaskID.new(taskpath)
-    local self = setmetatable({
-        taskpath = taskpath,
-    }, TaskID)
+function TaskID.new()
+    local self = setmetatable({}, TaskID)
     self.meta = G_tmanpath .. "taskids"
     self.taskids = self:load_taskids()
     self.curr = self:getcurr()

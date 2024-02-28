@@ -48,10 +48,8 @@ function TaskUnit:formnote(id)
 end
 
 --- Init class TaskUnit.
-function TaskUnit.newobj(gtaskpath)
-    local self = setmetatable({
-        taskpath = gtaskpath or "/home/roach/work/tasks",
-    }, TaskUnit)
+function TaskUnit.newobj()
+    local self = setmetatable({}, TaskUnit)
     return self
 end
 

@@ -46,11 +46,10 @@ end
 -- @type TMan
 
 --- Init class TMan.
-function TMan.init(taskpath)
-    taskpath = taskpath or "/home/roach/work/tasks"
+function TMan.init()
     local self = setmetatable({
-        taskid = taskid.new(taskpath),
-        taskunit = taskunit.newobj(taskpath),
+        taskid = taskid.new(),
+        taskunit = taskunit.newobj(),
     }, TMan)
     return self
 end
