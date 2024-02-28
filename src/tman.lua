@@ -20,11 +20,13 @@ Basic:
   new     - create new task
   use     - mark a task as current
   prev    - switch to previous task
+  curr    - show current task
   list    - list all tasks. Default: active tasks
   show    - show task info. Default: current task
   time    - time spent on task
   amend   - amend task unit
-  update  - git pull for all repos
+  update  - update git repos
+  del     - delete task unit
 
 Contribute:
   review  - push commits for review
@@ -32,8 +34,6 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
-  del     - delete task unit
-  curr    - get current task ID
 ]]):format("tman"))
 end
 
@@ -135,10 +135,23 @@ function TMan:prev()
     return 0
 end
 
---- Get cucrent task ID.
+--- Get cucrent task ID and other info.
+-- @param opt options: -i: task ID, -f: task ID and description. Default: -f
 -- @return currentn task ID
-function TMan:curr()
-    print(self.taskid.curr)
+function TMan:curr(opt)
+    opt = opt or "-f"
+    local id = self.taskid.curr
+
+    if opt == "-i" then
+        print(id)
+    elseif opt == "-f" then
+        local desc = self.taskunit:getunit(id, "desc")
+        print(("* %-8s %s"):format(id, desc))
+    else
+        log("curr: '%s': no such option", opt)
+        os.exit(1)
+    end
+    return 0
 end
 
 --- List all task IDs.
@@ -246,7 +259,7 @@ function TMan:main(arg)
     elseif cmd == "prev" then
         self:prev()
     elseif cmd == "curr" then
-        self:curr()
+        self:curr(arg[2])
     elseif cmd == "amend" then
         self:amend(arg[2], arg[3])
     elseif cmd == "update" then
