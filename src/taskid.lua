@@ -152,24 +152,6 @@ function TaskID:unsetprev()
     return true
 end
 
---[[
-
-public:
-    curr - member
-    prev - member
-    add()
-    del()
-    list()
-    updcurr() - update current and previous task ID
-    unsetcurr()
-    swap()
-
-private:
-    getcurr()
-    getprev()
-    exist()
-]]
-
 --- Init class TaskID.
 -- @return new object
 function TaskID.new()
