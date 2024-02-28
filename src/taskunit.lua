@@ -58,27 +58,21 @@ end
 
 --- Create a new unit for a task.
 -- @param id task id
-function TaskUnit:new(id)
+-- @param tasktype task type: bugfix, hotfix, feature
+function TaskUnit:new(id, tasktype)
     local file = nil
     local taskdir = G_taskpath .. id
     local fname = G_tmanpath .. id
 
     local unit = {
         id = { mark = false, inptext = "ID", value = id },
-        type = { mark = true, inptext = "Type", value = "" },
+        type = { mark = true, inptext = "Type", value = tasktype },
         desc = { mark = true, inptext = "Desc", value = "" },
         date = { mark = false, inptext = "Date", value = os.date("%Y%m%d") },
         branch = { mark = false, inptext = "Branch", value = "" },
         status = { mark = false, inptext = "Status", value = "progress" },
     }
-
-    -- roachme: sort table
-    -- Get user input
-    for _, item in pairs(unit) do
-        if item.mark then
-            item.value = get_input(item.inptext)
-        end
-    end
+    unit.desc.value = get_input(unit.desc.inptext)
     unit.branch.value = format_branch(unit)
 
     -- Check user input

@@ -73,17 +73,22 @@ end
 
 --- Create a new task.
 -- @param id task ID
+-- @param tasktype task type: bugfix, hotfix, feature. Default: bugfix
 -- @treturn true if new task unit is created, otherwise false
-function TMan:new(id)
+function TMan:new(id, tasktype)
     if not id then
         log("task ID required")
+        os.exit(1)
+    end
+    if not tasktype then
+        log("task type required")
         os.exit(1)
     end
     if not self.taskid:add(id) then
         log("'%s': already exists", id)
         os.exit(1)
     end
-    if not self.taskunit:new(id) then
+    if not self.taskunit:new(id, tasktype) then
         log("colud not create new task unit")
         self.taskid:del(id)
         os.exit(1)
@@ -231,7 +236,7 @@ function TMan:main(arg)
     local cmd = arg[1] or "help"
 
     if cmd == "new" then
-        self:new(arg[2])
+        self:new(arg[2], arg[3])
     elseif cmd == "use" then
         self:use(arg[2])
     elseif cmd == "list" then
