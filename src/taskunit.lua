@@ -73,8 +73,8 @@ function TaskUnit:new(id, tasktype)
     unit.branch.value = format_branch(unit)
 
     -- Check user input
-    if not check_tasktype(unit.type.value) then
-        print("taskunit: error: unknown task type: " .. unit.type.value)
+    if not check_tasktype(tasktype) then
+        print("taskunit: error: unknown task type: " .. tasktype)
         return false
     end
 
