@@ -37,6 +37,7 @@ Basic:
 Info:
   ver     - show %s version
   help    - show this help message
+  info    - show detailed info about commands and important info
 
 Contribute:
   review  - push commits for review
