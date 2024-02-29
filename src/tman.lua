@@ -9,6 +9,7 @@ local taskunit = require("taskunit")
 local gitmod = require("git")
 
 local version = "v0.1"
+local progname = "tman"
 
 local TMan = {}
 TMan.__index = TMan
@@ -27,6 +28,7 @@ Basic:
   time    - time spent on task
   amend   - amend task unit
   update  - update git repos
+  config  - config %s for your workflow
 
 Info:
   ver     - show %s version
@@ -38,7 +40,7 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
-]]):format("tman", "tman"))
+]]):format(progname, progname, progname))
 end
 
 local function log(fmt, ...)
@@ -260,6 +262,14 @@ function TMan:done()
     self.taskid:unsetcurr(true)
 end
 
+--- Config util for your workflow
+-- @param subcmd subcommand
+function TMan:config(subcmd)
+    if subcmd == "repo" then
+        print("configure repo list")
+    end
+end
+
 --- Interface.
 function TMan:main(arg)
     local cmd = arg[1] or "help"
@@ -287,6 +297,9 @@ function TMan:main(arg)
         self:review()
     elseif cmd == "done" then
         self:done()
+
+    elseif cmd == "config" then
+        self:config(arg[2])
 
     elseif cmd == "prev" then
         self:prev()
