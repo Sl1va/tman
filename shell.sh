@@ -1,14 +1,10 @@
 function tman()
 {
-    CWD=$(pwd)
-    TASKS="$HOME/work/tman/tasks"
-    cd ${HOME}/personal/prjs/tman/src
-    lua tman.lua $@
+    TASKS="${HOME}/work/tman/tasks"
+    TMAN="${HOME}/personal/prjs/tman/src/tman.lua"
+    lua $TMAN $@
     RET=$?
 
-    # tman new DE-me
-    # tman use DE-me
-    # tman prev
     if [ $RET -eq 0 ] && [ "$1" = "new" ]; then
         cd $TASKS/${2}
         wd -q rm task
@@ -41,8 +37,5 @@ function tman()
 
     elif [ "$1" = "del" ]; then
         cd $TASKS
-
-    else
-        cd $CWD
     fi
 }

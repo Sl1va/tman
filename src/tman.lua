@@ -2,6 +2,8 @@
 -- Simplify workflow when working with many repos.
 -- @module TMan
 
+package.path = package.path .. ";/home/roach/personal/prjs/tman/src/?.lua"
+
 require("globals")
 
 local taskid = require("taskid")
@@ -13,6 +15,8 @@ local progname = "tman"
 
 local TMan = {}
 TMan.__index = TMan
+
+
 
 local function usage()
     print(([[
