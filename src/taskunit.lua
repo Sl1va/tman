@@ -92,9 +92,9 @@ function TaskUnit:new(id, tasktype)
     file:close()
 
     --- create task branches in repos
-    gitmod = gitmod.new(unit.id.value, unit.branch.value)
-    gitmod:repolink()
-    gitmod:branch_create()
+    local git = gitmod.new(unit.id.value, unit.branch.value)
+    git:repolink()
+    git:branch_create()
     return true
 end
 
