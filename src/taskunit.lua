@@ -5,6 +5,24 @@
 local posix = require("posix")
 local gitmod = require("git")
 
+
+--[[
+1 - main ones
+2 - a bit more info about task
+3 - mantadory stuff
+
+1. ID
+2. Type
+2. Prio
+2. Status
+1. Desc
+
+3. Date
+3. Branch
+]]
+
+
+
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
 
