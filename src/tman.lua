@@ -161,14 +161,16 @@ end
 -- By default show only active task IDs.
 -- @param opt list option
 function TMan:list(opt)
+    opt = opt or "-a"
+
     if opt == "-A" then
-        print("All task IDs")
+        print("All tasks:")
         self.taskid:list(true, true)
-    elseif not opt or opt == "-a" then
-        print("Active task IDs")
+    elseif opt == "-a" then
+        print("Active tasks:")
         self.taskid:list(true, false)
     elseif opt == "-c" then
-        print("Complete task IDs")
+        print("Completed tasks:")
         self.taskid:list(false, true)
     end
 end
@@ -177,6 +179,7 @@ end
 -- @param id task ID
 function TMan:show(id)
     id = id or self.taskid.curr
+
     if not self:checkid(id) then
         os.exit(1)
     end

@@ -234,26 +234,27 @@ function TaskID:del(id)
 end
 
 --- List task IDs.
+-- There are 4 types: current, previous, active and completed. Default: active
 -- @param active list only active task IDs
--- @param complete list only complete task IDs
-function TaskID:list(active, complete)
-    local fmt = "  %-8s %s"
-    local fmt_curr = "* %-8s %s"
-    local fmt_prev = "- %-8s %s"
-
+-- @param completed list only completed task IDs
+-- @return true on success, otherwise false
+function TaskID:list(active, completed)
     for _, unit in pairs(self.taskids) do
-        local desc = taskunit:getunit(unit.id, "desc")
-
-        if unit.type == types.CURR and (active and complete or active) then
-            print((fmt_curr):format(unit.id, desc))
-        elseif unit.type == types.PREV and (active and complete or active) then
-            print((fmt_prev):format(unit.id, desc))
-        elseif active and unit.type ~= types.COMP then
-            print((fmt):format(unit.id, desc))
-        elseif complete and unit.type == types.COMP then
-            print((fmt):format(unit.id, desc))
+        if unit.type == types.CURR and (active and completed or active) then
+            local desc = taskunit:getunit(unit.id, "desc")
+            print(("* %-8s %s"):format(unit.id, desc))
+        elseif unit.type == types.PREV and (active and completed or active) then
+            local desc = taskunit:getunit(unit.id, "desc")
+            print(("- %-8s %s"):format(unit.id, desc))
+        elseif unit.type ~= types.COMP and active then
+            local desc = taskunit:getunit(unit.id, "desc")
+            print(("  %-8s %s"):format(unit.id, desc))
+        elseif unit.type == types.COMP and completed then
+            local desc = taskunit:getunit(unit.id, "desc")
+            print(("  %-8s %s"):format(unit.id, desc))
         end
     end
+    return true
 end
 
 return TaskID
