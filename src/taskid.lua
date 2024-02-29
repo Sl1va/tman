@@ -228,8 +228,7 @@ function TaskID:del(id)
         end
     end
     self:save_taskids()
-    self.curr = self:getcurr()
-    self.prev = self:getprev()
+    self:updcurr(id)
     return true
 end
 
