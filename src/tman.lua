@@ -225,6 +225,8 @@ function TMan:del(id)
         os.exit(1)
     end
 
+    local desc = self.taskunit:getunit(id, "desc")
+    print(("> %-8s %s"):format(id, desc))
     io.write("Do you want to continue? [Y/n] ")
     local confirm = io.read("*line")
     if confirm ~= "Y" then
