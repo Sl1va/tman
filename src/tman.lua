@@ -201,12 +201,20 @@ function TMan:amend(id, opt)
 end
 
 --- Update git repos.
+-- roachme: It doesn't work if there is no current task
 function TMan:update()
-    local git = gitmod.new("", "")
+    local id = self.taskid.curr
+    if not id then
+        log("no current task")
+        os.exit(1)
+    end
 
-    git:branch_default()
+    local branch = self.taskunit:getunit(id, "branch")
+    local git = gitmod.new(branch, "")
+
+    git:switch()
     git:pull(true)
-    git:branch_switch()
+    git:switch(branch)
     return 0
 end
 

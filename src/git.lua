@@ -55,6 +55,22 @@ function Git:check_uncommited()
     return false
 end
 
+--- Switch branch.
+-- @param branch branch name (default: repo default branch)
+-- @treturn bool true on success, otherwise false
+function Git:switch(branch)
+    if self:check_uncommited() then
+        return false
+    end
+    for _, repo in pairs(self.repos) do
+        local repopath = G_codebasepath .. repo.name
+        local cmd = "git -C " .. repopath .. " checkout --quiet "
+        branch = branch or repo.branch
+        os.execute(cmd.. branch)
+    end
+    return true
+end
+
 --- Switch to task branch.
 -- @param branch branch to switch to. Default: task unit branch
 function Git:branch_switch()
