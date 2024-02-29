@@ -263,26 +263,30 @@ function TMan:main(arg)
 
     if cmd == "add" then
         self:add(arg[2], arg[3])
-    elseif cmd == "use" then
-        self:use(arg[2])
-    elseif cmd == "list" then
-        self:list(arg[2])
-    elseif cmd == "show" then
-        self:show(arg[2])
-    elseif cmd == "prev" then
-        self:prev()
-    elseif cmd == "curr" then
-        self:curr(arg[2])
     elseif cmd == "amend" then
         self:amend(arg[2], arg[3])
-    elseif cmd == "update" then
-        self:update()
+
+    elseif cmd == "use" then
+        self:use(arg[2])
+    elseif cmd == "show" then
+        self:show(arg[2])
     elseif cmd == "del" then
         self:del(arg[2])
+
+    elseif cmd == "curr" then
+        self:curr(arg[2])
+    elseif cmd == "list" then
+        self:list(arg[2])
+
+    elseif cmd == "update" then
+        self:update()
     elseif cmd == "review" then
         self:review()
     elseif cmd == "done" then
         self:done()
+
+    elseif cmd == "prev" then
+        self:prev()
     elseif cmd == "help" then
         usage()
     elseif cmd == "ver" then
