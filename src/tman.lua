@@ -17,7 +17,8 @@ local function usage()
     print(([[
 Usage: %s COMMAND [ID]
 Basic:
-  new     - create new task
+  add     - add a new task
+  del     - delete task unit
   use     - mark a task as current
   prev    - switch to previous task
   curr    - show current task
@@ -26,8 +27,10 @@ Basic:
   time    - time spent on task
   amend   - amend task unit
   update  - update git repos
-  del     - delete task unit
+
+Info:
   ver     - show %s version
+  help    - show this help message
 
 Contribute:
   review  - push commits for review
@@ -71,11 +74,11 @@ function TMan:checkid(id)
     return true
 end
 
---- Create a new task.
+--- Add a new task.
 -- @param id task ID
 -- @param tasktype task type: bugfix, hotfix, feature. Default: bugfix
 -- @treturn true if new task unit is created, otherwise false
-function TMan:new(id, tasktype)
+function TMan:add(id, tasktype)
     if not id then
         log("task ID required")
         os.exit(1)
@@ -248,8 +251,8 @@ end
 function TMan:main(arg)
     local cmd = arg[1] or "help"
 
-    if cmd == "new" then
-        self:new(arg[2], arg[3])
+    if cmd == "add" then
+        self:add(arg[2], arg[3])
     elseif cmd == "use" then
         self:use(arg[2])
     elseif cmd == "list" then
