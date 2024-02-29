@@ -22,17 +22,19 @@ local function usage()
     print(([[
 Usage: %s COMMAND [ID]
 Basic:
-  add     - add a new task
-  del     - delete task unit
   use     - mark a task as current
   prev    - switch to previous task
   curr    - show current task
   list    - list all tasks. Default: active tasks
   show    - show task info. Default: current task
   time    - time spent on task
+
+Amend:
+  add     - add a new task
+  del     - delete task unit
   amend   - amend task unit
-  update  - update git repos
   config  - config %s for your workflow
+  update  - update git repos
 
 Info:
   ver     - show %s version
