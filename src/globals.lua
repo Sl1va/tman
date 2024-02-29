@@ -7,3 +7,4 @@ local homebase = os.getenv("HOME") .. "/" .. tmanbase
 G_tmanpath = homebase .. ".tman/"
 G_taskpath = homebase .. "tasks/"
 G_codebasepath = homebase .. "codebase/"
+G_tmanrepos = G_tmanpath .. "repos"

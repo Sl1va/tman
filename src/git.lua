@@ -19,15 +19,27 @@ end
 -- @param branch branch name
 function Git.new(taskid, branch)
     local self = setmetatable({
-        repos = {
-            { name = "lede-feeds", branch = "develop" },
-            { name = "cpeagent", branch = "master" },
-            { name = "wmsnmpd", branch = "master" },
-        },
         taskid = taskid,
         branch = branch,
     }, Git)
+    self.repos = self:load_repos()
     return self
+end
+
+--- Load repos from config file.
+function Git:load_repos()
+    local repos = {}
+    local f = io.open(G_tmanrepos)
+
+    if not f then
+        log("no file for repos")
+        return false
+    end
+    for line in f:lines() do
+        local name, branch, path = string.match(line, "(.*),(.*),(.*)")
+        table.insert(repos, {name = name, branch = branch, path = path or ""})
+    end
+    return repos
 end
 
 --- Check that repo has no uncommited changes.
