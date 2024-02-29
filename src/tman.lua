@@ -99,18 +99,18 @@ end
 -- @param id task ID
 function TMan:use(id)
     if not self:checkid(id) then
-        return 1
+        os.exit(1)
     end
     if self.taskid.curr == id then
         log("'%s': already in use", id)
-        return 1
+        os.exit(1)
     end
 
     local branch = self.taskunit:getunit(id, "branch")
     local git = gitmod.new(id, branch)
     if not git:branch_switch() then
         log("repo has uncommited changes")
-        return 1
+        os.exit(1)
     end
     self.taskid:updcurr(id)
     return 0
@@ -122,13 +122,13 @@ function TMan:prev()
 
     if not prev then
         log("no previous task")
-        return 1
+        os.exit(1)
     end
     local branch = self.taskunit:getunit(prev, "branch")
     local git = gitmod.new(prev, branch)
     if not git:branch_switch() then
         log("repo has uncommited changes")
-        return 1
+        os.exit(1)
     end
     self.taskid:swap()
     return 0
@@ -174,7 +174,7 @@ end
 function TMan:show(id)
     id = id or self.taskid.curr
     if not self:checkid(id) then
-        return 1
+        os.exit(1)
     end
     self.taskunit:show(id)
 end
@@ -186,7 +186,7 @@ function TMan:amend(id, opt)
     id = id or self.taskid.curr
 
     if not self:checkid(id) then
-        return 1
+        os.exit(1)
     end
     if opt == "-d" then
         io.write("new desc: ")
@@ -210,14 +210,14 @@ end
 -- @param id task ID
 function TMan:del(id)
     if not self:checkid(id) then
-        return 1
+        os.exit(1)
     end
 
     io.write("Do you want to continue? [Y/n] ")
     local confirm = io.read("*line")
     if confirm ~= "Y" then
         print("deletion is cancelled")
-        return 1
+        os.exit(1)
     end
     self.taskunit:del(id)
     self.taskid:del(id)
@@ -233,12 +233,12 @@ end
 function TMan:done()
     local id = self.taskid.curr
     if not self:checkid() then
-        return 1
+        os.exit(1)
     end
     local git = gitmod.new(id, "develop")
     if not git:branch_default() then
         log("repo has uncommited changes")
-        return 1
+        os.exit(1)
     end
     self.taskid:unsetcurr(true)
 end

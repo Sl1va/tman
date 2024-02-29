@@ -3,7 +3,7 @@
 -- @module TaskUnit
 
 local posix = require("posix")
-local git = require("git")
+local gitmod = require("git")
 
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
@@ -92,9 +92,9 @@ function TaskUnit:new(id, tasktype)
     file:close()
 
     --- create task branches in repos
-    git = git.new(unit.id.value, unit.branch.value)
-    git:repolink()
-    git:branch_create()
+    gitmod = gitmod.new(unit.id.value, unit.branch.value)
+    gitmod:repolink()
+    gitmod:branch_create()
     return true
 end
 
@@ -177,7 +177,9 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskUnit:del(id)
-    git = git.new(id, self:getunit(id, "branch"))
+    local branch = self:getunit(id, "branch")
+    local git = gitmod.new(id, branch)
+
     git:branch_delete()
     os.execute("rm -rf " .. G_taskpath .. id)
     return true

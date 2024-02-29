@@ -35,7 +35,7 @@ function TaskID:load_taskids()
         return taskids
     end
     for line in f:lines() do
-        local id, idtype = string.match(line, "(.*)%s(.*)")
+        local id, idtype = string.match(line, "(.*) (.*)")
         table.insert(taskids, { id = id, type = tonumber(idtype) })
     end
     f:close()
