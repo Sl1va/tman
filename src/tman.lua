@@ -27,6 +27,7 @@ Basic:
   amend   - amend task unit
   update  - update git repos
   del     - delete task unit
+  ver     - show %s version
 
 Contribute:
   review  - push commits for review
@@ -34,7 +35,7 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
-]]):format("tman"))
+]]):format("tman", "tman"))
 end
 
 local function log(fmt, ...)
