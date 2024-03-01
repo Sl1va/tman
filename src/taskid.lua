@@ -63,43 +63,34 @@ end
 -- @param id task ID to look up
 -- @treturn bool true if task ID exist, otherwise false
 function TaskID:exist(id)
-    local res = false
-
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
-            res = true
-            break
+            return true
         end
     end
-    return res
+    return false
 end
 
 --- Get current task ID.
 -- @return task ID
 function TaskID:getcurr()
-    local id = nil
-
     for _, unit in pairs(self.taskids) do
         if unit.type == types.CURR then
-            id = unit.id
-            break
+            return unit.id
         end
     end
-    return id
+    return nil
 end
 
 --- Get previous task ID.
 -- @return task ID
 function TaskID:getprev()
-    local id = nil
-
     for _, unit in pairs(self.taskids) do
         if unit.type == types.PREV then
-            id = unit.id
-            break
+            return unit.id
         end
     end
-    return id
+    return nil
 end
 
 --- Set current task ID.
@@ -138,17 +129,6 @@ function TaskID:setprev(id)
     end
     self:save_taskids()
     self.prev = id
-    return true
-end
-
---- Clear previous task ID.
--- @treturn bool true if previous task is unset, otherwise false
-function TaskID:unsetprev()
-    local previdx = 2
-
-    if self.taskids[previdx].type == types.PREV then
-        self.taskids[previdx].type = types.ACTV
-    end
     return true
 end
 
