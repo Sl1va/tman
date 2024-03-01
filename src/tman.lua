@@ -30,14 +30,14 @@ Basic:
   time    - time spent on task
 
 Amend:
-  add     - add a new task
-  del     - delete task unit
-  amend   - amend task unit
-  config  - config %s for your workflow
+  add     - add new task
+  del     - delete task
+  amend   - amend task
+  config  - config for your workflow
   update  - update git repos
 
 Info:
-  ver     - show %s version
+  ver     - show version
   help    - show this help message
   info    - show detailed info about commands and important info
 
@@ -47,7 +47,7 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
-]]):format(progname, progname, progname))
+]]):format(progname))
 end
 
 local function log(fmt, ...)
