@@ -11,7 +11,6 @@ local taskunit = require("taskunit")
 local gitmod = require("git")
 local help = require("help")
 
-
 local TMan = {}
 TMan.__index = TMan
 
