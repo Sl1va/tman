@@ -62,7 +62,7 @@ end
 function TMan.init()
     local self = setmetatable({
         taskid = taskid.new(),
-        taskunit = taskunit.newobj(),
+        taskunit = taskunit.new(),
     }, TMan)
     return self
 end
@@ -100,7 +100,7 @@ function TMan:add(id, tasktype)
         log("'%s': already exists", id)
         os.exit(1)
     end
-    if not self.taskunit:new(id, tasktype) then
+    if not self.taskunit:add(id, tasktype) then
         log("colud not create new task unit")
         self.taskid:del(id)
         os.exit(1)

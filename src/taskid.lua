@@ -19,7 +19,7 @@ local taskunit = require("taskunit")
 
 local TaskID = {}
 TaskID.__index = TaskID
-taskunit = taskunit.newobj()
+taskunit = taskunit.new()
 
 --- Types of task IDs.
 local types = {

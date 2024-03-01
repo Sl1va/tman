@@ -23,6 +23,16 @@ local unitregex = "(.*): (.*)"
 ]]
 
 
+--[[
+Public functions:
+    add     - add new unit file
+    del     - delete unit file
+    show    - show unit file
+    amend   - amend unit file (under development)
+    getunit - get unit value from unit file
+]]
+
+
 
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
@@ -67,15 +77,15 @@ function TaskUnit:formnote(id)
 end
 
 --- Init class TaskUnit.
-function TaskUnit.newobj()
+function TaskUnit.new()
     local self = setmetatable({}, TaskUnit)
     return self
 end
 
---- Create a new unit for a task.
+--- Add a new unit for a task.
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
-function TaskUnit:new(id, tasktype)
+function TaskUnit:add(id, tasktype)
     local file = nil
     local taskdir = G_taskpath .. id
     local fname = G_tmanpath .. id
