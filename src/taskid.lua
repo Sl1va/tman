@@ -27,11 +27,11 @@ end
 --- Load task iDs from the file.
 -- @treturn table table like {id, type}
 function TaskID:load_taskids()
-    local f = io.open(self.meta)
     local taskids = {}
+    local f = io.open(self.meta)
 
     if not f then
-        print("error: couldn't open file", self.meta)
+        log("couldn't open file '%s'", self.meta)
         return taskids
     end
     for line in f:lines() do
