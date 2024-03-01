@@ -17,6 +17,7 @@ Public functions:
 
 local taskunit = require("taskunit")
 local globals = require("globals")
+local log = require("log"):init("taskid")
 
 local TaskID = {}
 TaskID.__index = TaskID
@@ -32,10 +33,6 @@ local types = {
 
 -- Private functions: start --
 
-local function log(fmt, ...)
-    local msg = "taskid: " .. fmt:format(...)
-    print(msg)
-end
 
 --- Class TaskID
 -- @type TaskID
@@ -47,7 +44,7 @@ function TaskID:load_taskids()
     local f = io.open(self.meta)
 
     if not f then
-        log("couldn't open file '%s'", self.meta)
+        log:err("couldn't open file '%s'", self.meta)
         return taskids
     end
     for line in f:lines() do
@@ -66,7 +63,7 @@ function TaskID:save_taskids()
     local f = io.open(self.meta, "w")
 
     if not f then
-        log("couldn't open meta file")
+        log:err("couldn't open meta file")
         return false
     end
     for _, unit in pairs(self.taskids) do

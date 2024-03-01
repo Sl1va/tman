@@ -5,6 +5,7 @@
 local posix = require("posix")
 local gitmod = require("git")
 local globals = require("globals")
+local log = require("log"):init("taskunit")
 
 local unitregex = "(.*): (.*)"
 
@@ -24,6 +25,10 @@ local unitregex = "(.*): (.*)"
 ]]
 
 
+
+
+
+
 --[[
 Public functions:
     add     - add new unit file
@@ -37,11 +42,6 @@ Public functions:
 
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
-
-local function log(fmt, ...)
-    local msg = "taskunit: " .. fmt:format(...)
-    print(msg)
-end
 
 local function get_input(prompt)
     io.write(prompt, ": ")
@@ -134,7 +134,7 @@ function TaskUnit:getunit(id, key)
     local f = io.open(fname)
 
     if not f then
-        log("could not open task unit file")
+        log:err("could not open task unit file")
         return nil
     end
     for line in f:lines() do

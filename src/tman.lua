@@ -4,21 +4,16 @@
 
 package.path = package.path .. ";/home/roach/personal/prjs/tman/src/?.lua"
 
-require("globals")
 
 local taskid = require("taskid")
 local taskunit = require("taskunit")
 local gitmod = require("git")
 local help = require("help")
+local log = require("log")
 
 local TMan = {}
 TMan.__index = TMan
 
-
-local function log(fmt, ...)
-    local msg = "tman: " .. fmt:format(...)
-    print(msg)
-end
 
 --- Class TMan
 -- @type TMan
@@ -38,11 +33,11 @@ end
 function TMan:checkid(id)
     id = id or self.taskid.curr
     if not id then
-        log("no current task")
+        log:err("no current task")
         return false
     end
     if not self.taskid:exist(id) then
-        log("'%s': no such task ID", id)
+        log:err("'%s': no such task ID", id)
         return false
     end
     return true
@@ -54,19 +49,19 @@ end
 -- @treturn true if new task unit is created, otherwise false
 function TMan:add(id, tasktype)
     if not id then
-        log("task ID required")
+        log:err("task ID required")
         os.exit(1)
     end
     if not tasktype then
-        log("task type required")
+        log:err("task type required")
         os.exit(1)
     end
     if not self.taskid:add(id) then
-        log("'%s': already exists", id)
+        log:err("'%s': already exists", id)
         os.exit(1)
     end
     if not self.taskunit:add(id, tasktype) then
-        log("colud not create new task unit")
+        log:err("colud not create new task unit")
         self.taskid:del(id)
         os.exit(1)
     end
@@ -80,14 +75,14 @@ function TMan:use(id)
         os.exit(1)
     end
     if self.taskid.curr == id then
-        log("'%s': already in use", id)
+        log:warning("'%s': already in use", id)
         os.exit(1)
     end
 
     local branch = self.taskunit:getunit(id, "branch")
     local git = gitmod.new(id, branch)
     if not git:branch_switch() then
-        log("repo has uncommited changes")
+        log:err("repo has uncommited changes")
         os.exit(1)
     end
     self.taskid:updcurr(id)
@@ -99,13 +94,13 @@ function TMan:prev()
     local prev = self.taskid.prev
 
     if not prev then
-        log("no previous task")
+        log:warning("no previous task")
         os.exit(1)
     end
     local branch = self.taskunit:getunit(prev, "branch")
     local git = gitmod.new(prev, branch)
     if not git:branch_switch() then
-        log("repo has uncommited changes")
+        log:err("repo has uncommited changes")
         os.exit(1)
     end
     self.taskid:swap()
@@ -125,7 +120,7 @@ function TMan:_curr(opt)
         local desc = self.taskunit:getunit(id, "desc")
         print(("* %-8s %s"):format(id, desc))
     else
-        log("curr: '%s': no such option", opt)
+        log:err("curr: '%s': no such option", opt)
         os.exit(1)
     end
     return 0
@@ -173,7 +168,7 @@ function TMan:amend(id, opt)
         io.write("new desc: ")
         local desc = io.read("*l")
     else
-        log("'%s': no such option", opt)
+        log:err("'%s': no such option", opt)
     end
 end
 
@@ -182,7 +177,7 @@ end
 function TMan:update()
     local id = self.taskid.curr
     if not id then
-        log("no current task")
+        log:warning("no current task")
         os.exit(1)
     end
 
@@ -228,7 +223,7 @@ function TMan:done()
     end
     local git = gitmod.new(id, "develop")
     if not git:branch_default() then
-        log("repo has uncommited changes")
+        log:err("repo has uncommited changes")
         os.exit(1)
     end
     self.taskid:unsetcurr(true)
@@ -280,9 +275,11 @@ function TMan:main(arg)
     elseif cmd == "ver" then
         print(("tman version: %s"):format(help.version))
     else
-        log("'%s': no such command", cmd)
+        log:err("'%s': no such command", cmd)
     end
 end
 
+
+log = log:init("tman")
 local tman = TMan.init()
 return tman:main(arg)
