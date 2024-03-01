@@ -207,6 +207,7 @@ end
 --- Update current task ID, update previous one subsequently.
 -- @param id new current task ID
 function TaskID:updcurr(id)
+    -- roachme: self.taskid stays outdated.
     local curr = self:getcurr()
 
     if curr then
@@ -217,6 +218,7 @@ end
 
 --- Swap current and previous task IDs.
 function TaskID:swap()
+    -- roachme: self.taskid stays outdated.
     local prev = self.prev
     local curr = self.curr
 
