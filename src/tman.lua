@@ -9,48 +9,12 @@ require("globals")
 local taskid = require("taskid")
 local taskunit = require("taskunit")
 local gitmod = require("git")
+local help = require("help")
 
-local version = "v0.1"
-local progname = "tman"
 
 local TMan = {}
 TMan.__index = TMan
 
-
-
-local function usage()
-    print(([[
-Usage: %s COMMAND [ID]
-Basic:
-  use     - mark a task as current
-  prev    - switch to previous task
-  list    - list all tasks. Default: active tasks
-  show    - show task info. Default: current task
-  time    - time spent on task
-
-Amend:
-  add     - add new task
-  del     - delete task
-  amend   - amend task
-  config  - config for your workflow
-  update  - update git repos
-
-Info:
-  ver     - show version
-  help    - show this help message
-  info    - show detailed info about commands and important info
-
-Contribute:
-  review  - push commits for review
-  done    - move task to status complete
-
-For developers:
-  init    - download repos and create symlinks for all of them
-
-For utils:
-  _curr    - show current task
-]]):format(progname))
-end
 
 local function log(fmt, ...)
     local msg = "tman: " .. fmt:format(...)
@@ -313,9 +277,9 @@ function TMan:main(arg)
     elseif cmd == "prev" then
         self:prev()
     elseif cmd == "help" then
-        usage()
+        help:usage()
     elseif cmd == "ver" then
-        print(("tman version: %s"):format(version))
+        print(("tman version: %s"):format(help.version))
     else
         log("'%s': no such command", cmd)
     end
