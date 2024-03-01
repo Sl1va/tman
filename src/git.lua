@@ -1,4 +1,4 @@
---- Git wrapper
+--- Git wrapper.
 -- @module Git
 
 local posix = require("posix")
@@ -44,7 +44,7 @@ end
 
 --- Check that repo has no uncommited changes.
 -- roachme: it's discombabulated: true's false and vice versa
--- @param repo repo name
+-- @param reponame repo name
 -- @return true on success, otherwise false
 function Git:uncommited(reponame)
     local repopath = G_codebasepath .. reponame
