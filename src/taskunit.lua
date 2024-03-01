@@ -5,6 +5,7 @@
 local posix = require("posix")
 local gitmod = require("git")
 
+local unitregex = "(.*): (.*)"
 
 --[[
 1 - main ones
@@ -121,52 +122,20 @@ end
 -- @param key unit key
 -- @return unit value
 function TaskUnit:getunit(id, key)
-    local res = nil
     local fname = G_tmanpath .. id
     local f = io.open(fname)
+
     if not f then
         log("could not open task unit file")
         return nil
     end
     for line in f:lines() do
-        if string.match(line, "(%w+)"):lower() == key then
-            res = string.match(line, "%w+%s*:%s+(.*)")
+        local ukey, uval = string.match(line, unitregex)
+        if string.lower(ukey) == key then
+            return uval
         end
     end
-    return res
-end
-
---- Update task status.
--- @param id task ID
--- @param key key
--- @param val value
--- @treturn bool true if could change task status, otherwise false
-function TaskUnit:setunit(id, key, val)
-    local lines = {}
-    local fname = self:formnote(id)
-    local f = io.open(fname, "r+")
-    if not f then
-        log("could not open file '%s'", fname)
-        return false
-    end
-    for line in f:lines() do
-        if string.match(line, key) then
-            line = key .. ": " .. val
-        end
-        table.insert(lines, line)
-    end
-    f:close()
-
-    f = io.open(fname, "w")
-    if not f then
-        log("could not open file '%s'", fname)
-        return false
-    end
-    for _, line in pairs(lines) do
-        f:write(line, "\n")
-    end
-    f:close()
-    return true
+    return nil
 end
 
 --- Amend task unit.
@@ -178,7 +147,6 @@ function TaskUnit:amend(id) end
 function TaskUnit:show(id)
     local fname = G_tmanpath .. id
     local f = io.open(fname)
-    local unitregex = "([A-Za-z]*): ([A-Za-z0-9-_/ ]*)"
 
     if not f then
         print("taskunit: could not open file", fname)
@@ -195,11 +163,12 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskUnit:del(id)
+    local unitfile = G_taskpath .. id
     local branch = self:getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
     git:branch_delete()
-    os.execute("rm -rf " .. G_taskpath .. id)
+    os.remove(unitfile)
     return true
 end
 
