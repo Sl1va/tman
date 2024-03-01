@@ -1,10 +1,14 @@
+local Globals = {}
+
 -- Chaneg it to where you are gonna keep all your tasks
 -- For me it is path below in home directory
-local tmanbase = "work/tman/"
+Globals.tmanbase = "work/tman/"
 
-local homebase = os.getenv("HOME") .. "/" .. tmanbase
+Globals.homebase = os.getenv("HOME") .. "/" .. Globals.tmanbase
 
-G_tmanpath = homebase .. ".tman/"
-G_taskpath = homebase .. "tasks/"
-G_codebasepath = homebase .. "codebase/"
-G_tmanrepos = G_tmanpath .. "repos"
+Globals.G_tmanpath = Globals.homebase .. ".tman/"
+Globals.G_taskpath = Globals.homebase .. "tasks/"
+Globals.G_codebasepath = Globals.homebase .. "codebase/"
+Globals.G_tmanrepos = Globals.G_tmanpath .. "repos"
+
+return Globals

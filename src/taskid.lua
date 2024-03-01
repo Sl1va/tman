@@ -16,6 +16,7 @@ Public functions:
 
 
 local taskunit = require("taskunit")
+local globals = require("globals")
 
 local TaskID = {}
 TaskID.__index = TaskID
@@ -144,7 +145,7 @@ end
 -- @return new object
 function TaskID.new()
     local self = setmetatable({}, TaskID)
-    self.meta = G_tmanpath .. "taskids"
+    self.meta = globals.G_tmanpath .. "taskids"
     self.taskids = self:load_taskids()
     self.curr = self:getcurr()
     self.prev = self:getprev()

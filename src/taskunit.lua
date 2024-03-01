@@ -4,6 +4,7 @@
 
 local posix = require("posix")
 local gitmod = require("git")
+local globals = require("globals")
 
 local unitregex = "(.*): (.*)"
 
@@ -84,8 +85,8 @@ end
 -- @param tasktype task type: bugfix, hotfix, feature
 function TaskUnit:add(id, tasktype)
     local file = nil
-    local taskdir = G_taskpath .. id
-    local fname = G_tmanpath .. id
+    local taskdir = globals.G_taskpath .. id
+    local fname = globals.G_tmanpath .. id
 
     local unit = {
         id = { mark = false, inptext = "ID", value = id },
@@ -129,7 +130,7 @@ end
 -- @param key unit key
 -- @return unit value
 function TaskUnit:getunit(id, key)
-    local fname = G_tmanpath .. id
+    local fname = globals.G_tmanpath .. id
     local f = io.open(fname)
 
     if not f then
@@ -152,7 +153,7 @@ function TaskUnit:amend(id) end
 --- Show task unit metadata.
 -- @param id task ID
 function TaskUnit:show(id)
-    local fname = G_tmanpath .. id
+    local fname = globals.G_tmanpath .. id
     local f = io.open(fname)
 
     if not f then
@@ -170,7 +171,7 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskUnit:del(id)
-    local unitfile = G_taskpath .. id
+    local unitfile = globals.G_taskpath .. id
     local branch = self:getunit(id, "branch")
     local git = gitmod.new(id, branch)
 

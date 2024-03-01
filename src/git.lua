@@ -2,6 +2,7 @@
 -- @module Git
 
 local posix = require("posix")
+local globals = require("globals")
 
 local Git = {}
 Git.__index = Git
@@ -29,7 +30,7 @@ end
 --- Load repos from config file.
 function Git:load_repos()
     local repos = {}
-    local f = io.open(G_tmanrepos)
+    local f = io.open(globals.G_tmanrepos)
 
     if not f then
         log("no file for repos")
@@ -47,7 +48,7 @@ end
 -- @param reponame repo name
 -- @return true on success, otherwise false
 function Git:uncommited(reponame)
-    local repopath = G_codebasepath .. reponame
+    local repopath = globals.G_codebasepath .. reponame
     local cmd = ("git -C %s diff --quiet --exit-code"):format(repopath)
     if os.execute(cmd) == 0 then
         return false -- ok
@@ -75,7 +76,7 @@ function Git:switch(branch)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = G_codebasepath .. repo.name
+        local repopath = globals.G_codebasepath .. repo.name
         local cmd = "git -C " .. repopath .. " checkout --quiet "
         branch = branch or repo.branch
         os.execute(cmd.. branch)
@@ -91,7 +92,7 @@ function Git:branch_switch()
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = G_codebasepath .. repo.name
+        local repopath = globals.G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. self.branch)
     end
     return true
@@ -104,7 +105,7 @@ function Git:branch_default()
     end
     -- actually switch to specified branch
     for _, repo in pairs(self.repos) do
-        local repopath = G_codebasepath .. repo.name
+        local repopath = globals.G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
     end
     return true
@@ -117,7 +118,7 @@ function Git:pull(all)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = G_codebasepath .. repo.name
+        local repopath = globals.G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         if all then
             os.execute("git -C " .. repopath .. " pull --quiet")
@@ -134,7 +135,7 @@ function Git:branch_create()
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = G_codebasepath .. repo.name
+        local repopath = globals.G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         os.execute(
             "git -C " .. repopath .. " checkout --quiet -b " .. self.branch
@@ -147,7 +148,7 @@ function Git:branch_delete()
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = G_codebasepath .. repo.name
+        local repopath = globals.G_codebasepath .. repo.name
         os.execute("git -C " .. repopath .. " checkout --quiet " .. repo.branch)
         os.execute(
             "git -C " .. repopath .. " branch --quiet -D " .. self.branch
@@ -160,8 +161,8 @@ function Git:check_commit() end
 --- Create repo symlinks for task unit.
 function Git:repolink()
     for _, repo in pairs(self.repos) do
-        local src = G_codebasepath .. repo.name
-        local dst = G_taskpath .. self.taskid .. "/" .. repo.name
+        local src = globals.G_codebasepath .. repo.name
+        local dst = globals.G_taskpath .. self.taskid .. "/" .. repo.name
         posix.link(src, dst, true)
     end
 end
