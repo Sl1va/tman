@@ -69,12 +69,9 @@ local function check_tasktype(type)
     return found
 end
 
+
 --- Class TaskUnit
 -- type TaskUnit
-
-function TaskUnit:formnote(id)
-    return G_tmanpath .. id
-end
 
 --- Init class TaskUnit.
 function TaskUnit.new()
