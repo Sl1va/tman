@@ -24,7 +24,6 @@ Usage: %s COMMAND [ID]
 Basic:
   use     - mark a task as current
   prev    - switch to previous task
-  curr    - show current task
   list    - list all tasks. Default: active tasks
   show    - show task info. Default: current task
   time    - time spent on task
@@ -47,6 +46,9 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
+
+For utils:
+  _curr    - show current task
 ]]):format(progname))
 end
 
@@ -150,7 +152,7 @@ end
 --- Get cucrent task ID and other info.
 -- @param opt options: -i: task ID, -f: task ID and description. Default: -f
 -- @return currentn task ID
-function TMan:curr(opt)
+function TMan:_curr(opt)
     opt = opt or "-f"
     local id = self.taskid.curr
 
@@ -293,8 +295,8 @@ function TMan:main(arg)
     elseif cmd == "del" then
         self:del(arg[2])
 
-    elseif cmd == "curr" then
-        self:curr(arg[2])
+    elseif cmd == "_curr" then
+        self:_curr(arg[2])
     elseif cmd == "list" then
         self:list(arg[2])
 

@@ -18,7 +18,7 @@ function tman()
         wd task
 
     elif [ $RET -eq 0 ] && [ "$1" = "prev" ]; then
-        TASKID=$(lua $TMAN curr -i)
+        TASKID=$(lua $TMAN _curr -i)
         cd $TASKS/${TASKID}
         wd -q rm task
         wd -q add task
