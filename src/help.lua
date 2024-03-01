@@ -1,6 +1,6 @@
 local Help = {}
 
-Help.version = "v0.1"
+Help.version = "v0.1.0"
 Help.progname = "tman"
 
 function Help:usage()
