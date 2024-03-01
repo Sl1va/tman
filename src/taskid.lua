@@ -16,6 +16,8 @@ local types = {
     COMP = 3, -- complete task
 }
 
+-- Private functions: start --
+
 local function log(fmt, ...)
     local msg = "taskid: " .. fmt:format(...)
     print(msg)
@@ -57,18 +59,6 @@ function TaskID:save_taskids()
         f:write(unit.id, " ", unit.type, "\n")
     end
     f:close()
-end
-
---- Check that task ID exist.
--- @param id task ID to look up
--- @treturn bool true if task ID exist, otherwise false
-function TaskID:exist(id)
-    for _, unit in pairs(self.taskids) do
-        if unit.id == id then
-            return true
-        end
-    end
-    return false
 end
 
 --- Get current task ID.
@@ -132,6 +122,11 @@ function TaskID:setprev(id)
     return true
 end
 
+-- Private functions: end --
+
+
+-- Public functions: start --
+
 --- Init class TaskID.
 -- @return new object
 function TaskID.new()
@@ -143,43 +138,16 @@ function TaskID.new()
     return self
 end
 
---- Update current task ID, update previous one subsequently.
--- @param id new current task ID
-function TaskID:updcurr(id)
-    local curr = self:getcurr()
-
-    if curr then
-        self:setprev(curr)
-    end
-    self:setcurr(id)
-end
-
---- Swap current and previous task IDs.
-function TaskID:swap()
-    local prev = self.prev
-    local curr = self.curr
-
-    self:setprev(curr)
-    self:setcurr(prev)
-end
-
---- Clear current task ID.
--- @tparam bool isdone if set move task to done, otherwise to active
--- @treturn bool true if current task is unset, otherwise false
-function TaskID:unsetcurr(isdone)
-    local tasktype = types.ACTV
-    if isdone then
-        tasktype = types.COMP
-    end
+--- Check that task ID exist.
+-- @param id task ID to look up
+-- @treturn bool true if task ID exist, otherwise false
+function TaskID:exist(id)
     for _, unit in pairs(self.taskids) do
-        if unit.type == types.CURR then
-            unit.type = tasktype
-            self.curr = nil
-            break
+        if unit.id == id then
+            return true
         end
     end
-    self:save_taskids()
-    return true
+    return false
 end
 
 --- Add a new task ID.
@@ -235,5 +203,46 @@ function TaskID:list(active, completed)
     end
     return true
 end
+
+--- Update current task ID, update previous one subsequently.
+-- @param id new current task ID
+function TaskID:updcurr(id)
+    local curr = self:getcurr()
+
+    if curr then
+        self:setprev(curr)
+    end
+    self:setcurr(id)
+end
+
+--- Swap current and previous task IDs.
+function TaskID:swap()
+    local prev = self.prev
+    local curr = self.curr
+
+    self:setprev(curr)
+    self:setcurr(prev)
+end
+
+--- Clear current task ID.
+-- @tparam bool isdone if set move task to done, otherwise to active
+-- @treturn bool true if current task is unset, otherwise false
+function TaskID:unsetcurr(isdone)
+    local tasktype = types.ACTV
+    if isdone then
+        tasktype = types.COMP
+    end
+    for _, unit in pairs(self.taskids) do
+        if unit.type == types.CURR then
+            unit.type = tasktype
+            self.curr = nil
+            break
+        end
+    end
+    self:save_taskids()
+    return true
+end
+
+-- Public functions: start --
 
 return TaskID
