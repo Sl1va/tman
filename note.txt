@@ -1,2 +1,5 @@
-1. Let the module handle all necessary checks
+1. Let the module handle all its necessary checks
+2. Make everything modular. Benefits:
+    a) code is clean and no macarony code
+    b) code can be easily scaled
 
