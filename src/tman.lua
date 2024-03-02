@@ -245,29 +245,24 @@ function TMan:main(arg)
         self:add(arg[2], arg[3])
     elseif cmd == "amend" then
         self:amend(arg[2], arg[3])
-
     elseif cmd == "use" then
         self:use(arg[2])
     elseif cmd == "show" then
         self:show(arg[2])
     elseif cmd == "del" then
         self:del(arg[2])
-
     elseif cmd == "_curr" then
         self:_curr(arg[2])
     elseif cmd == "list" then
         self:list(arg[2])
-
     elseif cmd == "update" then
         self:update()
     elseif cmd == "review" then
         self:review()
     elseif cmd == "done" then
         self:done()
-
     elseif cmd == "config" then
         self:config(arg[2])
-
     elseif cmd == "prev" then
         self:prev()
     elseif cmd == "help" then
@@ -278,7 +273,6 @@ function TMan:main(arg)
         log:err("'%s': no such command", cmd)
     end
 end
-
 
 log = log:init("tman")
 local tman = TMan.init()

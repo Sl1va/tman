@@ -5,7 +5,7 @@ function tman()
     lua $TMAN $@
     RET=$?
 
-    if [ $RET -eq 0 ] && [ "$1" = "new" ]; then
+    if [ $RET -eq 0 ] && [ "$1" = "add" ]; then
         cd $TASKS/${2}
         wd -q rm task
         wd -q add task

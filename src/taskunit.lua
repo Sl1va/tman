@@ -120,9 +120,7 @@ function TaskUnit:add(id, tasktype)
 
     --- create task branches in repos
     local git = gitmod.new(unit.id.value, unit.branch.value)
-    git:repolink()
-    git:branch_create()
-    return true
+    return git:branch_create()
 end
 
 --- Get unit from task metadata.
