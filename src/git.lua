@@ -154,9 +154,13 @@ end
 -- Also symlinks repos for a task.
 -- @return true on success, otherwise false
 function Git:branch_create()
+    local taskdir = globals.G_taskpath .. self.taskid
+
     if not self:changes_check() then
         return false
     end
+
+    posix.mkdir(taskdir)
     for _, repo in pairs(self.repos) do
         local repopath = globals.G_codebasepath .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))

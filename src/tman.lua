@@ -274,6 +274,6 @@ function TMan:main(arg)
     end
 end
 
-log = log:init("tman")
+log = log.init("tman")
 local tman = TMan.init()
 return tman:main(arg)

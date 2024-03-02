@@ -17,7 +17,7 @@ Public functions:
 
 local taskunit = require("taskunit")
 local globals = require("globals")
-local log = require("log"):init("taskid")
+local log = require("log").init("taskid")
 
 local TaskID = {}
 TaskID.__index = TaskID

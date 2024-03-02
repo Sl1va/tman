@@ -3,8 +3,8 @@ Log.__index = Log
 
 -- roachme: make log message more appealing
 
-function Log:init(prefix)
-    self = setmetatable({
+function Log.init(prefix)
+    local self = setmetatable({
         prefix = prefix,
     }, Log)
     return self

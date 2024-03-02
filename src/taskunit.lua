@@ -5,7 +5,7 @@
 local posix = require("posix")
 local gitmod = require("git")
 local globals = require("globals")
-local log = require("log"):init("taskunit")
+local log = require("log").init("taskunit")
 
 local unitregex = "(.*): (.*)"
 
@@ -85,7 +85,6 @@ end
 -- @param tasktype task type: bugfix, hotfix, feature
 function TaskUnit:add(id, tasktype)
     local file = nil
-    local taskdir = globals.G_taskpath .. id
     local fname = globals.G_tmanpath .. id
 
     local unit = {
@@ -106,8 +105,6 @@ function TaskUnit:add(id, tasktype)
     end
 
     -- Save task info
-    posix.mkdir(taskdir)
-    --- roachme: git: create symlinks to repos
     file = io.open(fname, "w")
     if not file then
         print("taskunit: error: could not create file note", fname)
@@ -118,7 +115,7 @@ function TaskUnit:add(id, tasktype)
     end
     file:close()
 
-    --- create task branches in repos
+    -- create task branches in repos
     local git = gitmod.new(unit.id.value, unit.branch.value)
     return git:branch_create()
 end
