@@ -85,15 +85,19 @@ end
 function TaskUnit:add(id, tasktype)
     local file = nil
     local fname = globals.G_tmanpath .. id
-
     local unit = {
-        id = { mark = false, inptext = "ID", value = id },
-        type = { mark = true, inptext = "Type", value = tasktype },
-        desc = { mark = true, inptext = "Desc", value = "" },
-        date = { mark = false, inptext = "Date", value = os.date("%Y%m%d") },
-        branch = { mark = false, inptext = "Branch", value = "" },
-        status = { mark = false, inptext = "Status", value = "progress" },
+        id = { inptext = "ID", value = id },
+        type = { inptext = "Type", value = tasktype },
+        desc = { inptext = "Desc", value = "" },
+        date = { inptext = "Date", value = os.date("%Y%m%d") },
+        branch = { inptext = "Branch", value = "" },
+        status = { inptext = "Status", value = "progress" },
+        prio = { inptext = "Prio", value = "N/A"},
+        -- roachme: find a way to include it properly
+        --time = { inptext = "Time", value = {capac = "N/A", left = "N/A"}},
+        time = { inptext = "Time", value = "N/A"},
     }
+
     unit.desc.value = get_input(unit.desc.inptext)
     unit.branch.value = format_branch(unit)
 
