@@ -127,7 +127,7 @@ function TMan:_curr(opt)
 end
 
 --- List all task IDs.
--- By default show only active task IDs.
+-- Default: show only active task IDs.
 -- @param opt list option
 function TMan:list(opt)
     opt = opt or "-a"
@@ -193,15 +193,15 @@ end
 --- Delete task.
 -- @param id task ID
 function TMan:del(id)
+    local desc = self.taskunit:getunit(id, "desc")
+
     if not self:checkid(id) then
         os.exit(1)
     end
-
-    local desc = self.taskunit:getunit(id, "desc")
     print(("> %-8s %s"):format(id, desc))
-    io.write("Do you want to continue? [Y/n] ")
+    io.write("Do you want to continue? [Yes/No] ")
     local confirm = io.read("*line")
-    if confirm ~= "Y" then
+    if confirm ~= "Yes" then
         print("deletion is cancelled")
         os.exit(1)
     end

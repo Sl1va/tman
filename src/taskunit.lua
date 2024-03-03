@@ -2,7 +2,6 @@
 -- Metadata like branch name, date, description and so on.
 -- @module TaskUnit
 
-local posix = require("posix")
 local gitmod = require("git")
 local globals = require("globals")
 local log = require("log").init("taskunit")

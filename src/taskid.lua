@@ -5,11 +5,11 @@
 
 --[[
 Public functions:
-    exist       - check that task ID exist in database
     add         - add a new task ID to database
     del         - del a task ID from database
     list        - list all task IDs in database
     swap        - swap current and previous task IDs
+    exist       - check that task ID exist in database
     updcurr     - update current task as well as previous (if necessary)
     unsetcurr   - unset current task (used by `tman done TASKID`
 ]]
