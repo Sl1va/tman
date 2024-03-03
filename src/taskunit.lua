@@ -42,6 +42,32 @@ Public functions:
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
 
+
+local unit_ids = {
+    basic = 4, -- id, prio, type, desc
+    full = 8,  -- basic + time, date, status, branch
+}
+
+local unit_prios = {
+    highest = "highest",
+    high = "high",
+    mid = "mid",
+    low = "low",
+    lowest = "lowest",
+}
+
+--- Get table size (hash part).
+-- @param tab a toble to operate on
+-- @return table size
+function table.size(tab)
+    local size = 0
+
+    for _, _ in pairs(tab) do
+        size = size + 1
+    end
+    return size
+end
+
 local function get_input(prompt)
     io.write(prompt, ": ")
     return io.read("*line")
@@ -69,6 +95,30 @@ local function check_tasktype(type)
     return found
 end
 
+--- Save task units into file.
+-- @param unit units to save
+-- @param fname filename to save units into
+local function save_units(units, fname)
+    local i = 0
+    local len = table.size(units)
+    local file = io.open(fname, "w")
+
+    if not file then
+        print("taskunit: error: could not create file note", fname)
+        return false
+    end
+
+    while i < len do
+        for _, item in pairs(units) do
+            if i == item.prio then
+                file:write(("%s: %s\n"):format(item.inptext, item.value))
+            end
+        end
+        i = i + 1
+    end
+    file:close()
+end
+
 
 --- Class TaskUnit
 -- type TaskUnit
@@ -82,22 +132,23 @@ end
 --- Add a new unit for a task.
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
-function TaskUnit:add(id, tasktype)
-    local file = nil
+function TaskUnit:add(id, tasktype, prio)
+    prio = prio or unit_prios.mid
     local fname = globals.G_tmanpath .. id
+    -- roachme: refactor it, don't like prios. Just don't.
     local unit = {
-        id = { inptext = "ID", value = id },
-        type = { inptext = "Type", value = tasktype },
-        desc = { inptext = "Desc", value = "" },
-        date = { inptext = "Date", value = os.date("%Y%m%d") },
-        branch = { inptext = "Branch", value = "" },
-        status = { inptext = "Status", value = "progress" },
-        prio = { inptext = "Prio", value = "N/A"},
-        -- roachme: find a way to include it properly
-        --time = { inptext = "Time", value = {capac = "N/A", left = "N/A"}},
-        time = { inptext = "Time", value = "N/A"},
-    }
+        id = { prio = 0, inptext = "ID", value = id },
+        prio = { prio = 1, inptext = "Prio", value = prio},
+        type = { prio = 2, inptext = "Type", value = tasktype },
+        desc = { prio = 3, inptext = "Desc", value = "" },
 
+        -- roachme: find a way to include it properly
+        --time = { prio = 0, inptext = "Time", value = {capac = "N/A", left = "N/A"}},
+        time = { prio = 5, inptext = "Time", value = "N/A"},
+        date = { prio = 4, inptext = "Date", value = os.date("%Y%m%d") },
+        status = { prio = 6, inptext = "Status", value = "progress" },
+        branch = { prio = 7, inptext = "Branch", value = "" },
+    }
     unit.desc.value = get_input(unit.desc.inptext)
     unit.branch.value = format_branch(unit)
 
@@ -107,18 +158,9 @@ function TaskUnit:add(id, tasktype)
         return false
     end
 
-    -- Save task info
-    file = io.open(fname, "w")
-    if not file then
-        print("taskunit: error: could not create file note", fname)
-        return false
-    end
-    for _, item in pairs(unit) do
-        file:write(("%s: %s\n"):format(item.inptext, item.value))
-    end
-    file:close()
+    save_units(unit, fname)
 
-    -- create task branches in repos
+    -- create task repos and branches in them
     local git = gitmod.new(unit.id.value, unit.branch.value)
     return git:branch_create()
 end
@@ -150,7 +192,8 @@ function TaskUnit:amend(id) end
 
 --- Show task unit metadata.
 -- @param id task ID
-function TaskUnit:show(id)
+function TaskUnit:show(id, prio)
+    prio = prio or unit_ids.basic
     local fname = globals.G_tmanpath .. id
     local f = io.open(fname)
 
@@ -159,8 +202,12 @@ function TaskUnit:show(id)
         return false
     end
     for line in f:lines() do
+        if prio == 0 then
+            break
+        end
         local key, val = string.match(line, unitregex)
         print(("%-8s: %s"):format(key, val))
+        prio = prio - 1
     end
     f:close()
     return true
