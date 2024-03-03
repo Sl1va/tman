@@ -184,9 +184,9 @@ function TMan:update()
     local branch = self.taskunit:getunit(id, "branch")
     local git = gitmod.new(branch, "")
 
-    git:switch()
-    git:pull(true)
-    git:switch(branch)
+    git:branch_switch_default()
+    git:branch_update(true)
+    git:branch_switch(branch)
     return 0
 end
 
