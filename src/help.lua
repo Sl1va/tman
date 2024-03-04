@@ -31,6 +31,8 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
+  backup  - backup configs and metadata
+  restore - restore configs and metadata
 
 For utils:
   _curr    - show current task
