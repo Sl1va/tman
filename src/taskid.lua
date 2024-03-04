@@ -52,9 +52,6 @@ function TaskID:load_taskids()
         table.insert(taskids, { id = id, type = tonumber(idtype) })
     end
     f:close()
-    table.sort(taskids, function(a, b)
-        return a.type < b.type
-    end)
     return taskids
 end
 
@@ -66,6 +63,10 @@ function TaskID:save_taskids()
         log:err("couldn't open meta file")
         return false
     end
+
+    table.sort(self.taskids, function(a, b)
+        return a.type < b.type
+    end)
     for _, unit in pairs(self.taskids) do
         f:write(unit.id, " ", unit.type, "\n")
     end
