@@ -21,7 +21,7 @@ local log = require("log").init("taskid")
 
 local TaskID = {}
 TaskID.__index = TaskID
-taskunit = taskunit.new()
+taskunit = taskunit.init()
 
 --- Types of task IDs.
 local types = {
@@ -141,7 +141,7 @@ end
 
 --- Init class TaskID.
 -- @return new object
-function TaskID.new()
+function TaskID.init()
     local self = setmetatable({}, TaskID)
     self.meta = globals.G_tmanpath .. "taskids"
     self.taskids = self:load_taskids()

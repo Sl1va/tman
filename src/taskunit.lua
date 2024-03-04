@@ -136,7 +136,7 @@ end
 -- type TaskUnit
 
 --- Init class TaskUnit.
-function TaskUnit.new()
+function TaskUnit.init()
     local self = setmetatable({}, TaskUnit)
     return self
 end
@@ -167,6 +167,10 @@ function TaskUnit:add(id, tasktype, prio)
     -- Check user input
     if not check_tasktype(tasktype) then
         log:err("unknown task type: '%s'", tasktype)
+        return false
+    end
+    if not check_unit_prios(prio) then
+        log:err("unknown task priority: '%s'", prio)
         return false
     end
 

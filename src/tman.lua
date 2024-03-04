@@ -21,8 +21,8 @@ TMan.__index = TMan
 --- Init class TMan.
 function TMan.init()
     local self = setmetatable({
-        taskid = taskid.new(),
-        taskunit = taskunit.new(),
+        taskid = taskid.init(),
+        taskunit = taskunit.init(),
     }, TMan)
     return self
 end
