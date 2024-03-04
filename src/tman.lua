@@ -83,7 +83,7 @@ function TMan:use(id)
 
     local branch = self.taskunit:getunit(id, "branch")
     local git = gitmod.new(id, branch)
-    if not git:branch_switch() then
+    if not git:branch_switch(branch) then
         log:err("repo has uncommited changes")
         os.exit(1)
     end
@@ -224,7 +224,7 @@ function TMan:done()
         os.exit(1)
     end
     local git = gitmod.new(id, "develop")
-    if not git:branch_default() then
+    if not git:branch_switch_default() then
         log:err("repo has uncommited changes")
         os.exit(1)
     end
