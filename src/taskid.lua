@@ -55,7 +55,7 @@ function TaskID:load_taskids()
     return taskids
 end
 
---- Save task iDs to the file.
+--- Save task IDs to the file.
 function TaskID:save_taskids()
     local f = io.open(self.meta, "w")
 
@@ -70,16 +70,17 @@ function TaskID:save_taskids()
     for _, unit in pairs(self.taskids) do
         f:write(unit.id, " ", unit.type, "\n")
     end
-    f:close()
+    return f:close()
 end
 
 --- Get current task ID.
 -- @return task ID
 function TaskID:getcurr()
-    for _, unit in pairs(self.taskids) do
-        if unit.type == types.CURR then
-            return unit.id
-        end
+    local idxcurr = 1
+    local curr = self.taskids[idxcurr]
+
+    if curr and curr.type == types.CURR then
+        return curr.id
     end
     return nil
 end
@@ -87,51 +88,55 @@ end
 --- Get previous task ID.
 -- @return task ID
 function TaskID:getprev()
-    for _, unit in pairs(self.taskids) do
-        if unit.type == types.PREV then
-            return unit.id
-        end
+    local idxprev = 2
+    local prev = self.taskids[idxprev]
+
+    if prev and prev.type == types.PREV then
+        return prev.id
     end
     return nil
 end
 
 --- Set current task ID.
+-- Assumes that ID exists in database.
 -- @param id task ID
 -- @return true on success, otherwise false
 function TaskID:setcurr(id)
-    local curridx = 1
+    local idxcurr = 1
+    local curr = self.taskids[idxcurr]
 
-    if self.taskids[curridx].type == types.CURR then
-        self.taskids[curridx].type = types.ACTV
+    -- unset old current task ID
+    if curr and curr.type == types.CURR then
+        curr.type = types.ACTV
     end
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
             unit.type = types.CURR
+            self.curr = id
         end
     end
-    self:save_taskids()
-    self.curr = id
-    return true
+    return self:save_taskids()
 end
 
 --- Set previous task ID.
+-- Assumes that ID exists in database.
 -- @param id task ID
 -- @treturn bool true if previous task is set, otherwise false
 function TaskID:setprev(id)
-    local previdx = 2
+    local idxprev = 2
+    local prev = self.taskids[idxprev]
 
-    if self.taskids[previdx].type == types.PREV then
-        self.taskids[previdx].type = types.ACTV
+    -- unset old previous task ID
+    if prev and prev.type == types.CURR then
+        prev.type = types.ACTV
     end
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
             unit.type = types.PREV
-            break
+            self.prev = id
         end
     end
-    self:save_taskids()
-    self.prev = id
-    return true
+    return self:save_taskids()
 end
 
 -- Private functions: end --
@@ -217,9 +222,10 @@ function TaskID:list(active, completed)
 end
 
 --- Update current task ID, update previous one subsequently.
+-- Assumes that tasi ID exists in database.
 -- @param id new current task ID
 function TaskID:updcurr(id)
-    -- roachme: self.taskid stays outdated.
+    -- roachme: self.taskids stays outdated.
     local curr = self:getcurr()
 
     if curr then
@@ -230,7 +236,7 @@ end
 
 --- Swap current and previous task IDs.
 function TaskID:swap()
-    -- roachme: self.taskid stays outdated.
+    -- roachme: self.taskids stays outdated.
     local prev = self.prev
     local curr = self.curr
 
