@@ -73,7 +73,7 @@ function TaskID:save_taskids()
     return f:close()
 end
 
---- Get current task ID.
+--- Get current task ID from database.
 -- @return task ID
 function TaskID:getcurr()
     local idxcurr = 1
@@ -85,7 +85,7 @@ function TaskID:getcurr()
     return nil
 end
 
---- Get previous task ID.
+--- Get previous task ID from database.
 -- @return task ID
 function TaskID:getprev()
     local idxprev = 2
@@ -97,7 +97,7 @@ function TaskID:getprev()
     return nil
 end
 
---- Set current task ID.
+--- Set current task ID into database.
 -- Assumes that ID exists in database.
 -- @param id task ID
 -- @return true on success, otherwise false
@@ -118,7 +118,7 @@ function TaskID:setcurr(id)
     return self:save_taskids()
 end
 
---- Set previous task ID.
+--- Set previous task ID into database.
 -- Assumes that ID exists in database.
 -- @param id task ID
 -- @treturn bool true if previous task is set, otherwise false
