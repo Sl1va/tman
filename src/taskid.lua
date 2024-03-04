@@ -192,8 +192,9 @@ function TaskID:del(id)
             table.remove(self.taskids, i)
         end
     end
+    self:unsetcurr()
+    self:swap()
     self:save_taskids()
-    self:updcurr(id)
     return true
 end
 

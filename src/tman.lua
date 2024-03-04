@@ -229,6 +229,7 @@ function TMan:done()
         os.exit(1)
     end
     self.taskid:unsetcurr(true)
+    self.taskid:swap()
 end
 
 --- Config util for your workflow
