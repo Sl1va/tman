@@ -46,8 +46,10 @@ end
 --- Add a new task.
 -- @param id task ID
 -- @param tasktype task type: bugfix, hotfix, feature. Default: bugfix
+-- @param prio task priority (default: mid)
 -- @treturn true if new task unit is created, otherwise false
-function TMan:add(id, tasktype)
+function TMan:add(id, tasktype, prio)
+    prio = prio or "mid"
     if not id then
         log:err("task ID required")
         os.exit(1)
@@ -60,7 +62,7 @@ function TMan:add(id, tasktype)
         log:err("'%s': already exists", id)
         os.exit(1)
     end
-    if not self.taskunit:add(id, tasktype) then
+    if not self.taskunit:add(id, tasktype, prio) then
         log:err("colud not create new task unit")
         self.taskid:del(id)
         os.exit(1)
@@ -242,7 +244,7 @@ function TMan:main(arg)
     local cmd = arg[1] or "help"
 
     if cmd == "add" then
-        self:add(arg[2], arg[3])
+        self:add(arg[2], arg[3], arg[4])
     elseif cmd == "amend" then
         self:amend(arg[2], arg[3])
     elseif cmd == "use" then
