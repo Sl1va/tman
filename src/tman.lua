@@ -101,7 +101,7 @@ function TMan:prev()
     end
     local branch = self.taskunit:getunit(prev, "branch")
     local git = gitmod.new(prev, branch)
-    if not git:branch_switch() then
+    if not git:branch_switch(branch) then
         log:err("repo has uncommited changes")
         os.exit(1)
     end

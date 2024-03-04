@@ -118,7 +118,7 @@ function Git:branch_switch_default()
 end
 
 --- Switch branch.
--- @param branch branch name (default: repo default branch)
+-- @param branch task branch name
 -- @treturn bool true on success, otherwise false
 function Git:branch_switch(branch)
     if not self:changes_check() then
@@ -126,7 +126,6 @@ function Git:branch_switch(branch)
     end
     for _, repo in pairs(self.repos) do
         local repopath = globals.G_codebasepath .. repo.name
-        branch = branch or repo.branch
         os.execute(self.gcheckout:format(repopath, branch))
     end
     return true
