@@ -154,7 +154,7 @@ function TaskUnit:add(id, tasktype, prio)
 
     -- Check user input
     if not check_tasktype(tasktype) then
-        print("taskunit: error: unknown task type: " .. tasktype)
+        log:err("unknown task type: '%s'", tasktype)
         return false
     end
 
