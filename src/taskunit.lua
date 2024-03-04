@@ -95,6 +95,18 @@ local function check_tasktype(type)
     return found
 end
 
+--- Check that priority exists.
+-- @param priority priority to check
+-- @return true on success, otherwise false
+local function check_unit_prios(priority)
+    for _, prio in pairs(unit_prios) do
+        if prio == priority then
+            return true
+        end
+    end
+    return false
+end
+
 --- Save task units into file.
 -- @param unit units to save
 -- @param fname filename to save units into
