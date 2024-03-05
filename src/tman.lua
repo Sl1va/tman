@@ -5,11 +5,11 @@
 package.path = package.path .. ";/home/roach/personal/prjs/tman/src/?.lua"
 
 
-local taskid = require("taskid")
-local taskunit = require("taskunit")
-local gitmod = require("git")
-local help = require("help")
 local log = require("log")
+local help = require("help")
+local taskid = require("taskid")
+local gitmod = require("git")
+local taskunit = require("taskunit")
 
 local TMan = {}
 TMan.__index = TMan
