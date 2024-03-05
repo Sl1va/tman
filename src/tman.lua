@@ -32,7 +32,7 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 function TMan:checkid(id)
-    id = id or self.taskid.curr
+    id = id or self.taskid:getcurr()
     if not id then
         log:err("no current task")
         return false
@@ -77,7 +77,7 @@ function TMan:use(id)
     if not self:checkid(id) then
         os.exit(1)
     end
-    if self.taskid.curr == id then
+    if self.taskid:getcurr() == id then
         log:warning("'%s': already in use", id)
         os.exit(1)
     end
@@ -94,7 +94,7 @@ end
 
 --- Switch to previous task.
 function TMan:prev()
-    local prev = self.taskid.prev
+    local prev = self.taskid:getprev()
 
     if not prev then
         log:warning("no previous task")
@@ -115,7 +115,7 @@ end
 -- @return currentn task ID
 function TMan:_curr(opt)
     opt = opt or "-f"
-    local id = self.taskid.curr
+    local id = self.taskid:getcurr()
 
     if opt == "-i" then
         print(id)
@@ -150,7 +150,7 @@ end
 --- Show task unit metadata.
 -- @param id task ID
 function TMan:show(id)
-    id = id or self.taskid.curr
+    id = id or self.taskid:getcurr()
 
     if not self:checkid(id) then
         os.exit(1)
@@ -162,7 +162,7 @@ end
 -- @param id task ID
 -- @param opt option
 function TMan:amend(id, opt)
-    id = id or self.taskid.curr
+    id = id or self.taskid:getcurr()
 
     if not self:checkid(id) then
         os.exit(1)
@@ -178,7 +178,7 @@ end
 --- Update git repos.
 -- roachme: It doesn't work if there is no current task
 function TMan:update()
-    local id = self.taskid.curr
+    local id = self.taskid:getcurr()
     if not id then
         log:warning("no current task")
         os.exit(1)
@@ -215,12 +215,12 @@ end
 
 --- Check current task and push branch for review.
 function TMan:review()
-    local id = self.taskid.curr
+    local id = self.taskid:getcurr()
 end
 
 --- Move current task to done status.
 function TMan:done()
-    local id = self.taskid.curr
+    local id = self.taskid:getcurr()
     if not self:checkid() then
         os.exit(1)
     end

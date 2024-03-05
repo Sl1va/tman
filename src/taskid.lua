@@ -123,7 +123,6 @@ function TaskID:setcurr(id)
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
             unit.type = types.CURR
-            self.curr = id
             break
         end
     end
@@ -144,7 +143,6 @@ function TaskID:setprev(id)
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
             unit.type = types.PREV
-            self.prev = id
             break
         end
     end
@@ -162,7 +160,6 @@ function TaskID:_unsetcurr(tasktype)
     if curr and curr.type == types.CURR then
         curr.type = tasktype
     end
-    self.curr = nil
     return true
 end
 
@@ -177,8 +174,6 @@ function TaskID.init()
     local self = setmetatable({}, TaskID)
     self.meta = globals.G_tmanpath .. "taskids"
     self.taskids = self:load_taskids()
-    self.curr = self:getcurr()
-    self.prev = self:getprev()
     return self
 end
 
@@ -263,8 +258,8 @@ end
 
 --- Swap current and previous task IDs.
 function TaskID:swap()
-    local prev = self.prev
-    local curr = self.curr
+    local prev = self:getprev()
+    local curr = self:getcurr()
 
     self:setprev(curr)
     self:setcurr(prev)
