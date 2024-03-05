@@ -4,6 +4,12 @@
 
 
 --[[
+Private functions:
+    setcurr
+    setprev
+    unsetcurr
+    unsetprev
+
 Public functions:
     add         - add a new task ID to database
     del         - del a task ID from database
@@ -13,14 +19,8 @@ Public functions:
     getcurr     - get current task ID value from database
     getprev     - get previous task ID value from database
 
-    -- roachme: don't like this part of API. Causes troubles.
-    updcurr     - update current task as well as previous (if necessary)
-    unsetcurr   - unset current task (used by `tman done TASKID`
-
-    setcurr     - set current task, remove old one if needed and update previous as well
-    spec_set
-    spec_swap
-    spec_unset
+    update      - mark new ID as current, mark old current as previous
+    move        - move current ID to new status, make previous a current ID
 ]]
 
 
@@ -149,18 +149,33 @@ function TaskID:setprev(id)
 end
 
 --- Unset current task ID.
--- @param tasktype type to set current task into
+-- Assumes that ID exists in database.
+-- @param id task ID
+-- @param tasktype task type to move a current ID to
 -- @return true on success, otherwise false
-function TaskID:_unsetcurr(tasktype)
+function TaskID:unsetcurr(tasktype)
     local idxcurr = 1
-    tasktype = tasktype or types.ACTV
     local curr = self.taskids[idxcurr]
+    tasktype = tasktype or types.ACTV
 
-    -- unset current task ID in database.
     if curr and curr.type == types.CURR then
         curr.type = tasktype
     end
-    return true
+end
+
+--- Unset previous task ID.
+-- Assumes that ID exists in database.
+-- @param id task ID
+-- @param tasktype task type to move a previous ID to
+-- @return true on success, otherwise false
+function TaskID:unsetprev(tasktype)
+    local idxcurr = 1
+    local curr = self.taskids[idxcurr]
+    tasktype = tasktype or types.ACTV
+
+    if curr and curr.type == types.PREV then
+        curr.type = tasktype
+    end
 end
 
 -- Private functions: end --
@@ -174,6 +189,7 @@ function TaskID.init()
     local self = setmetatable({}, TaskID)
     self.meta = globals.G_tmanpath .. "taskids"
     self.taskids = self:load_taskids()
+    self.types = types
     return self
 end
 
@@ -197,7 +213,7 @@ function TaskID:add(id)
         return false
     end
     -- roachme: shoudn't we swap these commands?
-    self:updcurr(id)
+    self:update(id)
     table.insert(self.taskids, { id = id, type = types.CURR })
     return self:save_taskids()
 end
@@ -246,12 +262,10 @@ end
 --- Update current task ID, update previous one subsequently.
 -- Assumes that tasi ID exists in database.
 -- @param id new current task ID
-function TaskID:updcurr(id)
+function TaskID:update(id)
     local curr = self:getcurr()
 
-    if curr then
-        self:setprev(curr)
-    end
+    self:setprev(curr)
     self:setcurr(id)
     return self:save_taskids()
 end
@@ -266,16 +280,15 @@ function TaskID:swap()
     return self:save_taskids()
 end
 
---- Clear current task ID.
--- @tparam bool isdone if set move task to done, otherwise to active
--- @treturn bool true if current task is unset, otherwise false
-function TaskID:unsetcurr(isdone)
-    local tasktype = types.ACTV
+--- Move current task to new status.
+-- @param tasktype task type
+-- @return true on success, otherwise false
+function TaskID:move(tasktype)
+    local prev = self:getprev()
 
-    if isdone then
-        tasktype = types.COMP
-    end
-    self:_unsetcurr(tasktype)
+    self:unsetcurr(tasktype)
+    self:unsetprev(types.ACTV)
+    self:setcurr(prev)
     return self:save_taskids()
 end
 

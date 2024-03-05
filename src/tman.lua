@@ -88,7 +88,7 @@ function TMan:use(id)
         log:err("repo has uncommited changes")
         os.exit(1)
     end
-    self.taskid:updcurr(id)
+    self.taskid:update(id)
     return 0
 end
 
@@ -229,8 +229,7 @@ function TMan:done()
         log:err("repo has uncommited changes")
         os.exit(1)
     end
-    self.taskid:unsetcurr(true)
-    self.taskid:swap()
+    self.taskid:move(self.taskid.types.COMP)
 end
 
 --- Config util for your workflow
