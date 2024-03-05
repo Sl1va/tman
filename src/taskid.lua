@@ -10,10 +10,17 @@ Public functions:
     list        - list all task IDs in database
     swap        - swap current and previous task IDs
     exist       - check that task ID exist in database
+    getcurr     - get current task ID value from database
+    getprev     - get previous task ID value from database
 
     -- roachme: don't like this part of API. Causes troubles.
     updcurr     - update current task as well as previous (if necessary)
     unsetcurr   - unset current task (used by `tman done TASKID`
+
+    setcurr     - set current task, remove old one if needed and update previous as well
+    spec_set
+    spec_swap
+    spec_unset
 ]]
 
 
@@ -101,7 +108,7 @@ function TaskID:getprev()
     return nil
 end
 
---- Set current task ID into database.
+--- Set current task ID.
 -- Assumes that ID exists in database.
 -- @param id task ID
 -- @return true on success, otherwise false
@@ -122,23 +129,7 @@ function TaskID:setcurr(id)
     end
 end
 
---- Unset current task ID.
--- @param tasktype type to set current task into
--- @return true on success, otherwise false
-function TaskID:_unsetcurr(tasktype)
-    local idxcurr = 1
-    tasktype = tasktype or types.ACTV
-    local curr = self.taskids[idxcurr]
-
-    -- unset current task ID in database.
-    if curr and curr.type == types.CURR then
-        curr.type = tasktype
-    end
-    self.curr = nil
-    return true
-end
-
---- Set previous task ID into database.
+--- Set previous task ID.
 -- Assumes that ID exists in database.
 -- @param id task ID
 -- @treturn bool true if previous task is set, otherwise false
@@ -157,6 +148,22 @@ function TaskID:setprev(id)
             break
         end
     end
+end
+
+--- Unset current task ID.
+-- @param tasktype type to set current task into
+-- @return true on success, otherwise false
+function TaskID:_unsetcurr(tasktype)
+    local idxcurr = 1
+    tasktype = tasktype or types.ACTV
+    local curr = self.taskids[idxcurr]
+
+    -- unset current task ID in database.
+    if curr and curr.type == types.CURR then
+        curr.type = tasktype
+    end
+    self.curr = nil
+    return true
 end
 
 -- Private functions: end --
