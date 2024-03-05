@@ -117,9 +117,25 @@ function TaskID:setcurr(id)
         if unit.id == id then
             unit.type = types.CURR
             self.curr = id
+            break
         end
     end
-    return self:save_taskids()
+end
+
+--- Unset current task ID.
+-- @param tasktype type to set current task into
+-- @return true on success, otherwise false
+function TaskID:_unsetcurr(tasktype)
+    local idxcurr = 1
+    tasktype = tasktype or types.ACTV
+    local curr = self.taskids[idxcurr]
+
+    -- unset current task ID in database.
+    if curr and curr.type == types.CURR then
+        curr.type = tasktype
+    end
+    self.curr = nil
+    return true
 end
 
 --- Set previous task ID into database.
@@ -138,9 +154,9 @@ function TaskID:setprev(id)
         if unit.id == id then
             unit.type = types.PREV
             self.prev = id
+            break
         end
     end
-    return self:save_taskids()
 end
 
 -- Private functions: end --
@@ -178,10 +194,10 @@ function TaskID:add(id)
     if self:exist(id) then
         return false
     end
+    -- roachme: shoudn't we swap these commands?
     self:updcurr(id)
     table.insert(self.taskids, { id = id, type = types.CURR })
-    self:save_taskids()
-    return true
+    return self:save_taskids()
 end
 
 --- Delete a task ID.
@@ -198,8 +214,7 @@ function TaskID:del(id)
     end
     self:unsetcurr()
     self:swap()
-    self:save_taskids()
-    return true
+    return self:save_taskids()
 end
 
 --- List task IDs.
@@ -230,23 +245,23 @@ end
 -- Assumes that tasi ID exists in database.
 -- @param id new current task ID
 function TaskID:updcurr(id)
-    -- roachme: self.taskids stays outdated.
     local curr = self:getcurr()
 
     if curr then
         self:setprev(curr)
     end
     self:setcurr(id)
+    return self:save_taskids()
 end
 
 --- Swap current and previous task IDs.
 function TaskID:swap()
-    -- roachme: self.taskids stays outdated.
     local prev = self.prev
     local curr = self.curr
 
     self:setprev(curr)
     self:setcurr(prev)
+    return self:save_taskids()
 end
 
 --- Clear current task ID.
@@ -254,18 +269,12 @@ end
 -- @treturn bool true if current task is unset, otherwise false
 function TaskID:unsetcurr(isdone)
     local tasktype = types.ACTV
+
     if isdone then
         tasktype = types.COMP
     end
-    for _, unit in pairs(self.taskids) do
-        if unit.type == types.CURR then
-            unit.type = tasktype
-            self.curr = nil
-            break
-        end
-    end
-    self:save_taskids()
-    return true
+    self:_unsetcurr(tasktype)
+    return self:save_taskids()
 end
 
 -- Public functions: start --
