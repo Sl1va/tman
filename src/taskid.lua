@@ -10,6 +10,8 @@ Public functions:
     list        - list all task IDs in database
     swap        - swap current and previous task IDs
     exist       - check that task ID exist in database
+
+    -- roachme: don't like this part of API. Causes troubles.
     updcurr     - update current task as well as previous (if necessary)
     unsetcurr   - unset current task (used by `tman done TASKID`
 ]]
@@ -127,7 +129,7 @@ function TaskID:setprev(id)
     local prev = self.taskids[idxprev]
 
     -- unset old previous task ID
-    if prev and prev.type == types.CURR then
+    if prev and prev.type == types.PREV then
         prev.type = types.ACTV
     end
     for _, unit in pairs(self.taskids) do
