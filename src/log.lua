@@ -14,7 +14,7 @@ end
 -- @param fmt format message
 -- @param ... vararg
 function Log:log(fmt, ...)
-    print(self.prefix .. ": " .. fmt:format(...))
+    print(self.prefix .. ":notice:" .. fmt:format(...))
 end
 
 --- Log error message.

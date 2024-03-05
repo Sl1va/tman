@@ -3,7 +3,7 @@
 
 local posix = require("posix")
 local globals = require("globals")
-local log = require("log"):init("git")
+local log = require("log").init("git")
 
 --[[
 Private functions:
