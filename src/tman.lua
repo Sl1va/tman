@@ -9,6 +9,7 @@ local log = require("log")
 local help = require("help")
 local taskid = require("taskid")
 local gitmod = require("git")
+local global = require("globals")
 local taskunit = require("taskunit")
 
 local TMan = {}
@@ -240,6 +241,15 @@ function TMan:config(subcmd)
     end
 end
 
+--- Back up util configs into archive.
+function TMan:backup()
+    print(global.G_tmanpath)
+end
+
+--- Restore util configs from archive.
+function TMan:restore()
+end
+
 --- Interface.
 function TMan:main(arg)
     local cmd = arg[1] or "help"
@@ -268,10 +278,15 @@ function TMan:main(arg)
         self:config(arg[2])
     elseif cmd == "prev" then
         self:prev()
+
+    elseif cmd == "backup" then
+        self:backup()
+    elseif cmd == "restore" then
+        self:restore()
     elseif cmd == "help" then
         help:usage()
     elseif cmd == "ver" then
-        print(("tman version: %s"):format(help.version))
+        print(("%s version: %s"):format(help.progname, help.version))
     else
         log:err("'%s': no such command", cmd)
     end

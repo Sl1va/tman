@@ -77,6 +77,7 @@ end
 
 --- Get current task ID from database.
 -- @return task ID
+-- @return nil if there's no current task ID
 function TaskID:getcurr()
     local idxcurr = 1
     local curr = self.taskids[idxcurr]
@@ -89,6 +90,7 @@ end
 
 --- Get previous task ID from database.
 -- @return task ID
+-- @return nil if there's no previous task ID
 function TaskID:getprev()
     local idxprev = 2
     local prev = self.taskids[idxprev]
