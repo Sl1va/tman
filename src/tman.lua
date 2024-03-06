@@ -285,7 +285,7 @@ function TMan:main(arg)
     elseif cmd == "help" then
         help:usage()
     elseif cmd == "ver" then
-        print(("%s version: %s"):format(help.progname, help.version))
+        print(("%s version %s"):format(help.progname, help.version))
     else
         log:err("'%s': no such command", cmd)
     end
