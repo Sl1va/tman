@@ -48,6 +48,18 @@ local unit_prios = {
     lowest = "lowest",
 }
 
+local unit_keys = {
+    "id",
+    "prio",
+    "type",
+    "desc",
+
+    "time",
+    "date",
+    "status",
+    "branch",
+}
+
 --- Get table size (hash part).
 -- @param tab a toble to operate on
 -- @return table size
@@ -99,28 +111,16 @@ local function check_unit_prios(priority)
     return false
 end
 
---- Save task units into file.
--- @param unit units to save
--- @param fname filename to save units into
-local function save_units(units, fname)
-    local i = 0
-    local len = table.size(units)
-    local file = io.open(fname, "w")
-
-    if not file then
-        print("taskunit: error: could not create file note", fname)
-        return false
-    end
-
-    while i < len do
-        for _, item in pairs(units) do
-            if i == item.prio then
-                file:write(("%s: %s\n"):format(item.key, item.value))
-            end
+--- Check that unit key exist.
+-- @param keyvalue key to check
+-- @return true on success, otherwise false
+local function check_unit_keys(keyvalue)
+    for _, kval in pairs(unit_keys) do
+        if kval == keyvalue then
+            return true
         end
-        i = i + 1
     end
-    file:close()
+    return false
 end
 
 --- Class TaskUnit
@@ -138,19 +138,18 @@ end
 function TaskUnit:add(id, tasktype, prio)
     prio = prio or unit_prios.mid
     local fname = globals.G_tmanpath .. id
-    -- roachme: refactor it, don't like prios. Just don't.
     local unit = {
-        id = { prio = 0, key = "ID", value = id },
-        prio = { prio = 1, key = "Prio", value = prio },
-        type = { prio = 2, key = "Type", value = tasktype },
-        desc = { prio = 3, key = "Desc", value = "" },
+        id = { key = "ID", value = id },
+        prio = { key = "Prio", value = prio},
+        type = { key = "Type", value = tasktype },
+        desc = { key = "Desc", value = "" },
 
         -- roachme: find a way to include it properly
         --time = { prio = 0, key = "Time", value = {capac = "N/A", left = "N/A"}},
-        time = { prio = 5, key = "Time", value = "N/A" },
-        date = { prio = 4, key = "Date", value = os.date("%Y%m%d") },
-        status = { prio = 6, key = "Status", value = "progress" },
-        branch = { prio = 7, key = "Branch", value = "" },
+        time = { key = "Time", value = "N/A"},
+        date = { key = "Date", value = os.date("%Y%m%d") },
+        status = { key = "Status", value = "progress" },
+        branch = { key = "Branch", value = "" },
     }
     unit.desc.value = get_input(unit.desc.key)
     unit.branch.value = format_branch(unit)
@@ -165,11 +164,59 @@ function TaskUnit:add(id, tasktype, prio)
         return false
     end
 
-    save_units(unit, fname)
+    -- save stuff
+    if not self:save_units(id, unit) then
+        return false
+    end
 
     -- create task repos and branches in them
     local git = gitmod.new(unit.id.value, unit.branch.value)
     return git:branch_create()
+end
+
+--- Get task units.
+-- @param id task ID
+-- @return task units {{key, value}, ...}
+function TaskUnit:load_units(id)
+    local taskunits = {}
+    local fname = globals.G_tmanpath .. id
+    local f = io.open(fname)
+    local i = 1
+
+    if not f then
+        log:err("'%s': could not open task unit file", id)
+        return taskunits
+    end
+    for line in f:lines() do
+        local ukey, uval = string.match(line, unitregex)
+        taskunits[unit_keys[i]] = {key = string.lower(ukey), value = uval}
+        i = i + 1
+    end
+    f:close()
+    return taskunits
+end
+
+--- Save task units into file.
+-- @param unit units to save
+-- @param fname filename to save units into
+-- @param true on success, otherwise false
+function TaskUnit:save_units(id, taskunits)
+    local i = 1
+    local fname = globals.G_tmanpath .. id
+    local f = io.open(fname, "w")
+
+    if not f then
+        log("error: could not create file note", fname)
+        return false
+    end
+
+    for _, _ in pairs(unit_keys) do
+        local unit = taskunits[unit_keys[i]]
+        f:write(("%s: %s\n"):format(unit.key, unit.value))
+        i = i + 1
+    end
+    f:close()
+    return true
 end
 
 --- Get unit from task metadata.
@@ -177,47 +224,51 @@ end
 -- @param key unit key
 -- @return unit value
 function TaskUnit:getunit(id, key)
-    local fname = globals.G_tmanpath .. id
-    local f = io.open(fname)
-
-    if not f then
-        log:err("could not open task unit file")
-        return nil
-    end
-    for line in f:lines() do
-        local ukey, uval = string.match(line, unitregex)
-        if string.lower(ukey) == key then
-            return uval
-        end
-    end
-    return nil
+    local taskunits = self:load_units(id)
+    return taskunits[key].value
 end
 
---- Amend task unit.
--- Like branch name, ID, etc.
-function TaskUnit:amend(id) end
+--- Set unit key value.
+-- @param id task ID
+-- @param key key to look up
+-- @param value new value to set
+-- @return true on success, otherwise false
+function TaskUnit:setunit(id, key, value)
+    local taskunits = self:load_units(id)
+
+    if not next(taskunits) then
+        log:err("task ID '%s' empty")
+        return true
+    end
+    if not check_unit_keys(key) then
+        log:err("key '%s' does not exist")
+        return false
+    end
+
+    print("key", key)
+    print("value", value)
+    taskunits[key].value = value
+    self:save_units(id, taskunits)
+    self:show(id)
+end
 
 --- Show task unit metadata.
 -- @param id task ID
-function TaskUnit:show(id, prio)
-    prio = prio or unit_ids.basic
-    local fname = globals.G_tmanpath .. id
-    local f = io.open(fname)
+-- @param count how many items to show (default: 4)
+function TaskUnit:show(id, count)
+    local i = 1
+    count = count or unit_ids.basic
+    local taskunits = self:load_units(id)
 
-    if not f then
-        print("taskunit: could not open file", fname)
-        return false
-    end
-    for line in f:lines() do
-        if prio == 0 then
+    for _, _ in pairs(taskunits) do
+        if count == 0 then
             break
         end
-        local key, val = string.match(line, unitregex)
-        print(("%-8s: %s"):format(key, val))
-        prio = prio - 1
+        local unit = taskunits[unit_keys[i]]
+        print(("%-8s: %s"):format(unit.key, unit.value))
+        count = count - 1
+        i = i + 1
     end
-    f:close()
-    return true
 end
 
 --- Delete task unit.

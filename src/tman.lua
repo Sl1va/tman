@@ -166,8 +166,12 @@ function TMan:amend(id, opt)
         os.exit(1)
     end
     if opt == "-d" then
+        local olddesc = self.taskunit:getunit(id, "desc")
         io.write("new desc: ")
-        local desc = io.read("*l")
+        local newdesc = io.read("*l")
+        self.taskunit:setunit(id, "desc", newdesc)
+    elseif not opt then
+        log:err("option missing")
     else
         log:err("'%s': no such option", opt)
     end
