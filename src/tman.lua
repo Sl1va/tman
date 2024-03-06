@@ -4,7 +4,6 @@
 
 package.path = package.path .. ";/home/roach/personal/prjs/tman/src/?.lua"
 
-
 local log = require("log")
 local help = require("help")
 local taskid = require("taskid")
@@ -14,7 +13,6 @@ local taskunit = require("taskunit")
 
 local TMan = {}
 TMan.__index = TMan
-
 
 --- Class TMan
 -- @type TMan
@@ -246,8 +244,7 @@ function TMan:backup()
 end
 
 --- Restore util configs from archive.
-function TMan:restore()
-end
+function TMan:restore() end
 
 --- Interface.
 function TMan:main(arg)
@@ -277,7 +274,6 @@ function TMan:main(arg)
         self:config(arg[2])
     elseif cmd == "prev" then
         self:prev()
-
     elseif cmd == "backup" then
         self:backup()
     elseif cmd == "restore" then

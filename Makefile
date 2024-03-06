@@ -1,3 +1,5 @@
+all: release
+
 test:
 	lua tman.lua
 
@@ -19,3 +21,6 @@ lua_lint:
 lua_docs:
 	echo "===> Docs"
 	ldoc .
+
+
+release: lua_fmt lua_lint lua_docs

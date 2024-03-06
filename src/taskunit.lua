@@ -23,11 +23,6 @@ local unitregex = "(.*): (.*)"
 3. Branch
 ]]
 
-
-
-
-
-
 --[[
 Public functions:
     add     - add new unit file
@@ -37,15 +32,12 @@ Public functions:
     getunit - get unit value from unit file
 ]]
 
-
-
 local TaskUnit = {}
 TaskUnit.__index = TaskUnit
 
-
 local unit_ids = {
     basic = 4, -- id, prio, type, desc
-    full = 8,  -- basic + time, date, status, branch
+    full = 8, -- basic + time, date, status, branch
 }
 
 local unit_prios = {
@@ -131,7 +123,6 @@ local function save_units(units, fname)
     file:close()
 end
 
-
 --- Class TaskUnit
 -- type TaskUnit
 
@@ -150,13 +141,13 @@ function TaskUnit:add(id, tasktype, prio)
     -- roachme: refactor it, don't like prios. Just don't.
     local unit = {
         id = { prio = 0, key = "ID", value = id },
-        prio = { prio = 1, key = "Prio", value = prio},
+        prio = { prio = 1, key = "Prio", value = prio },
         type = { prio = 2, key = "Type", value = tasktype },
         desc = { prio = 3, key = "Desc", value = "" },
 
         -- roachme: find a way to include it properly
         --time = { prio = 0, key = "Time", value = {capac = "N/A", left = "N/A"}},
-        time = { prio = 5, key = "Time", value = "N/A"},
+        time = { prio = 5, key = "Time", value = "N/A" },
         date = { prio = 4, key = "Date", value = os.date("%Y%m%d") },
         status = { prio = 6, key = "Status", value = "progress" },
         branch = { prio = 7, key = "Branch", value = "" },

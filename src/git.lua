@@ -21,14 +21,11 @@ Public functions:
     commit_check  - check commit message
 ]]
 
-
 local Git = {}
 Git.__index = Git
 
 --- Class Git
 -- @type Git
-
-
 
 -- Private functions: end --
 
@@ -43,7 +40,7 @@ function Git:load_repos()
     end
     for line in f:lines() do
         local name, branch, path = string.match(line, "(.*),(.*),(.*)")
-        table.insert(repos, {name = name, branch = branch, path = path or ""})
+        table.insert(repos, { name = name, branch = branch, path = path or "" })
     end
     return repos
 end
@@ -80,7 +77,6 @@ function Git:repo_symlink()
 end
 
 -- Private functions: end --
-
 
 -- Public functions: start --
 

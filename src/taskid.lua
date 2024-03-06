@@ -2,7 +2,6 @@
 -- Like add, delete, list task IDs and so on.
 -- @module TaskID
 
-
 --[[
 Private functions:
     setcurr
@@ -23,7 +22,6 @@ Public functions:
     move        - move current ID to new status, make previous a current ID
 ]]
 
-
 local taskunit = require("taskunit")
 local globals = require("globals")
 local log = require("log").init("taskid")
@@ -41,7 +39,6 @@ local types = {
 }
 
 -- Private functions: start --
-
 
 --- Class TaskID
 -- @type TaskID
@@ -179,7 +176,6 @@ function TaskID:unsetprev(tasktype)
 end
 
 -- Private functions: end --
-
 
 -- Public functions: start --
 

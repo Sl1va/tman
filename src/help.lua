@@ -39,10 +39,8 @@ For utils:
 ]]):format(Help.progname))
 end
 
-
 --- Get detailed info about command.
 -- @param command command to info about
-function Help:info(cmd)
-end
+function Help:info(cmd) end
 
 return Help
