@@ -279,7 +279,7 @@ function TMan:main(arg)
     elseif cmd == "restore" then
         self:restore()
     elseif cmd == "help" then
-        help:usage()
+        help.usage()
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else

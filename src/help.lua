@@ -3,7 +3,7 @@ local Help = {}
 Help.version = "0.1.0"
 Help.progname = "tman"
 
-function Help:usage()
+function Help.usage()
     print(([[
 Usage: %s COMMAND [ID]
 Basic:
@@ -41,6 +41,6 @@ end
 
 --- Get detailed info about command.
 -- @param command command to info about
-function Help:info(cmd) end
+--function Help.info(cmd) end
 
 return Help
