@@ -222,6 +222,8 @@ end
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
 function TaskID:del(id)
+    local prev = self:getprev()
+
     if not self:exist(id) then
         return false
     end
@@ -230,8 +232,8 @@ function TaskID:del(id)
             table.remove(self.taskids, i)
         end
     end
-    self:unsetcurr()
-    self:swap()
+    self:unsetprev()
+    self:setcurr(prev)
     return self:save_taskids()
 end
 

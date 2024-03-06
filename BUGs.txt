@@ -1,3 +1,3 @@
 1. `tman` for some reason create file with task ID in task_new()
 2. Main script always returns 0???
-3. Command `del` doesn't make the previous ID a new current when current ID's deleted.
+3. (done) Command `del` doesn't make the previous ID a new current when current ID's deleted.
