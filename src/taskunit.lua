@@ -123,7 +123,7 @@ local function save_units(units, fname)
     while i < len do
         for _, item in pairs(units) do
             if i == item.prio then
-                file:write(("%s: %s\n"):format(item.inptext, item.value))
+                file:write(("%s: %s\n"):format(item.key, item.value))
             end
         end
         i = i + 1
@@ -149,19 +149,19 @@ function TaskUnit:add(id, tasktype, prio)
     local fname = globals.G_tmanpath .. id
     -- roachme: refactor it, don't like prios. Just don't.
     local unit = {
-        id = { prio = 0, inptext = "ID", value = id },
-        prio = { prio = 1, inptext = "Prio", value = prio},
-        type = { prio = 2, inptext = "Type", value = tasktype },
-        desc = { prio = 3, inptext = "Desc", value = "" },
+        id = { prio = 0, key = "ID", value = id },
+        prio = { prio = 1, key = "Prio", value = prio},
+        type = { prio = 2, key = "Type", value = tasktype },
+        desc = { prio = 3, key = "Desc", value = "" },
 
         -- roachme: find a way to include it properly
-        --time = { prio = 0, inptext = "Time", value = {capac = "N/A", left = "N/A"}},
-        time = { prio = 5, inptext = "Time", value = "N/A"},
-        date = { prio = 4, inptext = "Date", value = os.date("%Y%m%d") },
-        status = { prio = 6, inptext = "Status", value = "progress" },
-        branch = { prio = 7, inptext = "Branch", value = "" },
+        --time = { prio = 0, key = "Time", value = {capac = "N/A", left = "N/A"}},
+        time = { prio = 5, key = "Time", value = "N/A"},
+        date = { prio = 4, key = "Date", value = os.date("%Y%m%d") },
+        status = { prio = 6, key = "Status", value = "progress" },
+        branch = { prio = 7, key = "Branch", value = "" },
     }
-    unit.desc.value = get_input(unit.desc.inptext)
+    unit.desc.value = get_input(unit.desc.key)
     unit.branch.value = format_branch(unit)
 
     -- Check user input
