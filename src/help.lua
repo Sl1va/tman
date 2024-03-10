@@ -16,7 +16,7 @@ Basic:
 Amend:
   add     - add new task
   del     - delete task
-  amend   - amend task
+  amend   - amend task units
   config  - config for your workflow
   update  - update git repos
 

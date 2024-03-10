@@ -18,6 +18,7 @@ Public functions:
     branch_delete - delete task branch
     branch_switch - switch branch (default: repo's default branch)
     branch_update - pull changes from origin and tryna rebase against task branch
+    branch_rename - rename task branch
     commit_check  - check commit message
 ]]
 
@@ -95,6 +96,7 @@ function Git.new(taskid, branch)
         gpull = "git -C %s pull --quiet origin %s",
         gpull_generic = "git -C %s pull --quiet",
         gbranchD = "git -C %s branch --quiet -D %s",
+        gbranchm = "git -C %s branch --quiet -m %s",
     }, Git)
     self.repos = self:load_repos()
     return self
@@ -162,6 +164,19 @@ function Git:branch_create()
         os.execute(self.gcheckoutb:format(repopath, self.branch))
     end
     return self:repo_symlink()
+end
+
+--- Rename task branch.
+-- @return true on success, otherwise false
+function Git:branch_rename(newbranch)
+    if not self:changes_check() then
+        return false
+    end
+    for _, repo in pairs(self.repos) do
+        local repopath = globals.G_codebasepath .. repo.name
+        os.execute(self.gbranchm:format(repopath, newbranch))
+    end
+    return true
 end
 
 --- Delete task branch.

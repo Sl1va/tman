@@ -245,11 +245,8 @@ function TaskUnit:setunit(id, key, value)
         return false
     end
 
-    print("key", key)
-    print("value", value)
     taskunits[key].value = value
-    self:save_units(id, taskunits)
-    self:show(id)
+    return self:save_units(id, taskunits)
 end
 
 --- Show task unit metadata.
@@ -281,6 +278,27 @@ function TaskUnit:del(id)
     git:branch_delete()
     os.remove(unitfile)
     return true
+end
+
+--- Amend task description.
+-- @param id task ID
+-- @param newdesc new description
+-- @return true on success, otherwise false
+function TaskUnit:amend_desc(id, newdesc)
+    if not self:setunit(id, "desc", newdesc) then
+        log:err("could not update task unit")
+        return false
+    end
+
+    local taskunits = self:load_units(id)
+    if not next(taskunits) then
+        log:err("task '%s' unit is empty", id)
+        return false
+    end
+
+    local newbranch = format_branch(taskunits)
+    local git = gitmod.new(id, newbranch)
+    return git:branch_rename(newbranch)
 end
 
 return TaskUnit
