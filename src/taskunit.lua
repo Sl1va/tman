@@ -285,10 +285,7 @@ end
 -- @param newdesc new description
 -- @return true on success, otherwise false
 function TaskUnit:amend_desc(id, newdesc)
-    if not self:setunit(id, "desc", newdesc) then
-        log:err("could not update task unit")
-        return false
-    end
+    self:setunit(id, "desc", newdesc)
 
     local taskunits = self:load_units(id)
     if not next(taskunits) then
@@ -297,6 +294,8 @@ function TaskUnit:amend_desc(id, newdesc)
     end
 
     local newbranch = format_branch(taskunits)
+    self:setunit(id, "branch", newbranch)
+
     local git = gitmod.new(id, newbranch)
     return git:branch_rename(newbranch)
 end
