@@ -255,6 +255,30 @@ function TMan:config(subcmd)
     end
 end
 
+function TMan:time(oper, val)
+    local weeks = ""
+    local days = ""
+    local hours = ""
+
+    if oper == "set" then
+        local timeval = ""
+        io.write("weeks (default none): ")
+        weeks = io.read("*l")
+        io.write("days (default none): ")
+        days = io.read("*l")
+        io.write("hours (default none): ")
+        hours = io.read("*l")
+
+        --[[
+        print("weeks", weeks)
+        print("days", days)
+        print("hours", hours)
+        ]]
+        timeval = weeks .. " " .. days .. " " .. hours
+        print(("timeval '%s'"):format(timeval))
+    end
+end
+
 --- Back up util configs into archive.
 function TMan:backup()
     print(global.G_tmanpath)
@@ -291,6 +315,8 @@ function TMan:main(arg)
         self:config(arg[2])
     elseif cmd == "prev" then
         self:prev()
+    elseif cmd == "time" then
+        self:time(arg[2], arg[3])
     elseif cmd == "backup" then
         self:backup()
     elseif cmd == "restore" then
