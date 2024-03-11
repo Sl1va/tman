@@ -137,7 +137,6 @@ end
 -- @param tasktype task type: bugfix, hotfix, feature
 function TaskUnit:add(id, tasktype, prio)
     prio = prio or unit_prios.mid
-    local fname = globals.G_tmanpath .. id
     local unit = {
         id = { key = "ID", value = id },
         prio = { key = "Prio", value = prio},

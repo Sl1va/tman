@@ -183,8 +183,10 @@ function TMan:amend(id, opt)
 end
 
 --- Update git repos.
+-- @param opt options
 -- roachme: It doesn't work if there is no current task
-function TMan:update()
+function TMan:update(opt)
+    opt = opt or "-u"
     local id = self.taskid:getcurr()
     if not id then
         log:warning("no current task")
@@ -192,10 +194,16 @@ function TMan:update()
     end
 
     local branch = self.taskunit:getunit(id, "branch")
-    local git = gitmod.new(branch, "")
+    local git = gitmod.new(id, branch)
 
     git:branch_switch_default()
-    git:branch_update(true)
+    if opt == "-c" then
+        git:branch_create()
+    elseif opt == "-u" then
+        git:branch_update(true)
+    else
+        log:warning("unknown option '%s'", opt)
+    end
     git:branch_switch(branch)
     return 0
 end
@@ -274,7 +282,7 @@ function TMan:main(arg)
     elseif cmd == "list" then
         self:list(arg[2])
     elseif cmd == "update" then
-        self:update()
+        self:update(arg[2])
     elseif cmd == "review" then
         self:review()
     elseif cmd == "done" then
