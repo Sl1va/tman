@@ -300,4 +300,17 @@ function TaskUnit:amend_desc(id, newdesc)
     return git:branch_rename(newbranch)
 end
 
+--- Change task priority.
+-- @param id task ID
+-- @param newprio new task priority
+function TaskUnit:amend_prio(id, newprio)
+    local key = "prio"
+
+    if not check_unit_prios(newprio) then
+        log:err("task priority '%s' does not exist", newprio)
+        return false
+    end
+    return self:setunit(id, key, newprio)
+end
+
 return TaskUnit

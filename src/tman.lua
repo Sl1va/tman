@@ -169,6 +169,12 @@ function TMan:amend(id, opt)
         io.write("new desc: ")
         local newdesc = io.read("*l")
         self.taskunit:amend_desc(id, newdesc)
+
+    elseif opt == "-p" then
+        io.write("new priority [highest|high|mid|low|lowest]: ")
+        local newprio = io.read("*l")
+        self.taskunit:amend_prio(id, newprio)
+
     elseif not opt then
         log:err("option missing")
     else
