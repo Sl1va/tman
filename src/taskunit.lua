@@ -48,6 +48,8 @@ local unit_prios = {
     lowest = "lowest",
 }
 
+local unit_keys_count = 8
+
 local unit_keys = {
     "id",
     "prio",
@@ -132,6 +134,28 @@ function TaskUnit.init()
     return self
 end
 
+--- Check that task unit is not corrupted.
+-- roachme: it should check user key as well, but i just don't know
+-- @param id task id
+-- @param true on success, otherwise false
+function TaskUnit:check_unitfile(id)
+    local i = 1
+    local taskunits = self:load_units(id)
+
+    if not next(taskunits) then
+        return false
+    end
+
+    for _, _ in pairs(taskunits) do
+        local key = unit_keys[i]
+        if not taskunits[key] or taskunits[key].value then
+            return false
+        end
+        i = i + 1
+    end
+    return true
+end
+
 --- Add a new unit for a task.
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
@@ -175,7 +199,7 @@ end
 
 --- Get task units.
 -- @param id task ID
--- @return task units {{key, value}, ...}
+-- @treturn table task units {{key, value}, ...}
 function TaskUnit:load_units(id)
     local taskunits = {}
     local fname = globals.G_tmanpath .. id
@@ -184,7 +208,7 @@ function TaskUnit:load_units(id)
 
     if not f then
         log:err("'%s': could not open task unit file", id)
-        return taskunits
+        return {}
     end
     for line in f:lines() do
         local ukey, uval = string.match(line, unitregex)
@@ -222,8 +246,14 @@ end
 -- @param id task ID
 -- @param key unit key
 -- @return unit value
+-- @return nil if key doesn't exist
 function TaskUnit:getunit(id, key)
     local taskunits = self:load_units(id)
+
+    if not next(taskunits) or not check_unit_keys(key) then
+        log:err("couldn't get unit from task ID '%s'", id)
+        return nil
+    end
     return taskunits[key].value
 end
 
@@ -235,15 +265,10 @@ end
 function TaskUnit:setunit(id, key, value)
     local taskunits = self:load_units(id)
 
-    if not next(taskunits) then
-        log:err("task ID '%s' empty")
-        return true
-    end
-    if not check_unit_keys(key) then
-        log:err("key '%s' does not exist")
+    if not next(taskunits) or not check_unit_keys(key) then
+        log:err("couldn't set key '%s' to task ID '%s'", key, id)
         return false
     end
-
     taskunits[key].value = value
     return self:save_units(id, taskunits)
 end
