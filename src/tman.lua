@@ -323,6 +323,8 @@ function TMan:main(arg)
         self:restore()
     elseif cmd == "help" then
         help.usage()
+    elseif cmd == "info" then
+        help:info(arg[2])
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
