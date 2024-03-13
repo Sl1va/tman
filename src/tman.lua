@@ -10,6 +10,8 @@ local taskid = require("taskid")
 local gitmod = require("git")
 local global = require("globals")
 local taskunit = require("taskunit")
+local getopt = require("posix.unistd").getopt
+
 
 local TMan = {}
 TMan.__index = TMan
@@ -109,40 +111,53 @@ function TMan:prev()
 end
 
 --- Get cucrent task ID and other info.
--- @param opt options: -i: task ID, -f: task ID and description. Default: -f
 -- @return currentn task ID
-function TMan:_curr(opt)
-    opt = opt or "-f"
+function TMan:_curr()
+    local optstring = "fi"
     local id = self.taskid:getcurr()
 
-    if opt == "-i" then
-        print(id)
-    elseif opt == "-f" then
-        local desc = self.taskunit:getunit(id, "desc")
-        print(("* %-8s %s"):format(id, desc))
-    else
-        log:err("curr: '%s': no such option", opt)
-        os.exit(1)
+    for optopt, _, optind in getopt(arg, optstring) do
+        if optopt == "?" then
+            log:err("unrecognized option '%s'", arg[optind - 1])
+            os.exit(1)
+        end
+        if optopt == "f" then
+            local desc = self.taskunit:getunit(id, "desc")
+            print(("* %-8s %s"):format(id, desc))
+        elseif optopt == "i" then
+            print(id)
+        end
     end
-    return 0
 end
 
 --- List all task IDs.
 -- Default: show only active task IDs.
 -- @param opt list option
-function TMan:list(opt)
-    opt = opt or "-a"
+function TMan:list()
+    local active = true
+    local completed = false
+    local optstring = "Aac"
 
-    if opt == "-A" then
-        print("All tasks:")
-        self.taskid:list(true, true)
-    elseif opt == "-a" then
-        print("Active tasks:")
-        self.taskid:list(true, false)
-    elseif opt == "-c" then
-        print("Completed tasks:")
-        self.taskid:list(false, true)
+    for optopt, _, optind in getopt(arg, optstring) do
+        if optopt == "?" then
+            return log:err("unrecognized option '%s'", arg[optind - 1])
+        end
+        if optopt == "A" then
+            print("All tasks:")
+            active = true
+            completed= true
+        elseif optopt == "c" then
+            print("Completed tasks:")
+            active = false
+            completed= true
+            self.taskid:list(false, true)
+        elseif optopt == "a" then
+            print("Active tasks:")
+            active = false
+            completed= true
+        end
     end
+    self.taskid:list(active, completed)
 end
 
 --- Show task unit metadata.
@@ -287,9 +302,12 @@ end
 --- Restore util configs from archive.
 function TMan:restore() end
 
+
 --- Interface.
 function TMan:main(arg)
     local cmd = arg[1] or "help"
+    -- posix getopt does not let permutations as GNU version
+    table.remove(arg, 1)
 
     if cmd == "add" then
         self:add(arg[2], arg[3], arg[4])
@@ -304,7 +322,7 @@ function TMan:main(arg)
     elseif cmd == "_curr" then
         self:_curr(arg[2])
     elseif cmd == "list" then
-        self:list(arg[2])
+        self:list()
     elseif cmd == "update" then
         self:update(arg[2])
     elseif cmd == "review" then
