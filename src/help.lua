@@ -121,11 +121,14 @@ Show tman version.
 function Help:info(cmdname)
     for _, cmd in ipairs(cmds) do
         if cmd.name == cmdname then
-           print(cmd.desc)
-           return
+           return print(cmd.desc)
         end
     end
-    log:warning("no such command '%s'", cmdname)
+    if cmdname then
+        log:warning("no such command '%s'", cmdname)
+    else
+        log:warning("command to look up is missing")
+    end
 end
 
 return Help

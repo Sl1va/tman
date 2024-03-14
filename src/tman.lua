@@ -320,7 +320,7 @@ function TMan:main(arg)
     elseif cmd == "del" then
         self:del(arg[2])
     elseif cmd == "_curr" then
-        self:_curr(arg[2])
+        self:_curr()
     elseif cmd == "list" then
         self:list()
     elseif cmd == "update" then
@@ -342,7 +342,7 @@ function TMan:main(arg)
     elseif cmd == "help" then
         help.usage()
     elseif cmd == "info" then
-        help:info(arg[2])
+        help:info(arg[1])
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
