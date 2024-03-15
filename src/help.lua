@@ -82,12 +82,12 @@ Switch to previous task. If no previous task exist informs about it.
         name = "list",
         desc = [[
 Usage: tman list [OPTION]
-List task IDs with description (active tasks by default). See section Options.
+List task IDs with description.
 
 Options:
-    -a   List only active tasks.
     -c   List only complete tasks.
-    -A   List all tasks (active and complete).
+    -a   List only active tasks (default).
+    -A   List all tasks: active and complete.
 Notes:
     *   Marks current task.
     -   Makrs previous task.
@@ -119,16 +119,17 @@ Show tman version.
 --- Get detailed info about command.
 -- @param cmdname command name to get info about
 function Help:info(cmdname)
+    if not cmdname then
+        log:warning("command to look up is missing")
+        return false
+    end
+
     for _, cmd in ipairs(cmds) do
         if cmd.name == cmdname then
            return print(cmd.desc)
         end
     end
-    if cmdname then
-        log:warning("no such command '%s'", cmdname)
-    else
-        log:warning("command to look up is missing")
-    end
+    return log:warning("no such command '%s'", cmdname)
 end
 
 return Help
