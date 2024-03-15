@@ -14,6 +14,7 @@ local gitmod = require("git")
 local global = require("globals")
 local taskunit = require("taskunit")
 local getopt = require("posix.unistd").getopt
+local posix = require("posix")
 
 
 local TMan = {}
@@ -297,7 +298,19 @@ end
 
 --- Back up util configs into archive.
 function TMan:backup()
-    print(global.G_tmanpath)
+    local ftar = "tman_db.tar"
+    local dtar = ".tman"
+    local tar = "tar -C "
+    local tarcmd = tar .. global.homebase .. " -cf " .. ftar .. " " .. dtar
+
+    if not posix.access(global.G_tmanpath) then
+        return log:err("tman database doesn't exist. Nothing to backup")
+    end
+
+    if not os.execute(tarcmd) then
+        return log:err("couldn't create tman database backup")
+    end
+    return print(("create backup file: './%s'"):format(ftar))
 end
 
 --- Restore util configs from archive.
