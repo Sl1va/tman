@@ -237,8 +237,10 @@ end
 -- There are 4 types: current, previous, active and completed. Default: active
 -- @param active list only active task IDs
 -- @param completed list only completed task IDs
--- @return true on success, otherwise false
+-- @return count of task IDs
 function TaskID:list(active, completed)
+    local count = 1
+
     for _, unit in pairs(self.taskids) do
         if unit.type == types.CURR and active then
             local desc = taskunit:getunit(unit.id, "desc")
@@ -256,8 +258,9 @@ function TaskID:list(active, completed)
             local desc = taskunit:getunit(unit.id, "desc")
             print(("  %-8s %s"):format(unit.id, desc))
         end
+        count = count + 1
     end
-    return true
+    return count
 end
 
 --- Update current task ID, update previous one subsequently.
