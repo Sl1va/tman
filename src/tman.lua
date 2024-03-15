@@ -2,7 +2,10 @@
 -- Simplify workflow when working with many repos.
 -- @module TMan
 
-package.path = package.path .. ";/home/roach/personal/prjs/tman/src/?.lua"
+local HOME = os.getenv("HOME")
+local tman_path = "personal/prjs/tman/src/?.lua"
+package.path = package.path .. ";" .. HOME .. "/" .. tman_path
+
 
 local log = require("log")
 local help = require("help")
