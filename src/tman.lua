@@ -149,15 +149,14 @@ function TMan:list()
             print("All tasks:")
             active = true
             completed= true
+        elseif optopt == "a" then
+            print("Active tasks:")
+            -- use default flags
         elseif optopt == "c" then
             print("Completed tasks:")
             active = false
             completed= true
             self.taskid:list(false, true)
-        elseif optopt == "a" then
-            print("Active tasks:")
-            active = false
-            completed= true
         end
     end
     self.taskid:list(active, completed)
