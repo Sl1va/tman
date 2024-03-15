@@ -310,31 +310,31 @@ function TMan:main(arg)
     table.remove(arg, 1)
 
     if cmd == "add" then
-        self:add(arg[2], arg[3], arg[4])
+        self:add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
-        self:amend(arg[2], arg[3])
+        self:amend(arg[1], arg[2])
     elseif cmd == "use" then
-        self:use(arg[2])
+        self:use(arg[1])
     elseif cmd == "show" then
-        self:show(arg[2])
+        self:show(arg[1])
     elseif cmd == "del" then
-        self:del(arg[2])
+        self:del(arg[1])
     elseif cmd == "_curr" then
         self:_curr()
     elseif cmd == "list" then
         self:list()
     elseif cmd == "update" then
-        self:update(arg[2])
+        self:update(arg[1])
     elseif cmd == "review" then
         self:review()
     elseif cmd == "done" then
         self:done()
     elseif cmd == "config" then
-        self:config(arg[2])
+        self:config(arg[1])
     elseif cmd == "prev" then
         self:prev()
     elseif cmd == "time" then
-        self:time(arg[2], arg[3])
+        self:time(arg[1], arg[2])
     elseif cmd == "backup" then
         self:backup()
     elseif cmd == "restore" then

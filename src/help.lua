@@ -45,12 +45,13 @@ local cmds = {
     {
         name = "add",
         desc = [[
-Usage: tman add TASKID PRIORITY
+Usage: tman add TASKID TASKTYPE PRIORITY
 Add new task.
 
 Notes:
     TASKID      task ID
-    PRIORITY    task priority (available: feature, bugfix, hotfix).
+    TASKTYPE    task type (available: feature, bugfix, hotfix).
+    PRIORITY    task priority (available: lowest, low, mid, high, highest).
 ]]
     },
     {
@@ -58,6 +59,20 @@ Notes:
         desc = [[
 Usage: tman del TASKID
 Delete task.
+
+Notes:
+    TASKID      task ID
+]]
+    },
+    {
+        name = "amend",
+        desc = [[
+Usage: tman amend TASKID
+Amend task.
+
+Options:
+    -d      amend task description
+    -p      amend task priority
 
 Notes:
     TASKID      task ID
