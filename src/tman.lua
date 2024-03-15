@@ -156,7 +156,6 @@ function TMan:list()
             print("Completed tasks:")
             active = false
             completed= true
-            self.taskid:list(false, true)
         end
     end
     self.taskid:list(active, completed)
