@@ -165,14 +165,14 @@ function TMan:list()
         if optopt == "A" then
             print("All tasks:")
             active = true
-            completed= true
+            completed = true
         elseif optopt == "a" then
             print("Active tasks:")
             -- use default flags
         elseif optopt == "c" then
             print("Completed tasks:")
             active = false
-            completed= true
+            completed = true
         end
     end
     self.taskid:list(active, completed)
@@ -202,12 +202,10 @@ function TMan:amend(id, opt)
         io.write("new desc: ")
         local newdesc = io.read("*l")
         self.taskunit:amend_desc(id, newdesc)
-
     elseif opt == "-p" then
         io.write("new priority [highest|high|mid|low|lowest]: ")
         local newprio = io.read("*l")
         self.taskunit:amend_prio(id, newprio)
-
     elseif not opt then
         log:err("option missing")
     else
@@ -330,8 +328,25 @@ function TMan:backup()
 end
 
 --- Restore util configs from archive.
-function TMan:restore() end
+function TMan:restore()
+    local ftar = arg[1]
 
+    if not ftar then
+        log:err("pass config *.tar file")
+        os.exit(1)
+    end
+
+    local dtar = ".tman"
+    local tar = "tar"
+    local tarcmd = tar .. " -xf " .. ftar .. " " .. dtar
+    if not posix.access(ftar) then
+        log:err("'%s': no archive such file", ftar)
+        os.exit(1)
+    end
+
+    print("tarcmd", tarcmd)
+    --os.execute(tarcmd)
+end
 
 --- Interface.
 function TMan:main(arg)
