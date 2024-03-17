@@ -33,7 +33,7 @@ Git.__index = Git
 --- Load repos from config file.
 function Git:load_repos()
     local repos = {}
-    local f = io.open(globals.G_tmanrepos)
+    local f = io.open(globals.repos)
 
     if not f then
         log:err("no file for repos")
@@ -50,7 +50,7 @@ end
 -- @param reponame repo name
 -- @return true on success, otherwise false
 function Git:change_check_repo(reponame)
-    local repopath = globals.G_codebasepath .. reponame
+    local repopath = globals.cdbase .. reponame
     local cmd = string.format(self.gdiff_word, repopath)
     return os.execute(cmd) == 0
 end
@@ -70,8 +70,8 @@ end
 -- @return true on success, otherwise false
 function Git:repo_symlink()
     for _, repo in pairs(self.repos) do
-        local src = globals.G_codebasepath .. repo.name
-        local dst = globals.G_taskpath .. self.taskid .. "/" .. repo.name
+        local src = globals.cdbase .. repo.name
+        local dst = globals.tasks .. self.taskid .. "/" .. repo.name
         posix.link(src, dst, true)
     end
     return true
@@ -109,7 +109,7 @@ function Git:branch_switch_default()
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.G_codebasepath .. repo.name
+        local repopath = globals.cdbase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
     end
     return true
@@ -123,7 +123,7 @@ function Git:branch_switch(branch)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.G_codebasepath .. repo.name
+        local repopath = globals.cdbase .. repo.name
         os.execute(self.gcheckout:format(repopath, branch))
     end
     return true
@@ -137,7 +137,7 @@ function Git:branch_update(all)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.G_codebasepath .. repo.name
+        local repopath = globals.cdbase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         if all then
             os.execute(self.gpull_generic:format(repopath))
@@ -151,7 +151,7 @@ end
 -- Also symlinks repos for a task.
 -- @return true on success, otherwise false
 function Git:branch_create()
-    local taskdir = globals.G_taskpath .. self.taskid
+    local taskdir = globals.tasks .. self.taskid
 
     if not self:changes_check() then
         return false
@@ -159,7 +159,7 @@ function Git:branch_create()
 
     posix.mkdir(taskdir)
     for _, repo in pairs(self.repos) do
-        local repopath = globals.G_codebasepath .. repo.name
+        local repopath = globals.cdbase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         os.execute(self.gcheckoutb:format(repopath, self.branch))
     end
@@ -173,7 +173,7 @@ function Git:branch_rename(newbranch)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.G_codebasepath .. repo.name
+        local repopath = globals.cdbase .. repo.name
         os.execute(self.gbranchm:format(repopath, newbranch))
     end
     return true
@@ -186,7 +186,7 @@ function Git:branch_delete()
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.G_codebasepath .. repo.name
+        local repopath = globals.cdbase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         os.execute(self.gbranchD:format(repopath, self.branch))
     end

@@ -183,7 +183,7 @@ end
 -- @return new object
 function TaskID.init()
     local self = setmetatable({}, TaskID)
-    self.meta = globals.G_tmanpath .. "taskids"
+    self.meta = globals.tmandb .. "taskids"
     self.taskids = self:load_taskids()
     self.types = types
     return self

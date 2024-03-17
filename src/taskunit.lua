@@ -202,7 +202,7 @@ end
 -- @treturn table task units {{key, value}, ...}
 function TaskUnit:load_units(id)
     local taskunits = {}
-    local fname = globals.G_tmanpath .. id
+    local fname = globals.tmandb .. id
     local f = io.open(fname)
     local i = 1
 
@@ -225,7 +225,7 @@ end
 -- @param true on success, otherwise false
 function TaskUnit:save_units(id, taskunits)
     local i = 1
-    local fname = globals.G_tmanpath .. id
+    local fname = globals.tmandb .. id
     local f = io.open(fname, "w")
 
     if not f then
@@ -295,7 +295,7 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskUnit:del(id)
-    local unitfile = globals.G_taskpath .. id
+    local unitfile = globals.tasks .. id
     local branch = self:getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
