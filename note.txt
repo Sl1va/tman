@@ -2,4 +2,4 @@
 2. Make everything modular. Benefits:
     a) code is clean and no macarony code
     b) code can be easily scaled
-
+3. `:` for object methods and class methods, `.` for static members.
