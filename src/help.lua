@@ -53,7 +53,7 @@ Notes:
     TASKID      task ID
     TASKTYPE    task type (available: feature, bugfix, hotfix).
     PRIORITY    task priority (available: lowest, low, mid, high, highest).
-]]
+]],
     },
     {
         name = "del",
@@ -63,7 +63,7 @@ Delete task.
 
 Notes:
     TASKID      task ID
-]]
+]],
     },
     {
         name = "amend",
@@ -77,7 +77,7 @@ Options:
 
 Notes:
     TASKID      task ID
-]]
+]],
     },
 
     {
@@ -85,14 +85,14 @@ Notes:
         desc = [[
 Usage: tman use TASKID
 Switch to specified task. Use `tman list` to see existing tasks.
-]]
+]],
     },
     {
         name = "prev",
         desc = [[
 Usage: tman prev
 Switch to previous task. If no previous task exist informs about it.
-]]
+]],
     },
     {
         name = "list",
@@ -107,28 +107,28 @@ Options:
 Notes:
     *   Marks current task.
     -   Makrs previous task.
-]]
+]],
     },
     {
         name = "show",
         desc = [[
 Usage: tman show [TASKID]
 Show task units (current task by default).
-]]
+]],
     },
     {
         name = "help",
         desc = [[
 Usage: tman help
 Show list of commands with description.
-]]
+]],
     },
     {
         name = "ver",
         desc = [[
 Usage: tman ver
 Show tman version.
-]]
+]],
     },
 }
 
@@ -142,7 +142,7 @@ function Help:info(cmdname)
 
     for _, cmd in ipairs(cmds) do
         if cmd.name == cmdname then
-           return print(cmd.desc)
+            return print(cmd.desc)
         end
     end
     return log:warning("no such command '%s'", cmdname)

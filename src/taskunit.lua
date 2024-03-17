@@ -163,13 +163,13 @@ function TaskUnit:add(id, tasktype, prio)
     prio = prio or unit_prios.mid
     local unit = {
         id = { key = "ID", value = id },
-        prio = { key = "Prio", value = prio},
+        prio = { key = "Prio", value = prio },
         type = { key = "Type", value = tasktype },
         desc = { key = "Desc", value = "" },
 
         -- roachme: find a way to include it properly
         --time = { prio = 0, key = "Time", value = {capac = "N/A", left = "N/A"}},
-        time = { key = "Time", value = "N/A"},
+        time = { key = "Time", value = "N/A" },
         date = { key = "Date", value = os.date("%Y%m%d") },
         status = { key = "Status", value = "progress" },
         branch = { key = "Branch", value = "" },
@@ -212,7 +212,7 @@ function TaskUnit:load_units(id)
     end
     for line in f:lines() do
         local ukey, uval = string.match(line, unitregex)
-        taskunits[unit_keys[i]] = {key = string.lower(ukey), value = uval}
+        taskunits[unit_keys[i]] = { key = string.lower(ukey), value = uval }
         i = i + 1
     end
     f:close()

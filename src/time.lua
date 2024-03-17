@@ -1,5 +1,3 @@
-
-
 --[[
 
 tman amend time -1h
@@ -14,8 +12,6 @@ tman time add 3h
 tman time del 4h
 ]]
 
-
-
 local function day_to_hour(dayval)
     local hours_in_day = 8
     return dayval * hours_in_day
@@ -26,13 +22,12 @@ local function week_to_hour(weekval)
     return day_to_hour(weekval * day_in_week)
 end
 
-
 local function time_check(timeval)
-    local sep = ' '
+    local sep = " "
 
     for str in string.gmatch(timeval, "([^" .. sep .. "]+)") do
         local _, unit = string.match(str, "([0-9]*)([wdh])")
-        if unit ~= 'w' and unit ~= 'd' and unit ~= 'h' then
+        if unit ~= "w" and unit ~= "d" and unit ~= "h" then
             return false
         end
     end
@@ -50,11 +45,11 @@ local function time_to_hours(timeval)
         val = tonumber(val)
         --print(val, unit)
 
-        if unit == 'w' then
+        if unit == "w" then
             res = res + val * days_a_week * hours_a_day
-        elseif unit == 'd' then
+        elseif unit == "d" then
             res = res + val * hours_a_day
-        elseif unit == 'h' then
+        elseif unit == "h" then
             res = res + val
         end
     end
@@ -88,16 +83,11 @@ local function hours_to_time(hourval)
     return res
 end
 
-
-
-
-
 local timeval = "2d 3h"
 local hours = 49
 
 local res1 = time_to_hours(timeval)
 local res2 = hours_to_time(hours)
-
 
 print("res1", res1)
 print("res2", res2)

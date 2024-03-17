@@ -6,8 +6,7 @@ local HOME = os.getenv("HOME")
 local tman_path = "personal/prjs/tman/src/?.lua"
 package.path = package.path .. ";" .. HOME .. "/" .. tman_path
 
-
-local log = require("log")
+local log = require("log").init("tman")
 local help = require("help")
 local taskid = require("taskid")
 local gitmod = require("git")
@@ -16,20 +15,22 @@ local taskunit = require("taskunit")
 local getopt = require("posix.unistd").getopt
 local posix = require("posix")
 
-
 local TMan = {}
 TMan.__index = TMan
 
 --- Class TMan
 -- @type TMan
 
---- Init class TMan.
-function TMan.init()
-    local self = setmetatable({
-        taskid = taskid.init(),
-        taskunit = taskunit.init(),
-    }, TMan)
+--- Create a new instance of class TMan.
+function TMan.newinstance()
+    local self = setmetatable({}, TMan)
     return self
+end
+
+--- Init class Tman.
+function TMan:init()
+    self.taskid = taskid.init()
+    self.taskunit = taskunit.init()
 end
 
 --- Init util.
@@ -37,11 +38,17 @@ function TMan:tman_init()
     local mkdir = "mkdir -p %s 2> /dev/null"
 
     print("init tman structure")
-    print("tmanhome", global.tmanhome); os.execute(mkdir:format(global.tmanhome))
-    print("tmandb", global.tmanhome); os.execute(mkdir:format(global.tmandb))
-    print("repos", global.tmanhome); os.execute(mkdir:format(global.repos))
-    print("tasks", global.tmanhome); os.execute(mkdir:format(global.tasks))
-    print("cdbase", global.tmanhome); os.execute(mkdir:format(global.cdbase))
+    print("tmanhome", global.tmanhome)
+    os.execute(mkdir:format(global.tmanhome))
+    print("tmandb", global.tmanhome)
+    os.execute(mkdir:format(global.tmandb))
+    print("tasks", global.tmanhome)
+    os.execute(mkdir:format(global.tasks))
+    print("cdbase", global.tmanhome)
+    os.execute(mkdir:format(global.cdbase))
+
+    os.execute("touch " .. global.taskids)
+    os.execute("touch " .. global.repos)
 end
 
 --- Check paths and configs for proper work.
@@ -350,46 +357,51 @@ function TMan:restore()
 end
 
 --- Interface.
-function TMan:main(arg)
+local function main()
     local cmd = arg[1] or "help"
+    local tman = TMan.newinstance()
+
     -- posix getopt does not let permutations as GNU version
     table.remove(arg, 1)
 
+    -- system commands
     if cmd == "init" then
-        self:tman_init()
+        return tman:tman_init()
     elseif cmd == "check" then
-        self:tman_check()
+        return tman:tman_check()
+    end
 
-    elseif cmd == "add" then
-        self:add(arg[1], arg[2], arg[3])
+    tman:init()
+    if cmd == "add" then
+        tman:add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
-        self:amend(arg[1], arg[2])
+        tman:amend(arg[1], arg[2])
     elseif cmd == "use" then
-        self:use(arg[1])
+        tman:use(arg[1])
     elseif cmd == "show" then
-        self:show(arg[1])
+        tman:show(arg[1])
     elseif cmd == "del" then
-        self:del(arg[1])
+        tman:del(arg[1])
     elseif cmd == "_curr" then
-        self:_curr()
+        tman:_curr()
     elseif cmd == "list" then
-        self:list()
+        tman:list()
     elseif cmd == "update" then
-        self:update(arg[1])
+        tman:update(arg[1])
     elseif cmd == "review" then
-        self:review()
+        tman:review()
     elseif cmd == "done" then
-        self:done()
+        tman:done()
     elseif cmd == "config" then
-        self:config(arg[1])
+        tman:config(arg[1])
     elseif cmd == "prev" then
-        self:prev()
+        tman:prev()
     elseif cmd == "time" then
-        self:time(arg[1], arg[2])
+        tman:time(arg[1], arg[2])
     elseif cmd == "backup" then
-        self:backup()
+        tman:backup()
     elseif cmd == "restore" then
-        self:restore()
+        tman:restore()
     elseif cmd == "help" then
         help.usage()
     elseif cmd == "info" then
@@ -401,6 +413,4 @@ function TMan:main(arg)
     end
 end
 
-log = log.init("tman")
-local tman = TMan.init()
-return tman:main(arg)
+main()

@@ -6,8 +6,10 @@ Globals.tmandir = "work/tman/"
 
 Globals.tmanhome = os.getenv("HOME") .. "/" .. Globals.tmandir
 Globals.tmandb = Globals.tmanhome .. ".tman/"
-Globals.repos = Globals.tmandb .. "repos"
 Globals.tasks = Globals.tmanhome .. "tasks/"
 Globals.cdbase = Globals.tmanhome .. "codebase/"
+
+Globals.repos = Globals.tmandb .. "repos"
+Globals.taskids = Globals.tmandb .. "taskids"
 
 return Globals

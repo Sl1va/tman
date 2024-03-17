@@ -1,4 +1,4 @@
-all: release
+#all: release
 
 test:
 	lua tman.lua
