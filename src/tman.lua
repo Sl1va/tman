@@ -34,13 +34,14 @@ end
 
 --- Init util.
 function TMan:tman_init()
-    print("tman_init")
-    print("homebase", global.tmanhome)
-    --[[
-    os.execute("mkdir -p " .. global.homebase)
-    os.execute("mkdir -p " .. global.G_tmanpath)
-    os.execute("mkdir -p " .. global.homebase)
-    ]]
+    local mkdir = "mkdir -p %s 2> /dev/null"
+
+    print("init tman structure")
+    print("tmanhome", global.tmanhome); os.execute(mkdir:format(global.tmanhome))
+    print("tmandb", global.tmanhome); os.execute(mkdir:format(global.tmandb))
+    print("repos", global.tmanhome); os.execute(mkdir:format(global.repos))
+    print("tasks", global.tmanhome); os.execute(mkdir:format(global.tasks))
+    print("cdbase", global.tmanhome); os.execute(mkdir:format(global.cdbase))
 end
 
 --- Check paths and configs for proper work.
