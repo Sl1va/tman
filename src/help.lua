@@ -33,6 +33,7 @@ Contribute:
 
 For developers:
   init    - download repos and create symlinks for all of them
+  check   - check paths and configs for proper work
   backup  - backup configs and metadata
   restore - restore configs and metadata
 

@@ -32,6 +32,22 @@ function TMan.init()
     return self
 end
 
+--- Init util.
+function TMan:tman_init()
+    print("tman_init")
+    print("homebase", global.homebase)
+    --[[
+    os.execute("mkdir -p " .. global.homebase)
+    os.execute("mkdir -p " .. global.G_tmanpath)
+    os.execute("mkdir -p " .. global.homebase)
+    ]]
+end
+
+--- Check paths and configs for proper work.
+function TMan:tman_check()
+    print("tman_check")
+end
+
 --- Check ID is passed and exists in database.
 -- @param id task ID
 -- @return true on success, otherwise false
@@ -323,7 +339,12 @@ function TMan:main(arg)
     -- posix getopt does not let permutations as GNU version
     table.remove(arg, 1)
 
-    if cmd == "add" then
+    if cmd == "init" then
+        self:tman_init()
+    elseif cmd == "check" then
+        self:tman_check()
+
+    elseif cmd == "add" then
         self:add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
         self:amend(arg[1], arg[2])
