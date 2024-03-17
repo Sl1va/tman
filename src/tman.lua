@@ -35,7 +35,7 @@ end
 --- Init util.
 function TMan:tman_init()
     print("tman_init")
-    print("homebase", global.homebase)
+    print("homebase", global.tmanhome)
     --[[
     os.execute("mkdir -p " .. global.homebase)
     os.execute("mkdir -p " .. global.G_tmanpath)
@@ -315,9 +315,9 @@ function TMan:backup()
     local ftar = "tman_db.tar"
     local dtar = ".tman"
     local tar = "tar -C "
-    local tarcmd = tar .. global.homebase .. " -cf " .. ftar .. " " .. dtar
+    local tarcmd = tar .. global.tmanhome .. " -cf " .. ftar .. " " .. dtar
 
-    if not posix.access(global.G_tmanpath) then
+    if not posix.access(global.tmandb) then
         return log:err("tman database doesn't exist. Nothing to backup")
     end
 
