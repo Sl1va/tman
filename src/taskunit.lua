@@ -48,8 +48,6 @@ local unit_prios = {
     lowest = "lowest",
 }
 
-local unit_keys_count = 8
-
 local unit_keys = {
     "id",
     "prio",
@@ -62,6 +60,7 @@ local unit_keys = {
     "branch",
 }
 
+--[[
 --- Get table size (hash part).
 -- @param tab a toble to operate on
 -- @return table size
@@ -73,6 +72,8 @@ function table.size(tab)
     end
     return size
 end
+]]
+
 
 local function get_input(prompt)
     io.write(prompt, ": ")

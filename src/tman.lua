@@ -38,15 +38,13 @@ function TMan:tman_init()
     local mkdir = "mkdir -p %s 2> /dev/null"
 
     print("init tman structure")
-    print("tmanhome", global.tmanhome)
+    -- dirs
     os.execute(mkdir:format(global.tmanhome))
-    print("tmandb", global.tmanhome)
     os.execute(mkdir:format(global.tmandb))
-    print("tasks", global.tmanhome)
     os.execute(mkdir:format(global.tasks))
-    print("cdbase", global.tmanhome)
     os.execute(mkdir:format(global.cdbase))
 
+    -- files
     os.execute("touch " .. global.taskids)
     os.execute("touch " .. global.repos)
 end
