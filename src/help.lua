@@ -68,15 +68,13 @@ Notes:
     {
         name = "amend",
         desc = [[
-Usage: tman amend TASKID
+Usage: tman amend TASKID OPTION
 Amend task.
 
 Options:
     -d      amend task description
     -p      amend task priority
-
-Notes:
-    TASKID      task ID
+    -i      amend task ID
 ]],
     },
 

@@ -35,6 +35,14 @@ function tman()
         cd $TASKS
         wd -q -f add task
 
+    # tman amend DE-me4 -i
+    elif [ $RET -eq 0 ] && [ "$1" = "amend" ] && [ "$3" = "-i" ]; then
+        TASKID=$(lua $TMAN _curr -i)
+        cd $TASKS/${TASKID}
+        wd -q rm task
+        wd -q add task
+        wd task
+
     elif [ "$1" = "del" ]; then
         cd $TASKS
     fi

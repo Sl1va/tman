@@ -325,6 +325,38 @@ function TaskUnit:amend_desc(id, newdesc)
     return git:branch_rename(newbranch)
 end
 
+--- Chaneg task ID.
+-- @param id current task ID
+-- @param newid new ID
+function TaskUnit:amend_id(id, newid)
+    local old_taskdir = globals.tasks .. id
+    local new_taskdir = globals.tasks .. newid
+
+    self:setunit(id, "id", newid)
+    local taskunits = self:load_units(id)
+
+    if not next(taskunits) then
+        log:err("task '%s' unit is empty", id)
+        return false
+    end
+
+    local newbranch = format_branch(taskunits)
+    self:setunit(id, "branch", newbranch)
+
+    local git = gitmod.new(id, newbranch)
+    git:branch_rename(newbranch)
+
+    -- rename task folder
+    local cmd = ("mv %s %s"):format(old_taskdir, new_taskdir)
+    os.execute(cmd)
+
+    -- rename task ID file in .tman
+    local old_file_task = globals.tmandb .. id
+    local new_file_task = globals.tmandb .. newid
+    local cmd_db = ("mv %s %s"):format(old_file_task, new_file_task)
+    return os.execute(cmd_db)
+end
+
 --- Change task priority.
 -- @param id task ID
 -- @param newprio new task priority

@@ -212,6 +212,12 @@ function TMan:amend(id, opt)
         io.write("new priority [highest|high|mid|low|lowest]: ")
         local newprio = io.read("*l")
         self.taskunit:amend_prio(id, newprio)
+    elseif opt == "-i" then
+        io.write("new task ID: ")
+        local newid = io.read("*l")
+        self.taskunit:amend_id(id, newid)
+        self.taskid:del(id)
+        self.taskid:add(newid)
     elseif not opt then
         log:err("option missing")
     else
