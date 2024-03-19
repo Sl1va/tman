@@ -22,18 +22,18 @@ TMan.__index = TMan
 -- @type TMan
 
 --- Create a new instance of class TMan.
-function TMan.newinstance()
+function TMan.new()
     local self = setmetatable({}, TMan)
     return self
 end
 
---- Init class Tman.
+--- Init class TMan.
 function TMan:init()
     self.taskid = taskid.init()
     self.taskunit = taskunit.init()
 end
 
---- Init util.
+--- Init system to use a util.
 function TMan:tman_init()
     local mkdir = "mkdir -p %s 2> /dev/null"
 
@@ -97,7 +97,7 @@ function TMan:add(id, tasktype, prio)
     return true
 end
 
---- Switch to new task.
+--- Switch to another task.
 -- @param id task ID
 function TMan:use(id)
     if not self:checkid(id) then
@@ -357,7 +357,7 @@ end
 --- Interface.
 local function main()
     local cmd = arg[1] or "help"
-    local tman = TMan.newinstance()
+    local tman = TMan.new()
 
     -- posix getopt does not let permutations as GNU version
     table.remove(arg, 1)
