@@ -3,3 +3,5 @@
     a) code is clean and no macarony code
     b) code can be easily scaled
 3. `:` for object methods and class methods, `.` for static members.
+
+4. Usefull link http://tst2005.github.io/lua-users.org/wiki/SampleCode.html
