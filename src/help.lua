@@ -79,6 +79,14 @@ Options:
     },
 
     {
+        name = "done",
+        desc = [[
+Usage: tman done TASKID
+Move task to done status.
+]],
+    },
+
+    {
         name = "use",
         desc = [[
 Usage: tman use TASKID
