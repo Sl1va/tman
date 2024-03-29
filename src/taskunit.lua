@@ -7,7 +7,7 @@ local globals = require("globals")
 local log = require("log").init("taskunit")
 
 --- FIXME: If description has a colon (:) in itself this regex causes problems
-local unitregex = "(.*): (.*)"
+local unitregex = "(%w*): (.*)"
 
 --[[
 1 - main ones
