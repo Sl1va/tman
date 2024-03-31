@@ -244,16 +244,16 @@ function TaskID:list(active, completed)
     for _, unit in pairs(self.taskids) do
         if unit.type == types.CURR and active then
             local desc = taskunit:getunit(unit.id, "desc")
-            print(("* %-8s %s"):format(unit.id, desc))
+            print(("* %-10s %s"):format(unit.id, desc))
         elseif unit.type == types.PREV and active then
             local desc = taskunit:getunit(unit.id, "desc")
-            print(("- %-8s %s"):format(unit.id, desc))
+            print(("- %-10s %s"):format(unit.id, desc))
         elseif unit.type == types.ACTV and active then
             local desc = taskunit:getunit(unit.id, "desc")
-            print(("  %-8s %s"):format(unit.id, desc))
+            print(("  %-10s %s"):format(unit.id, desc))
         elseif unit.type == types.COMP and completed then
             local desc = taskunit:getunit(unit.id, "desc")
-            print(("  %-8s %s"):format(unit.id, desc))
+            print(("  %-10s %s"):format(unit.id, desc))
         end
         count = count + 1
     end
@@ -293,6 +293,6 @@ function TaskID:move(tasktype)
     return self:save_taskids()
 end
 
--- Public functions: start --
+-- Public functions: end --
 
 return TaskID
