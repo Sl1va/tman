@@ -141,6 +141,7 @@ end
 -- @param id task id
 -- @param true on success, otherwise false
 function TaskUnit:check_unitfile(id)
+    -- roachme: not used, but gotta be when load_units()
     local i = 1
     local taskunits = self:load_units(id)
 
