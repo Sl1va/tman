@@ -18,6 +18,7 @@ Basic:
 Amend:
   add     - add new task
   del     - delete task
+  link    - create task symlinks
   amend   - amend task units
   config  - config for your workflow
   update  - update git repos
@@ -113,6 +114,13 @@ Options:
 Notes:
     *   Marks current task.
     -   Makrs previous task.
+]],
+    },
+    {
+        name = "link",
+        desc = [[
+Usage: tman link TASKID
+Create task symlinks.
 ]],
     },
     {

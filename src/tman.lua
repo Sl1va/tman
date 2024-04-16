@@ -225,6 +225,16 @@ function TMan:amend(id, opt)
     end
 end
 
+--- Create task symlinks.
+function TMan:link(id)
+    if not self:checkid(id) then
+        os.exit(1)
+    end
+
+    local git = gitmod.new(id, "")
+    return git:repo_symlink()
+end
+
 --- Update git repos.
 -- @param opt options
 -- roachme: It doesn't work if there is no current task
@@ -380,6 +390,10 @@ local function main()
         tman:add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
         tman:amend(arg[1], arg[2])
+
+    elseif cmd == "link" then
+        tman:link(arg[1])
+
     elseif cmd == "use" then
         tman:use(arg[1])
     elseif cmd == "show" then
