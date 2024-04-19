@@ -143,15 +143,14 @@ function TMan:_curr()
     local id = self.taskid:getcurr()
 
     for optopt, _, optind in getopt(arg, optstring) do
-        if optopt == "?" then
-            log:err("unrecognized option '%s'", arg[optind - 1])
-            os.exit(1)
-        end
         if optopt == "f" then
             local desc = self.taskunit:getunit(id, "desc")
-            print(("* %-8s %s"):format(id, desc))
+            print(("* %-10s %s"):format(id, desc))
         elseif optopt == "i" then
             print(id)
+        elseif optopt == "?" then
+            log:err("unrecognized option '%s'", arg[optind - 1])
+            os.exit(1)
         end
     end
 end
