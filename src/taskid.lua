@@ -9,14 +9,19 @@ Private functions:
     unsetcurr
     unsetprev
 
+    load_taskids
+    save_taskids
+
 Public functions:
     add         - add a new task ID to database
     del         - del a task ID from database
-    list        - list all task IDs in database
     swap        - swap current and previous task IDs
     exist       - check that task ID exist in database
     getcurr     - get current task ID value from database
     getprev     - get previous task ID value from database
+
+    -- roachme: questionable thingy
+    list        - list all task IDs in database (roachme: redicilous API command)
 
     update      - mark new ID as current, mark old current as previous
     move        - move current ID to new status, make previous a current ID
@@ -79,17 +84,25 @@ function TaskID:save_taskids()
     return f:close()
 end
 
+--- Get taskid by index.
+-- @param id task ID by index from the database.
+-- @return task ID
+-- @return nil if there's no current task ID
+function TaskID:getid(idx)
+    local taskid = self.taskids[idx]
+
+    if taskid and taskid.type == types.CURR then
+        return taskid.id
+    end
+    return nil
+end
+
 --- Get current task ID from database.
 -- @return task ID
 -- @return nil if there's no current task ID
 function TaskID:getcurr()
     local idxcurr = 1
-    local curr = self.taskids[idxcurr]
-
-    if curr and curr.type == types.CURR then
-        return curr.id
-    end
-    return nil
+    return self:getid(idxcurr)
 end
 
 --- Get previous task ID from database.
@@ -97,12 +110,7 @@ end
 -- @return nil if there's no previous task ID
 function TaskID:getprev()
     local idxprev = 2
-    local prev = self.taskids[idxprev]
-
-    if prev and prev.type == types.PREV then
-        return prev.id
-    end
-    return nil
+    return self:getid(idxprev)
 end
 
 --- Set current task ID.
