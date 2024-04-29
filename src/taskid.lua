@@ -20,11 +20,13 @@ Public functions:
     getcurr     - get current task ID value from database
     getprev     - get previous task ID value from database
 
+    setcurr     - mark new ID as current, mark old current as previous if needed (cmd: move (depricated))
+    movecurr    - move current ID to new status, make previous a current ID
+    unsetcurr   - unset current task
+
     -- roachme: questionable thingy
     list        - list all task IDs in database (roachme: redicilous API command)
 
-    update      - mark new ID as current, mark old current as previous
-    move        - move current ID to new status, make previous a current ID
 ]]
 
 local taskunit = require("taskunit")
@@ -36,7 +38,7 @@ TaskID.__index = TaskID
 taskunit = taskunit.init()
 
 --- Types of task IDs.
-local types = {
+local status = {
     CURR = 0, -- current task
     PREV = 1, -- previous task
     ACTV = 2, -- active task
@@ -91,7 +93,7 @@ end
 function TaskID:getid(idx)
     local taskid = self.taskids[idx]
 
-    if taskid and taskid.type == types.CURR then
+    if taskid and taskid.type == status.CURR then
         return taskid.id
     end
     return nil
@@ -122,12 +124,12 @@ function TaskID:setcurr(id)
     local curr = self.taskids[idxcurr]
 
     -- unset old current task ID
-    if curr and curr.type == types.CURR then
-        curr.type = types.ACTV
+    if curr and curr.type == status.CURR then
+        curr.type = status.ACTV
     end
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
-            unit.type = types.CURR
+            unit.type = status.CURR
             break
         end
     end
@@ -142,12 +144,12 @@ function TaskID:setprev(id)
     local prev = self.taskids[idxprev]
 
     -- unset old previous task ID
-    if prev and prev.type == types.PREV then
-        prev.type = types.ACTV
+    if prev and prev.type == status.PREV then
+        prev.type = status.ACTV
     end
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
-            unit.type = types.PREV
+            unit.type = status.PREV
             break
         end
     end
@@ -161,9 +163,9 @@ end
 function TaskID:unsetcurr(tasktype)
     local idxcurr = 1
     local curr = self.taskids[idxcurr]
-    tasktype = tasktype or types.ACTV
+    tasktype = tasktype or status.ACTV
 
-    if curr and curr.type == types.CURR then
+    if curr and curr.type == status.CURR then
         curr.type = tasktype
     end
 end
@@ -176,9 +178,9 @@ end
 function TaskID:unsetprev(tasktype)
     local idxcurr = 1
     local curr = self.taskids[idxcurr]
-    tasktype = tasktype or types.ACTV
+    tasktype = tasktype or status.ACTV
 
-    if curr and curr.type == types.PREV then
+    if curr and curr.type == status.PREV then
         curr.type = tasktype
     end
 end
@@ -193,7 +195,7 @@ function TaskID.init()
     local self = setmetatable({}, TaskID)
     self.meta = globals.tmandb .. "taskids"
     self.taskids = self:load_taskids()
-    self.types = types
+    self.types = status
     return self
 end
 
@@ -218,7 +220,7 @@ function TaskID:add(id)
     end
     -- roachme: shoudn't we swap these commands?
     self:update(id)
-    table.insert(self.taskids, { id = id, type = types.CURR })
+    table.insert(self.taskids, { id = id, type = status.CURR })
     return self:save_taskids()
 end
 
@@ -250,16 +252,16 @@ function TaskID:list(active, completed)
     local count = 1
 
     for _, unit in pairs(self.taskids) do
-        if unit.type == types.CURR and active then
+        if unit.type == status.CURR and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("* %-10s %s"):format(unit.id, desc))
-        elseif unit.type == types.PREV and active then
+        elseif unit.type == status.PREV and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("- %-10s %s"):format(unit.id, desc))
-        elseif unit.type == types.ACTV and active then
+        elseif unit.type == status.ACTV and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
-        elseif unit.type == types.COMP and completed then
+        elseif unit.type == status.COMP and completed then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
         end
@@ -290,13 +292,14 @@ function TaskID:swap()
 end
 
 --- Move current task to new status.
+-- Update previous one if needed.
 -- @param tasktype task type
 -- @return true on success, otherwise false
 function TaskID:move(tasktype)
     local prev = self:getprev()
 
     self:unsetcurr(tasktype)
-    self:unsetprev(types.ACTV)
+    self:unsetprev(status.ACTV)
     self:setcurr(prev)
     return self:save_taskids()
 end
