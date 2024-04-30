@@ -48,7 +48,7 @@ local status = {
 -- @type TaskID
 
 --- Load task iDs from the file.
--- @treturn table table like {id, type}
+-- @treturn table table like {id, idstatus}
 function TaskID:_load_taskids()
     local taskids = {}
     local f = io.open(self.meta)
@@ -58,8 +58,8 @@ function TaskID:_load_taskids()
         return taskids
     end
     for line in f:lines() do
-        local id, idtype = string.match(line, "(.*) (.*)")
-        table.insert(taskids, { id = id, type = tonumber(idtype) })
+        local id, idstatus = string.match(line, "(.*) (.*)")
+        table.insert(taskids, { id = id, status = tonumber(idstatus) })
     end
     f:close()
     return taskids
@@ -75,10 +75,10 @@ function TaskID:_save_taskids()
     end
 
     table.sort(self.taskids, function(a, b)
-        return a.type < b.type
+        return a.status < b.status
     end)
     for _, unit in pairs(self.taskids) do
-        f:write(unit.id, " ", unit.type, "\n")
+        f:write(unit.id, " ", unit.status, "\n")
     end
     return f:close()
 end
@@ -92,12 +92,12 @@ function TaskID:_setprev(id)
     local prev = self.taskids[idxprev]
 
     -- unset old previous task ID
-    if prev and prev.type == status.PREV then
-        prev.type = status.ACTV
+    if prev and prev.status == status.PREV then
+        prev.status = status.ACTV
     end
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
-            unit.type = status.PREV
+            unit.status = status.PREV
             return true
         end
     end
@@ -112,12 +112,12 @@ function TaskID:_setcurr(id)
     local curr = self.taskids[idxcurr]
 
     -- unset old current task ID
-    if curr and curr.type == status.CURR then
-        curr.type = status.ACTV
+    if curr and curr.status == status.CURR then
+        curr.status = status.ACTV
     end
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
-            unit.type = status.CURR
+            unit.status = status.CURR
             return true
         end
     end
@@ -127,15 +127,15 @@ end
 --- Unset previous task ID.
 -- Assumes that ID exists in database.
 -- @param id task ID
--- @param tasktype task type to move a previous ID to
+-- @param taskstatus task status to move a previous ID to
 -- @return true on success, otherwise false
-function TaskID:_unsetprev(tasktype)
+function TaskID:_unsetprev(taskstatus)
     local idxcurr = 1
     local curr = self.taskids[idxcurr]
-    tasktype = tasktype or status.ACTV
+    taskstatus = taskstatus or status.ACTV
 
-    if curr and curr.type == status.PREV then
-        curr.type = tasktype
+    if curr and curr.status == status.PREV then
+        curr.status = taskstatus
     end
     return true
 end
@@ -156,9 +156,9 @@ function TaskID.init()
 end
 
 function TaskID:_add_new_taskid(id, _status)
-    table.insert(self.taskids, { id = id, type = _status })
+    table.insert(self.taskids, { id = id, status = _status })
     table.sort(self.taskids, function(a, b)
-        return a.type < b.type
+        return a.status < b.status
     end)
 end
 
@@ -177,7 +177,7 @@ function TaskID:add(id)
     self.taskids[idxcurr].status = status.ACTV
     table.insert(self.taskids, { id = id, status = status.CURR })
     table.sort(self.taskids, function(a, b)
-        return a.type < b.type
+        return a.status < b.status
     end)
 
     self:_setprev(prev)
@@ -222,7 +222,8 @@ end
 function TaskID:getcurr()
     local idxcurr = 1
     local curr = self.taskids[idxcurr]
-    if curr and curr.type == status.CURR then
+
+    if curr and curr.status == status.CURR then
         return curr.id
     end
     return nil
@@ -234,7 +235,8 @@ end
 function TaskID:getprev()
     local idxprev = 2
     local prev = self.taskids[idxprev]
-    if prev and prev.type == status.PREV then
+
+    if prev and prev.status == status.PREV then
         return prev.id
     end
     return nil
@@ -267,15 +269,15 @@ end
 --- Unset current task ID.
 -- Assumes that ID exists in database.
 -- @param id task ID
--- @param tasktype task type to move a current ID to
+-- @param taskstatus task status to move a current ID to
 -- @return true on success, otherwise false
-function TaskID:unsetcurr(tasktype)
+function TaskID:unsetcurr(taskstatus)
     local idxcurr = 1
     local curr = self.taskids[idxcurr]
-    tasktype = tasktype or status.ACTV
+    taskstatus = taskstatus or status.ACTV
 
-    if curr and curr.type == status.CURR then
-        curr.type = tasktype
+    if curr and curr.status == status.CURR then
+        curr.status = taskstatus
     end
     return true
 end
@@ -292,7 +294,7 @@ function TaskID:movecurr()
 end
 
 --- List task IDs.
--- There are 4 types: current, previous, active and completed. Default: active
+-- There are 4 statuses: current, previous, active and completed. Default: active
 -- @param active list only active task IDs
 -- @param completed list only completed task IDs
 -- @return count of task IDs
@@ -300,16 +302,16 @@ function TaskID:list(active, completed)
     local count = 1
 
     for _, unit in pairs(self.taskids) do
-        if unit.type == status.CURR and active then
+        if unit.status == status.CURR and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("* %-10s %s"):format(unit.id, desc))
-        elseif unit.type == status.PREV and active then
+        elseif unit.status == status.PREV and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("- %-10s %s"):format(unit.id, desc))
-        elseif unit.type == status.ACTV and active then
+        elseif unit.status == status.ACTV and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
-        elseif unit.type == status.COMP and completed then
+        elseif unit.status == status.COMP and completed then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
         end
