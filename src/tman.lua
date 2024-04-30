@@ -90,7 +90,7 @@ function TMan:add(id, tasktype, prio)
         os.exit(1)
     end
     if not self.taskunit:add(id, tasktype, prio) then
-        log:err("colud not create new task unit")
+        log:err("could not create new task unit")
         self.taskid:del(id)
         os.exit(1)
     end
@@ -114,7 +114,7 @@ function TMan:use(id)
         log:err("repo has uncommited changes")
         os.exit(1)
     end
-    self.taskid:update(id)
+    self.taskid:setcurr(id)
     return 0
 end
 
