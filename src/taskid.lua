@@ -83,18 +83,28 @@ function TaskID:_save_taskids()
     return f:close()
 end
 
+--- Unset previous task ID.
+-- Assumes that ID exists in database.
+-- @param id task ID
+-- @param taskstatus task status to move a previous ID to
+-- @return true on success, otherwise false
+function TaskID:_unsetprev(taskstatus)
+    local idxprev = 2
+    local curr = self.taskids[idxprev]
+    taskstatus = taskstatus or status.ACTV
+
+    if curr and curr.status == status.PREV then
+        curr.status = taskstatus
+    end
+    return true
+end
+
 --- Set previous task ID.
 -- Unset old previous task ID.
 -- @param id task ID
 -- @treturn bool true if previous task is set, otherwise false
 function TaskID:_setprev(id)
-    local idxprev = 2
-    local prev = self.taskids[idxprev]
-
-    -- unset old previous task ID
-    if prev and prev.status == status.PREV then
-        prev.status = status.ACTV
-    end
+    self:_unsetprev()
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
             unit.status = status.PREV
@@ -122,22 +132,6 @@ function TaskID:_setcurr(id)
         end
     end
     return false
-end
-
---- Unset previous task ID.
--- Assumes that ID exists in database.
--- @param id task ID
--- @param taskstatus task status to move a previous ID to
--- @return true on success, otherwise false
-function TaskID:_unsetprev(taskstatus)
-    local idxcurr = 1
-    local curr = self.taskids[idxcurr]
-    taskstatus = taskstatus or status.ACTV
-
-    if curr and curr.status == status.PREV then
-        curr.status = taskstatus
-    end
-    return true
 end
 
 --- Private functions: end --
