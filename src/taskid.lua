@@ -4,25 +4,27 @@
 
 --[[
 Private functions:
-    load_taskids
-    save_taskids
-    setprev
-    unsetprev
+    _load_taskids
+    _save_taskids
+    _add_new_taskid
+    _setprev
+    _unsetprev
+    _setcurr
 
 Public functions:
-    add         - add a new task ID to database
-    del         - del a task ID from database
-    exist       - check that task ID exist in database
-    getcurr     - get current task ID value from database
-    getprev     - get previous task ID value from database
+    add        - add a new task ID to database
+    del        - del a task ID from database
+    exist      - check that task ID exist in database
 
-    swap        - swap current and previous task IDs
-    setcurr     - mark new ID as current, mark old current as previous if needed (cmd: update (depricated))
-    unsetcurr   - unset current task
-    movecurr    - move current ID to new status, make previous a current ID
+    list       - list task IDs in database (redicilous implementation?)
+    getcurr    - get current task ID value from database
+    getprev    - get previous task ID value from database
 
-    -- roachme: questionable thingy
-    list        - list all task IDs in database (roachme: redicilous API command)
+    swap       - swap current and previous task IDs
+    move       - move task ID to new status
+    movecurr   - move current task ID to new status, make previous a current ID
+    setcurr    - mark new ID as current, mark old current as previous if needed
+    unsetcurr  - unset current task (used when task's moved to COMP status)
 ]]
 
 
@@ -118,13 +120,7 @@ end
 -- @param id task ID
 -- @treturn bool true if previous task is set, otherwise false
 function TaskID:_setcurr(id)
-    local idxcurr = 1
-    local curr = self.taskids[idxcurr]
-
-    -- unset old current task ID
-    if curr and curr.status == status.CURR then
-        curr.status = status.ACTV
-    end
+    self:unsetcurr()
     for _, unit in pairs(self.taskids) do
         if unit.id == id then
             unit.status = status.CURR
@@ -252,7 +248,8 @@ function TaskID:setcurr(id)
     local oldcurr = self:getcurr()
 
     if not self:exist(id) then
-        return log:err("no such task ID '%s' or empty", id or "")
+        log:err("no such task ID '%s' or empty", id or "")
+        return false
     end
     self:_setprev(oldcurr)
     self:_setcurr(id)
@@ -276,13 +273,39 @@ function TaskID:unsetcurr(taskstatus)
     return true
 end
 
+--- Move task ID to new status.
+-- @param id task ID
+-- @param _status task new status (default: active)
+-- @return true on success, otherwise false
+function TaskID:move(id, _status)
+    local prev = self:getprev()
+    local curr = self:getcurr()
+    _status = status.ACTV
+
+    if id == curr then
+        return self:movecurr()
+    elseif id == prev then
+        self:_unsetprev(_status)
+    else
+        -- roachme: maybe it's better to make a generic function for this thnigy?
+        -- any other active or complete task ID
+        for _, unit in pairs(self.taskids) do
+            if unit.id == id then
+                unit.status = _status
+            end
+        end
+    end
+end
+
 --- Move current task to new status.
 -- Update previous one if needed.
+-- @param _status current task new status (default: active)
 -- @return true on success, otherwise false
-function TaskID:movecurr()
+function TaskID:movecurr(_status)
     local prev = self:getprev()
+    _status = status.ACTV
 
-    self:_unsetprev(status.ACTV)
+    self:_unsetprev(_status)
     self:setcurr(prev)
     return self:_save_taskids()
 end
