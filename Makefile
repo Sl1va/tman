@@ -1,7 +1,8 @@
 #all: release
+.PHONY: test
 
 test:
-	lua tman.lua
+	@lua test/db_add.lua
 
 git:
 	lua git.lua

@@ -1,19 +1,23 @@
+local globals = require("globals")
+
+
 --[[
 
 List of DB commands:
 Private:
     _sort
     _exist
+    _load
+    _save
 
 Public:
-    load
-    save
-
     add
     del
 
     get
     set
+    size
+    getunit
     getidx
     setidx
 ]]
@@ -33,7 +37,7 @@ taskid file structure:
 
 
 local taskids = {}
-local meta = "taskids"
+local meta = globals.taskids
 
 
 -- Private functions: start --
@@ -57,7 +61,7 @@ local function _db_exist(id)
 end
 
 --- Load task IDs from file.
-local function db_load()
+local function _db_load()
     local f = io.open(meta, "r")
 
     if not f then
@@ -73,7 +77,7 @@ local function db_load()
 end
 
 --- Save task IDs to file.
-local function db_save()
+local function _db_save()
     local f = io.open(meta, "w")
 
     if not f then
@@ -93,10 +97,10 @@ end
 
 -- Public functions: start ---
 
---- Init db.
+--- Init database.
 local function db_init(ftaskids)
     meta = ftaskids or meta
-    db_load()
+    _db_load()
 end
 
 --- Add new task ID into database.
@@ -107,7 +111,7 @@ local function db_add(taskid, taskstatus)
         return false
     end
     table.insert(taskids, { id = taskid, status = taskstatus })
-    db_save()
+    _db_save()
     return true
 end
 
@@ -117,11 +121,22 @@ local function db_del(id)
     for i, unit in pairs(taskids) do
         if unit.id == id then
             table.remove(taskids, i)
-            db_save()
+            _db_save()
             return true
         end
     end
     return false
+end
+
+--- Get size of units in database.
+-- @return number of units in database
+local function db_size()
+    local size = 0
+
+    for _, _ in pairs(taskids) do
+        size = size + 1
+    end
+    return size
 end
 
 --- Get task ID from database.
@@ -134,6 +149,18 @@ local function db_get(id)
         end
     end
     return nil
+end
+
+--- Get a unit from database.
+-- @param idx task ID index
+-- @tparam table {id, status}
+local function db_getunit(idx)
+    local unit = taskids[idx]
+
+    if unit ~= nil then
+        return { id = unit.id, status = unit.status }
+    end
+    return {}
 end
 
 --- Get task ID from database by index
@@ -181,9 +208,10 @@ return {
     init = db_init,
     add = db_add,
     del = db_del,
-
     get = db_get,
     set = db_set,
+    size = db_size,
     getidx = db_getidx,
     setidx = db_setidx,
+    getunit = db_getunit,
 }

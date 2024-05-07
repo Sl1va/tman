@@ -30,11 +30,16 @@ Public functions:
 
 local taskunit = require("taskunit")
 local globals = require("globals")
-local log = require("log").init("taskid")
+local log = require("log")
+local db = require("db")
+
 
 local TaskID = {}
 TaskID.__index = TaskID
 taskunit = taskunit.init()
+log = log.init("taskid")
+db.init()
+
 
 --- Types of task IDs.
 local status = {
@@ -316,9 +321,10 @@ end
 -- @param completed list only completed task IDs
 -- @return count of task IDs
 function TaskID:list(active, completed)
-    local count = 1
+    local size = db.size()
 
-    for _, unit in pairs(self.taskids) do
+    for idx = 1, size do
+        local unit = db.getunit(idx)
         if unit.status == status.CURR and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("* %-10s %s"):format(unit.id, desc))
@@ -332,9 +338,8 @@ function TaskID:list(active, completed)
             local desc = taskunit:getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
         end
-        count = count + 1
     end
-    return count
+    return size
 end
 
 -- Public functions: end --
