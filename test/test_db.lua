@@ -1,4 +1,4 @@
-local db = require("../src/db")
+local db = require("db")
 local file_taskids = "test/taskids_add"
 
 local function add_clean()
@@ -38,5 +38,12 @@ local function add_multiple()
     add_clean()
 end
 
-add_multiple()
+local function test_add()
+    add_multiple()
+end
+
+
+return {
+    add = test_add,
+}
 

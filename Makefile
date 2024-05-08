@@ -2,7 +2,7 @@
 .PHONY: test
 
 test:
-	@lua test/db_add.lua
+	@lua test/tests.lua
 
 git:
 	lua git.lua
