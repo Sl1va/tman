@@ -226,7 +226,6 @@ return {
     init = db_init,
     size = db_size,
     get = db_get,
-    getidx = db_getidx,
     getunit = db_getunit,
     getstat = db_getstat,
 
@@ -234,8 +233,9 @@ return {
     del = db_del,
     set = db_set,
     save = db_save,
-    setidx = db_setidx,
 
-    -- roachme: gotta delete it from API
-    exist = db_exist,
+    -- roachme: gotta delete 'em from API
+    exist = db_exist,       -- should be private function
+    setidx = db_setidx,     -- no use
+    getidx = db_getidx,     -- no use
 }
