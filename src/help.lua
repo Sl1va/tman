@@ -5,7 +5,7 @@ local log = require("log").init("help")
 Help.version = "0.1.0"
 Help.progname = "tman"
 
-function Help.usage()
+local function help_usage()
     print(([[
 Usage: %s COMMAND [ID]
 Basic:
@@ -148,7 +148,7 @@ Show tman version.
 
 --- Get detailed info about command.
 -- @param cmdname command name to get info about
-function Help:info(cmdname)
+local function help_info(cmdname)
     if not cmdname then
         log:warning("command to look up is missing")
         return false
@@ -162,4 +162,7 @@ function Help:info(cmdname)
     return log:warning("no such command '%s'", cmdname)
 end
 
-return Help
+return {
+    usage = help_usage,
+    info = help_info,
+}

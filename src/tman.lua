@@ -422,7 +422,7 @@ local function main()
     elseif cmd == "help" then
         help.usage()
     elseif cmd == "info" then
-        help:info(arg[1])
+        help.info(arg[1])
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
