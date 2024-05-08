@@ -28,7 +28,6 @@ Public functions:
 
 
 local taskunit = require("taskunit")
-local globals = require("globals")
 local log = require("log")
 local db = require("db")
 

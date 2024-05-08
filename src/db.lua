@@ -196,10 +196,10 @@ end
 -- @param id task ID
 -- @param new task status
 -- @param return true on success, otherwise false
-local function db_set(id, _status)
+local function db_set(id, status)
     for _, unit in pairs(taskids) do
         if unit.id == id then
-            unit.status = _status
+            unit.status = status
             return true
         end
     end
@@ -210,11 +210,11 @@ end
 -- @param idx task ID index
 -- @param new task status
 -- @param return true on success, otherwise false
-local function db_setidx(idx, _status)
+local function db_setidx(idx, status)
     local unit = taskids[idx]
 
     if unit and unit.idx == idx then
-        unit.status = _status
+        unit.status = status
         return true
     end
     return false
