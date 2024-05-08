@@ -1,16 +1,10 @@
 #all: release
-.PHONY: test
+.PHONY: lua_test lua_fmt lua_lint lua_docs
 
-test:
+lua_test:
 	@lua test/tests.lua
 
-git:
-	lua git.lua
-
-run:
-	lua taskman.lua
-
-
+# stylua is install by cargo (rust something)
 lua_fmt:
 	echo "===> Formatting"
 	stylua . --config-path=.stylua.toml
