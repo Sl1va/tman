@@ -3,23 +3,30 @@ local globals = require("globals")
 
 --[[
 
+Qs:
+    1. Should db or user save data into file?
+]]
+
+--[[
+
 List of DB commands:
 Private:
-    _sort
-    _exist
-    _load
-    _save
+    _db_load
+    _db_sort
+    _db_exist      - check that task ID exist in database
 
 Public:
-    add
-    del
+    add        - add a new task ID to database
+    del        - del a task ID from database
+    save
 
     get
     set
     size
-    getunit
     getidx
     setidx
+    getunit
+    getstat
 ]]
 
 --[[
@@ -51,7 +58,7 @@ end
 
 --- Check that task ID exist in database.
 -- @param task ID to check
-local function _db_exist(id)
+local function db_exist(id)
     for _, unit in pairs(taskids) do
         if unit.id == id then
             return true
@@ -77,7 +84,7 @@ local function _db_load()
 end
 
 --- Save task IDs to file.
-local function _db_save()
+local function db_save()
     local f = io.open(meta, "w")
 
     if not f then
@@ -107,11 +114,10 @@ end
 -- @param taskid task ID
 -- @param taskstatus task status
 local function db_add(taskid, taskstatus)
-    if _db_exist(taskid) then
+    if db_exist(taskid) then
         return false
     end
     table.insert(taskids, { id = taskid, status = taskstatus })
-    _db_save()
     return true
 end
 
@@ -121,7 +127,6 @@ local function db_del(id)
     for i, unit in pairs(taskids) do
         if unit.id == id then
             table.remove(taskids, i)
-            _db_save()
             return true
         end
     end
@@ -174,6 +179,19 @@ local function db_getidx(idx)
     return nil
 end
 
+--- Get task ID by its status.
+-- @param task ID status
+-- @return task ID
+local function db_getstat(stat)
+    -- roach: it traverses a whole database. Optimize it
+    for _, unit in pairs(taskids) do
+        if unit.status == stat then
+            return unit.id
+        end
+    end
+    return false
+end
+
 --- Set new status to task ID.
 -- @param id task ID
 -- @param new task status
@@ -206,12 +224,18 @@ end
 
 return {
     init = db_init,
+    size = db_size,
+    get = db_get,
+    getidx = db_getidx,
+    getunit = db_getunit,
+    getstat = db_getstat,
+
     add = db_add,
     del = db_del,
-    get = db_get,
     set = db_set,
-    size = db_size,
-    getidx = db_getidx,
+    save = db_save,
     setidx = db_setidx,
-    getunit = db_getunit,
+
+    -- roachme: gotta delete it from API
+    exist = db_exist,
 }
