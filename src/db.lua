@@ -13,20 +13,18 @@ List of DB commands:
 Private:
     _db_load
     _db_sort
-    _db_exist      - check that task ID exist in database
+    _db_exist   - check that task ID exist in database
 
 Public:
-    add        - add a new task ID to database
-    del        - del a task ID from database
+    init        - init database
+    add         - add a new task ID to database
+    del         - del a task ID from database
     save
+    size
 
     get
     set
-    size
     getidx
-    setidx
-    getunit
-    getstat
 ]]
 
 --[[
@@ -113,11 +111,11 @@ end
 --- Add new task ID into database.
 -- @param taskid task ID
 -- @param taskstatus task status
-local function db_add(taskid, taskstatus)
-    if db_exist(taskid) then
+local function db_add(id, status)
+    if db_exist(id) then
         return false
     end
-    table.insert(taskids, { id = taskid, status = taskstatus })
+    table.insert(taskids, { id = id, status = status })
     return true
 end
 
@@ -144,52 +142,31 @@ local function db_size()
     return size
 end
 
---- Get task ID from database.
+--- Get unit from database by task ID.
 -- @param id task ID
--- @return task ID
+-- @return task ID unit
+-- @return table {id, status}
+-- @return empty table if task ID doesn't exist
 local function db_get(id)
     for _, unit in pairs(taskids) do
         if unit.id == id then
-            return unit.id
+            return { id = unit.id, status = unit.status }
         end
     end
-    return nil
+    return {}
 end
 
---- Get a unit from database.
+--- Get a unit from database by task ID index.
 -- @param idx task ID index
--- @tparam table {id, status}
-local function db_getunit(idx)
+-- @return table {id, status}
+-- @return empty table if task ID doesn't exist
+local function db_getidx(idx)
     local unit = taskids[idx]
 
     if unit ~= nil then
         return { id = unit.id, status = unit.status }
     end
     return {}
-end
-
---- Get task ID from database by index
--- @param idx task ID index
-local function db_getidx(idx)
-    local unit = taskids[idx]
-
-    if unit ~= nil then
-        return unit.id
-    end
-    return nil
-end
-
---- Get task ID by its status.
--- @param task ID status
--- @return task ID
-local function db_getstat(stat)
-    -- roach: it traverses a whole database. Optimize it
-    for _, unit in pairs(taskids) do
-        if unit.status == stat then
-            return unit.id
-        end
-    end
-    return false
 end
 
 --- Set new status to task ID.
@@ -206,36 +183,17 @@ local function db_set(id, status)
     return false
 end
 
---- Set new status to task ID by its index.
--- @param idx task ID index
--- @param new task status
--- @param return true on success, otherwise false
-local function db_setidx(idx, status)
-    local unit = taskids[idx]
-
-    if unit and unit.idx == idx then
-        unit.status = status
-        return true
-    end
-    return false
-end
-
 -- Public functions: end --
 
 return {
     init = db_init,
     size = db_size,
-    get = db_get,
-    getunit = db_getunit,
-    getstat = db_getstat,
 
     add = db_add,
     del = db_del,
-    set = db_set,
     save = db_save,
 
-    -- roachme: gotta delete 'em from API
-    exist = db_exist,       -- should be private function
-    setidx = db_setidx,     -- no use
-    getidx = db_getidx,     -- no use
+    set = db_set,
+    get = db_get,
+    getidx = db_getidx,
 }

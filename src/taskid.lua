@@ -58,14 +58,15 @@ local status = {
 -- @param taskstatus task status to move a previous ID to
 -- @return true on success, otherwise false
 function TaskID:_unsetprev(taskstatus)
-    local idxprev = 2
-    local curr = db.getunit(idxprev)
-    taskstatus = taskstatus or status.ACTV
+    local size = db.size()
 
-    if curr and curr.status == status.PREV then
-        db.set(curr.id, taskstatus)
+    for i = 1, size do
+        local unit = db.getidx(i)
+        if unit.status == status.PREV then
+            return db.set(unit.id, taskstatus)
+        end
     end
-    return true
+    return false
 end
 
 --- Set previous task ID.
@@ -108,6 +109,7 @@ function TaskID:add(id)
     if db.add(id, stat) == false then
         return false
     end
+
     self:_setprev(prev)
     self:_setcurr(id)
     return db.save()
@@ -146,14 +148,30 @@ end
 -- @return current task ID
 -- @return nil if there's no current task ID
 function TaskID:getcurr()
-    return db.getstat(status.CURR)
+    local size =  db.size()
+
+    for i = 1, size do
+        local unit = db.getidx(i)
+        if unit.status == status.CURR then
+            return unit.id
+        end
+    end
+    return nil
 end
 
 --- Get previous task ID from database.
 -- @return previous task ID
 -- @return nil if there's no previous task ID
 function TaskID:getprev()
-    return db.getstat(status.PREV)
+    local size =  db.size()
+
+    for i = 1, size do
+        local unit = db.getidx(i)
+        if unit.status == status.PREV then
+            return unit.id
+        end
+    end
+    return nil
 end
 
 --- Swap current and previous task IDs.
@@ -185,16 +203,15 @@ end
 -- @param taskstatus task status to move a current ID to
 -- @return true on success, otherwise false
 function TaskID:unsetcurr(taskstatus)
-    -- roachme: maybe it's better to use db.getstat()
-    --          this way db doesn't gotta be sorted
-    local idxcurr = 1
-    local curr = db.getunit(idxcurr)
-    taskstatus = taskstatus or status.ACTV
+    local size = db.size()
 
-    if curr and curr.status == status.CURR then
-        db.set(curr.id, taskstatus)
+    for i = 1, size do
+        local unit = db.getidx(i)
+        if unit.status == status.CURR then
+            return db.set(unit.id, taskstatus)
+        end
     end
-    return true
+    return false
 end
 
 --- Move task ID to new status.
@@ -238,7 +255,7 @@ function TaskID:list(active, completed)
     local size = db.size()
 
     for idx = 1, size do
-        local unit = db.getunit(idx)
+        local unit = db.getidx(idx)
         if unit.status == status.CURR and active then
             local desc = taskunit:getunit(unit.id, "desc")
             print(("* %-10s %s"):format(unit.id, desc))
