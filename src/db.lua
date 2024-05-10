@@ -18,20 +18,20 @@ TODO:
 
 List of DB commands:
 Private:
-    _db_load
-    _db_sort
+    _db_load    - load task units from database
+    _db_sort    - sort task units in database
     _db_exist   - check that task ID exist in database
 
 Public:
     init        - init database
     add         - add a new task ID to database
     del         - del a task ID from database
-    save
-    size
+    save        - save task units into database
+    size        - get size of taks units in database
 
-    get
-    set
-    getidx
+    get         - get task unit from database (by task ID)
+    set         - set status to task unit
+    getixd      - get task unit from database (by task ID index)
 ]]
 
 --[[
