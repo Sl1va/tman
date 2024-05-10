@@ -59,6 +59,7 @@ local status = {
 -- @return true on success, otherwise false
 function TaskID:_unsetprev(taskstatus)
     local size = db.size()
+    taskstatus = taskstatus or status.ACTV
 
     for i = 1, size do
         local unit = db.getidx(i)
@@ -204,6 +205,7 @@ end
 -- @return true on success, otherwise false
 function TaskID:unsetcurr(taskstatus)
     local size = db.size()
+    taskstatus = taskstatus or status.ACTV
 
     for i = 1, size do
         local unit = db.getidx(i)
@@ -221,7 +223,7 @@ end
 function TaskID:move(id, _status)
     local prev = self:getprev()
     local curr = self:getcurr()
-    _status = status.ACTV
+    _status = status or status.ACTV
 
     if id == curr then
         return self:movecurr()
