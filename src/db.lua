@@ -58,7 +58,7 @@ end
 
 --- Check that task ID exist in database.
 -- @param id task ID to check
-local function db_exist(id)
+local function _db_exist(id)
     for _, unit in pairs(taskids) do
         if unit.id == id then
             return true
@@ -114,7 +114,7 @@ end
 -- @param id taskid task ID
 -- @param status task status
 local function db_add(id, status)
-    if db_exist(id) then
+    if _db_exist(id) then
         return false
     end
     table.insert(taskids, { id = id, status = status })
