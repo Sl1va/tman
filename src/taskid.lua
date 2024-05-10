@@ -54,7 +54,6 @@ local status = {
 
 --- Unset previous task ID.
 -- Assumes that ID exists in database.
--- @param id task ID
 -- @param taskstatus task status to move a previous ID to
 -- @return true on success, otherwise false
 function TaskID:_unsetprev(taskstatus)
@@ -200,7 +199,6 @@ end
 
 --- Unset current task ID.
 -- Assumes that ID exists in database.
--- @param id task ID
 -- @param taskstatus task status to move a current ID to
 -- @return true on success, otherwise false
 function TaskID:unsetcurr(taskstatus)

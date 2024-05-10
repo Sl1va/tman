@@ -1,5 +1,7 @@
-local globals = require("globals")
+--- Simple database for task IDs.
+-- @module db
 
+local globals = require("globals")
 
 --[[
 
@@ -55,7 +57,7 @@ local function _db_sort()
 end
 
 --- Check that task ID exist in database.
--- @param task ID to check
+-- @param id task ID to check
 local function db_exist(id)
     for _, unit in pairs(taskids) do
         if unit.id == id then
@@ -109,8 +111,8 @@ local function db_init(ftaskids)
 end
 
 --- Add new task ID into database.
--- @param taskid task ID
--- @param taskstatus task status
+-- @param id taskid task ID
+-- @param status task status
 local function db_add(id, status)
     if db_exist(id) then
         return false
@@ -131,7 +133,7 @@ local function db_del(id)
     return false
 end
 
---- Get size of units in database.
+--- Get size database units.
 -- @return number of units in database
 local function db_size()
     local size = 0
@@ -171,8 +173,8 @@ end
 
 --- Set new status to task ID.
 -- @param id task ID
--- @param new task status
--- @param return true on success, otherwise false
+-- @param status new task status
+-- @return true on success, otherwise false
 local function db_set(id, status)
     for _, unit in pairs(taskids) do
         if unit.id == id then
