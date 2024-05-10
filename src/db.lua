@@ -21,6 +21,7 @@ Private:
     _db_load    - load task units from database
     _db_sort    - sort task units in database
     _db_exist   - check that task ID exist in database
+    _db_check   - check `taskids` content is safe to save
 
 Public:
     init        - init database
@@ -59,6 +60,18 @@ local function _db_sort()
     table.sort(taskids, function(a, b)
         return a.status < b.status
     end)
+end
+
+--- Check that variable `taskids` is safe to save.
+--TODO: use it in code
+-- @return true `taskids` ok, otherwise false
+local function _db_check()
+    for _, unit in pairs(taskids) do
+        if unit.id == nil or unit.status == nil then
+            return false
+        end
+    end
+    return true
 end
 
 --- Check that task ID exist in database.
