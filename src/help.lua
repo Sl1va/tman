@@ -1,9 +1,7 @@
-local Help = {}
-
 local log = require("log").init("help")
 
-Help.version = "0.1.0"
-Help.progname = "tman"
+local version = "0.1.0"
+local progname = "tman"
 
 local function help_usage()
     print(([[
@@ -40,7 +38,7 @@ For developers:
 
 For utils:
   _curr    - show current task
-]]):format(Help.progname))
+]]):format(progname))
 end
 
 local cmds = {
@@ -165,4 +163,6 @@ end
 return {
     usage = help_usage,
     info = help_info,
+    version = version,
+    progname = progname,
 }
