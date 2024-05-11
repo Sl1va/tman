@@ -77,12 +77,10 @@ end
 -- @treturn true if new task unit is created, otherwise false
 function TMan:add(id, tasktype, prio)
     prio = prio or "mid"
+    tasktype = tasktype or "bugfix"
+
     if not id then
         log:err("task ID required")
-        os.exit(1)
-    end
-    if not tasktype then
-        log:err("task type required")
         os.exit(1)
     end
     if not self.taskid:add(id) then
