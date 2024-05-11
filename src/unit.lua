@@ -1,3 +1,19 @@
+local globals = require("globals")
+
+local unitregex = "(%w*): (.*)"
+
+local unit_keys = {
+    "id",
+    "prio",
+    "type",
+    "desc",
+
+    "time",
+    "date",
+    "status",
+    "branch",
+}
+
 
 --[[
 
@@ -16,7 +32,7 @@ end
 --- Check that user specified task type exists.
 -- @tparam string utype user specified type
 -- @treturn bool true if exists, otherwise false
-local function check_unit_type(utype)
+local function unit_check_type(utype)
     local tasktypes = { "bugfix", "feature", "hotfix" }
 
     for _, _type in pairs(tasktypes) do
@@ -27,15 +43,75 @@ local function check_unit_type(utype)
     return false
 end
 
-local function check_unit_key()
+local function unit_check_key(key)
 end
 
-local function check_unit_prio()
+local function unit_check_prio()
 end
 
+--- Get task units.
+-- @param id task ID
+-- @treturn table task units {{key, value}, ...}
+local function unit_load(id)
+    local taskunits = {}
+    local fname = globals.tmandb .. id
+    local f = io.open(fname)
+    local i = 1
 
+    if not f then
+        return {}
+    end
+    for line in f:lines() do
+        local ukey, uval = string.match(line, unitregex)
+        taskunits[unit_keys[i]] = { key = string.lower(ukey), value = uval }
+        i = i + 1
+    end
+    f:close()
+    return taskunits
+end
 
+--- Save task units into file.
+-- @param unit units to save
+-- @param fname filename to save units into
+-- @param true on success, otherwise false
+local function unit_save(id, taskunits)
+    local i = 1
+    local fname = globals.tmandb .. id
+    local f = io.open(fname, "w")
+
+    if not f then
+        return false
+    end
+
+    for _, _ in pairs(unit_keys) do
+        local unit = taskunits[unit_keys[i]]
+        f:write(("%s: %s\n"):format(unit.key, unit.value))
+        i = i + 1
+    end
+    return f:close()
+end
+
+--- Get unit from task metadata.
+-- @param id task ID
+-- @param key unit key
+-- @return unit value
+-- @return nil if key doesn't exist
+local function unit_getunit(id, key)
+    local taskunits = unit_load(id)
+
+    if not next(taskunits) or not unit_check_key(key) then
+        return nil
+    end
+    return taskunits[key].value
+end
 
 return {
-    check_type = check_unit_type,
+    load = unit_load,
+    save = unit_save,
+
+    check_key = unit_check_key,
+    check_type = unit_check_type,
+    check_prio = unit_check_prio,
+
+    getunit = unit_getunit,
 }

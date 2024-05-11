@@ -275,6 +275,12 @@ function TMan:del(id)
     end
     self.taskunit:del(id)
     self.taskid:del(id)
+    --[[
+    self.git:del(id)        -- delete task branch (need task ID from taskunit.lua)
+    self.struct:del(id)     -- delete task dir
+    self.taskid:del(id)     -- delete task ID from the database
+    self.taskunit:del(id)   -- delete task unit file from .tman
+    ]]
     return 0
 end
 
@@ -387,10 +393,8 @@ local function main()
         tman:add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
         tman:amend(arg[1], arg[2])
-
     elseif cmd == "link" then
         tman:link(arg[1])
-
     elseif cmd == "use" then
         tman:use(arg[1])
     elseif cmd == "show" then

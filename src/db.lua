@@ -108,6 +108,9 @@ local function db_save()
     if not f then
         return false
     end
+    if not _db_check() then
+        return false
+    end
 
     _db_sort() -- sort task IDs according to their statuses
     for _, unit in pairs(taskids) do

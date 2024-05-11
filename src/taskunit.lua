@@ -5,6 +5,7 @@
 local gitmod = require("git")
 local globals = require("globals")
 local log = require("log").init("taskunit")
+local utils = require("utils")
 
 --- FIXME: If description has a colon (:) in itself this regex causes problems
 local unitregex = "(%w*): (.*)"
@@ -305,6 +306,10 @@ function TaskUnit:del(id)
     git:branch_delete()
     os.remove(unitfile)
     return true
+end
+function TaskUnit:del2(id)
+    local unitfile = globals.tasks .. id
+    return utils.rm(unitfile)
 end
 
 --- Amend task description.
