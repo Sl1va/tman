@@ -139,8 +139,6 @@ end
 -- @param id task ID to look up
 -- @treturn bool true if task ID exist, otherwise false
 function TaskID:exist(id)
-    -- roachme: doubt it, this function is in db.lua
-    -- roachme: tman.lua uses it tho. Ain't right
     return db.exist(id)
 end
 
