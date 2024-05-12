@@ -9,9 +9,9 @@ local struct_base = config.base
 local struct_repos = config.repos
 local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
+local path_taskid = nil
 local repos = {}
 
-local path_taskid = nil
 
 -- Private functions: end --
 
@@ -24,7 +24,7 @@ local function _load_repos()
     end
 
     for line in f:lines() do
-        -- roachme: don't link this regex
+        -- roachme: don't like this regex
         local repo = line:match("([a-z-A-Z0-9_]*)")
         table.insert(_repos, repo)
     end
@@ -74,7 +74,7 @@ local function struct_init(fbase, taskid)
     path_taskid = struct_taskbase .. "/" .. taskid
 end
 
---- Create dir for new task.
+--- Create new task filesystem structure.
 local function struct_create()
     utils.mkdir(path_taskid)
     _struct_dirs(path_taskid)
@@ -83,7 +83,7 @@ local function struct_create()
     return true
 end
 
---- Delete task dir.
+--- Delete task filesystem structure.
 local function struct_delete()
     return utils.rm(path_taskid)
 end
