@@ -6,7 +6,7 @@ local utils = require("utils")
 local config = require("config")
 
 local struct_base = config.base
-local file_repos_config = config.repos
+local struct_repos = config.repos
 local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
 local repos = {}
@@ -17,7 +17,7 @@ local path_taskid = nil
 
 local function _load_repos()
     local _repos = {}
-    local f = io.open(file_repos_config)
+    local f = io.open(struct_repos)
 
     if not f then
         return _repos
