@@ -5,17 +5,13 @@
 local utils = require("utils")
 local config = require("config")
 
-
--- TODO: load this stuff from config file
---local struct_base = "~/trash/tman"
-local userhome = os.getenv("HOME")
-local struct_base = userhome .. "/work/tman/"
-local file_repos_config = struct_base .. "/.tman/repos"
+local struct_base = config.base
+local file_repos_config = config.repos
+local struct_codebase = config.codebase
+local struct_taskbase = config.taskbase
 local repos = {}
 
 local path_taskid = nil
-local struct_taskbase = struct_base .. "/" .. "tasks"
-local struct_codebase = struct_base .. "/" .. "codebase"
 
 -- Private functions: end --
 
