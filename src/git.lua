@@ -8,7 +8,6 @@ local log = require("log").init("git")
 --[[
 Private functions:
     load_repos    - load repos from config file
-    repo_symlink  - create repo symlinks for a task
     change_check  - check that repo has no unsaved changes
 
 
@@ -62,17 +61,6 @@ function Git:changes_check()
             log:err("repo '%s' has uncommited changes", repo.name)
             return false
         end
-    end
-    return true
-end
-
---- Create repo symlinks for task unit.
--- @return true on success, otherwise false
-function Git:repo_symlink()
-    for _, repo in pairs(self.repos) do
-        local src = globals.cdbase .. repo.name
-        local dst = globals.tasks .. self.taskid .. "/" .. repo.name
-        posix.link(src, dst, true)
     end
     return true
 end
@@ -151,19 +139,16 @@ end
 -- Also symlinks repos for a task.
 -- @return true on success, otherwise false
 function Git:branch_create()
-    local taskdir = globals.tasks .. self.taskid
-
     if not self:changes_check() then
         return false
     end
 
-    posix.mkdir(taskdir)
     for _, repo in pairs(self.repos) do
         local repopath = globals.cdbase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         os.execute(self.gcheckoutb:format(repopath, self.branch))
     end
-    return self:repo_symlink()
+    return true
 end
 
 --- Rename task branch.

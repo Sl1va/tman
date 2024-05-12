@@ -245,9 +245,7 @@ function TMan:link(id)
     if not self:checkid(id) then
         os.exit(1)
     end
-
-    local git = gitmod.new(id, "")
-    return git:repo_symlink()
+    print("under dev: gotta use struct.lua API")
 end
 
 --- Update git repos.
