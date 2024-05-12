@@ -1,43 +1,65 @@
---- From task filesystem structure.
--- create symlinks, helper dirs, etc.
+--- Form task filesystem structure.
+-- Create repo symlinks, helper dirs, etc.
 -- @module struct
 
 local utils = require("utils")
 
 -- TODO: load this stuff from config file
---local struct_base = "~/work/tman/"
-local struct_base = "~/trash/tman"
-
-local struct_codebase = struct_base .. "/" .. "codebase"
-local struct_taskbase = struct_base .. "/" .. "tasks"
+--local struct_base = "~/trash/tman"
+local userhome = os.getenv("HOME")
+local struct_base = userhome .. "/work/tman/"
+local file_repos_config = struct_base .. "/.tman/repos"
 local repos = {}
-local tasks_base = nil
 
+local path_taskid = nil
+local struct_taskbase = struct_base .. "/" .. "tasks"
+local struct_codebase = struct_base .. "/" .. "codebase"
 
 -- Private functions: end --
 
+local function _load_repos()
+    local _repos = {}
+    local f = io.open(file_repos_config)
+
+    if not f then
+        return _repos
+    end
+
+    for line in f:lines() do
+        -- roachme: don't link this regex
+        local repo = line:match("([a-z-A-Z0-9_]*)")
+        table.insert(_repos, repo)
+    end
+    f:close()
+    return _repos
+end
+
 --- Create dirs.
-local function _struct_dirs(_base)
+local function _struct_dirs(base)
     local dirs = { "logs", "lab" }
 
     for _, dir in pairs(dirs) do
-        utils.mkdir(_base .. "/" .. dir)
+        utils.mkdir(base .. "/" .. dir)
     end
 end
 
 --- Create files.
-local function _struct_files(_base)
+local function _struct_files(base)
     local files = { "note" }
 
     for _, file in pairs(files) do
-        utils.touch(_base .. "/" .. file)
+        utils.touch(base .. "/" .. file)
     end
 end
 
 --- Create symlinks to repos.
 local function _struct_repos()
+    repos = _load_repos()
+
     for _, repo in pairs(repos) do
-        utils.link()
+        local target = struct_codebase .. "/" .. repo
+        local linkname = path_taskid .. "/" .. repo
+        utils.link(target, linkname)
     end
 end
 
@@ -47,25 +69,28 @@ end
 -- Public functions: start --
 
 --- Init strcut.
-local function struct_init(fbase, _taskid)
+-- @param fbase
+-- @param taskid task ID
+local function struct_init(fbase, taskid)
     struct_base = fbase or struct_base
-    tasks_base = struct_taskbase .. "/" .. _taskid
+    path_taskid = struct_taskbase .. "/" .. taskid
 end
 
 --- Create dir for new task.
 local function struct_create()
-    utils.mkdir(tasks_base)
-    _struct_dirs(tasks_base)
-    _struct_files(tasks_base)
+    utils.mkdir(path_taskid)
+    _struct_dirs(path_taskid)
+    _struct_files(path_taskid)
     _struct_repos()
 end
 
 --- Delete task dir.
 local function struct_delete()
-    utils.rm(tasks_base)
+    utils.rm(path_taskid)
 end
 
 -- Public functions: end --
+
 
 return {
     init = struct_init,

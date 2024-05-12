@@ -15,9 +15,9 @@ local function create_file(fname)
     return os.execute(("touch %s"):format(fname))
 end
 
-local function create_symlink(src, dst, opt)
-    opt = opt or true
-    return posix.link(src, dst, true)
+local function create_symlink(target, linkname, soft)
+    soft = soft or true
+    return posix.link(target, linkname, soft)
 end
 
 return {
