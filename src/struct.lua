@@ -84,11 +84,12 @@ local function struct_create()
     _struct_dirs(path_taskid)
     _struct_files(path_taskid)
     _struct_repos()
+    return true
 end
 
 --- Delete task dir.
 local function struct_delete()
-    utils.rm(path_taskid)
+    return utils.rm(path_taskid)
 end
 
 -- Public functions: end --

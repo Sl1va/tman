@@ -85,6 +85,7 @@ end
 function TMan:add(id, tasktype, prio)
     prio = prio or "mid"
     tasktype = tasktype or "bugfix"
+    struct.init(nil, id)
 
     if not id then
         log:err("task ID required")
@@ -99,8 +100,14 @@ function TMan:add(id, tasktype, prio)
         self.taskid:del(id)
         os.exit(1)
     end
+    if not struct.create() then
+        log:err("could not create new task structure")
+        self.taskid:del(id)
+        self.taskunit:del(id)
+        os.exit(1)
+    end
     --[[
-        struct.create(id)
+        TODE: this's how it should go
         git.create_branch()
     ]]
     return true
