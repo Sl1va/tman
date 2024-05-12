@@ -6,14 +6,21 @@ local HOME = os.getenv("HOME")
 local tman_path = "personal/prjs/tman/src/?.lua"
 package.path = package.path .. ";" .. HOME .. "/" .. tman_path
 
+-- roachme: get rid of 'em
+local global = require("globals")
+local posix = require("posix")
+
+-- Tman main components.
+local taskid = require("taskid")
+local struct = require("struct")
+local gitmod = require("git")
+local taskunit = require("taskunit")
+
+-- Tman aux components.
 local log = require("log").init("tman")
 local help = require("help")
-local taskid = require("taskid")
-local gitmod = require("git")
-local global = require("globals")
-local taskunit = require("taskunit")
 local getopt = require("posix.unistd").getopt
-local posix = require("posix")
+
 
 local TMan = {}
 TMan.__index = TMan
