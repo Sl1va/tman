@@ -3,6 +3,8 @@
 -- @module struct
 
 local utils = require("utils")
+local config = require("config")
+
 
 -- TODO: load this stuff from config file
 --local struct_base = "~/trash/tman"

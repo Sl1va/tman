@@ -73,7 +73,7 @@ end
 --- Add a new task.
 -- @param id task ID
 -- @param tasktype task type: bugfix, hotfix, feature. Default: bugfix
--- @param prio task priority (default: mid)
+-- @param prio task priority: lowest, low, mid, high, highest. Default: mid
 -- @treturn true if new task unit is created, otherwise false
 function TMan:add(id, tasktype, prio)
     prio = prio or "mid"
@@ -92,6 +92,10 @@ function TMan:add(id, tasktype, prio)
         self.taskid:del(id)
         os.exit(1)
     end
+    --[[
+        struct.create(id)
+        git.create_branch()
+    ]]
     return true
 end
 
