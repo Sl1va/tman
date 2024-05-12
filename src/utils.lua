@@ -4,20 +4,15 @@
 local posix = require("posix")
 
 local function create_dir(dirname)
-    os.execute(("mkdir -p %s"):format(dirname))
+    return os.execute(("mkdir -p %s"):format(dirname))
 end
 
 local function remove_dir(dirname)
-    os.execute(("rm -rf %s"):format(dirname))
+    return os.execute(("rm -rf %s"):format(dirname))
 end
 
 local function create_file(fname)
-    local f = io.open(fname, "w")
-    if f then
-        f:close()
-        return true
-    end
-    return false
+    return os.execute(("touch %s"):format(fname))
 end
 
 local function create_symlink(src, dst, opt)
