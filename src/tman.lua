@@ -355,7 +355,7 @@ end
 function TMan:backup()
     -- roachme: need some tuning
     local ftar = "tman_db.tar"
-    local dtar = "."
+    local dtar = ".tman"
     local tar = "tar -C "
     local tarcmd = tar .. config.taskbase .. " -cf " .. ftar .. " " .. dtar
 
@@ -435,7 +435,8 @@ local function main()
     elseif cmd == "time" then
         tman:time(arg[1], arg[2])
     elseif cmd == "backup" then
-        tman:backup()
+        --tman:backup()
+        print("under development")
     elseif cmd == "restore" then
         tman:restore()
     elseif cmd == "help" then
