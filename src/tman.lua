@@ -278,6 +278,7 @@ end
 function TMan:del(id)
     local desc = self.taskunit:getunit(id, "desc")
 
+    struct.init(id)
     if not self:checkid(id) then
         os.exit(1)
     end
@@ -290,6 +291,7 @@ function TMan:del(id)
     end
     self.taskunit:del(id)
     self.taskid:del(id)
+    struct.delete()
     --[[
     self.git:del(id)        -- delete task branch (need task ID from taskunit.lua)
     self.struct:del(id)     -- delete task dir
