@@ -211,6 +211,9 @@ end
 return {
     init = db_init,
     size = db_size,
+
+    -- roachme: others can use db.get(id) instead of db.exist
+    --          Maybe it's better to delete db.exist() from the API?
     exist = db_exist,
 
     add = db_add,
