@@ -7,7 +7,7 @@ local fconfig = nil         -- config file
 local _base = userhome .. "/work/tman"
 local _codebase = _base .. "/codebase"
 local _taskbase = _base .. "/tasks"
-local _repos = _base .. "/repos"
+local _repos = _base .. "/.tman/repos"
 
 --[[
 tman.conf:
