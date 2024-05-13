@@ -12,10 +12,11 @@ local posix = require("posix")
 -- Tman main components.
 local taskid = require("taskid")
 local struct = require("struct")
-local gitmod = require("misc/git")
+local config = require("config")
 local taskunit = require("taskunit")
 
--- Tman aux components.
+-- Tman misc components.
+local gitmod = require("misc/git")
 local log = require("misc/log").init("tman")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
@@ -45,14 +46,14 @@ function TMan:tman_init()
 
     print("init tman structure")
     -- dirs
-    os.execute(mkdir:format(global.tmanhome))
-    os.execute(mkdir:format(global.tmandb))
-    os.execute(mkdir:format(global.tasks))
-    os.execute(mkdir:format(global.cdbase))
+    os.execute(mkdir:format(config.ids))
+    os.execute(mkdir:format(config.tmanbase))
+    os.execute(mkdir:format(config.taskbase))
+    os.execute(mkdir:format(config.codebase))
 
     -- files
-    os.execute("touch " .. global.taskids)
-    os.execute("touch " .. global.repos)
+    os.execute("touch " .. config.taskids)
+    os.execute("touch " .. config.repos)
 end
 
 --- Check paths and configs for proper work.
@@ -352,12 +353,13 @@ end
 
 --- Back up util configs into archive.
 function TMan:backup()
+    -- roachme: need some tuning
     local ftar = "tman_db.tar"
-    local dtar = ".tman"
+    local dtar = "."
     local tar = "tar -C "
-    local tarcmd = tar .. global.tmanhome .. " -cf " .. ftar .. " " .. dtar
+    local tarcmd = tar .. config.taskbase .. " -cf " .. ftar .. " " .. dtar
 
-    if not posix.access(global.tmandb) then
+    if not posix.access(config.taskids) then
         return log:err("tman database doesn't exist. Nothing to backup")
     end
 
