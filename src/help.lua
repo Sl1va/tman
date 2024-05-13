@@ -4,7 +4,7 @@
 
 local log = require("log").init("help")
 
-local version = "0.1.0"
+local version = "0.2.0"
 local progname = "tman"
 
 local function help_usage()
