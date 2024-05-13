@@ -1,7 +1,7 @@
 --- Simple database for task IDs.
 -- @module db
 
-local globals = require("globals")
+local config = require("config")
 
 --[[
 
@@ -50,7 +50,7 @@ taskid file structure:
 
 
 local taskids = {}
-local meta = globals.taskids
+local meta = config.taskids
 
 
 -- Private functions: start --

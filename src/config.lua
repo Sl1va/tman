@@ -8,6 +8,8 @@ local _base = userhome .. "/work/tman"
 local _codebase = _base .. "/codebase"
 local _taskbase = _base .. "/tasks"
 local _repos = _base .. "/.tman/repos"
+local _taskids = _base .. "/.tman/taskids"
+
 
 --[[
 tman.conf:
@@ -17,6 +19,7 @@ tman.conf:
 return {
     base = _base,
     repos = _repos,
+    taskids = _taskids,
     codebase = _codebase,
     taskbase = _taskbase,
     debug = true,
