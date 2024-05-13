@@ -300,17 +300,13 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskUnit:del(id)
-    local unitfile = config.taskbase .. id
+    local unitfile = config.ids .. id
     local branch = self:getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
     git:branch_delete()
     os.remove(unitfile)
     return true
-end
-function TaskUnit:del2(id)
-    local unitfile = config.taskbase .. id
-    return utils.rm(unitfile)
 end
 
 --- Amend task description.

@@ -84,7 +84,6 @@ end
 function TMan:add(id, tasktype, prio)
     prio = prio or "mid"
     tasktype = tasktype or "bugfix"
-    struct.init(id)
 
     if not id then
         log:err("task ID required")
@@ -99,7 +98,7 @@ function TMan:add(id, tasktype, prio)
         self.taskid:del(id)
         os.exit(1)
     end
-    if not struct.create() then
+    if not struct.create(id) then
         log:err("could not create new task structure")
         self.taskid:del(id)
         self.taskunit:del(id)
@@ -278,7 +277,6 @@ end
 function TMan:del(id)
     local desc = self.taskunit:getunit(id, "desc")
 
-    struct.init(id)
     if not self:checkid(id) then
         os.exit(1)
     end
@@ -291,7 +289,7 @@ function TMan:del(id)
     end
     self.taskunit:del(id)
     self.taskid:del(id)
-    struct.delete()
+    struct.delete(id)
     --[[
     self.git:del(id)        -- delete task branch (need task ID from taskunit.lua)
     self.struct:del(id)     -- delete task dir

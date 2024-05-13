@@ -8,7 +8,6 @@ local config = require("config")
 local struct_repos = config.repos
 local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
-local path_taskid = nil
 local repos = {}
 
 
@@ -50,12 +49,13 @@ local function _struct_files(base)
 end
 
 --- Create symlinks to repos.
-local function _struct_repos()
+-- @param id task ID
+local function _struct_repos(id)
     repos = _load_repos()
 
     for _, repo in pairs(repos) do
         local target = struct_codebase .. "/" .. repo
-        local linkname = path_taskid .. "/" .. repo
+        local linkname = struct_taskbase .. "/" .. id .. "/" .. repo
         utils.link(target, linkname)
     end
 end
@@ -65,31 +65,29 @@ end
 
 -- Public functions: start --
 
---- Init strcut.
--- @param taskid task ID
-local function struct_init(taskid)
-    path_taskid = struct_taskbase .. "/" .. taskid
-end
-
 --- Create new task filesystem structure.
-local function struct_create()
-    utils.mkdir(path_taskid)
-    _struct_dirs(path_taskid)
-    _struct_files(path_taskid)
-    _struct_repos()
+-- @param id task id
+local function struct_create(id)
+    local taskdir = struct_taskbase .. "/" .. id
+
+    utils.mkdir(taskdir)
+    _struct_dirs(taskdir)
+    _struct_files(taskdir)
+    _struct_repos(id)
     return true
 end
 
 --- Delete task filesystem structure.
-local function struct_delete()
-    return utils.rm(path_taskid)
+-- @param id task id
+local function struct_delete(id)
+    local taskdir = struct_taskbase .. "/" .. id
+    return utils.rm(taskdir)
 end
 
 -- Public functions: end --
 
 
 return {
-    init = struct_init,
     create = struct_create,
     delete = struct_delete,
 }
