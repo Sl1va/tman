@@ -1,3 +1,7 @@
+--- Module to store variables for other modules.
+-- DEPREICATED: its replacement config.lua
+
+
 local Globals = {}
 
 -- Chaneg it to where you are gonna keep all your tasks
