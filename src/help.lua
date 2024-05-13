@@ -1,3 +1,7 @@
+--- Provide help.
+-- @module help
+
+
 local log = require("log").init("help")
 
 local version = "0.1.0"

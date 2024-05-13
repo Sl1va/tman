@@ -129,7 +129,7 @@ local function check_unit_keys(keyvalue)
 end
 
 --- Class TaskUnit
--- type TaskUnit
+-- @type TaskUnit
 
 --- Init class TaskUnit.
 function TaskUnit.init()
@@ -138,9 +138,9 @@ function TaskUnit.init()
 end
 
 --- Check that task unit is not corrupted.
--- roachme: it should check user key as well, but i just don't know
+-- roachme: it should check user key as well, but i just don't know.
 -- @param id task id
--- @param true on success, otherwise false
+-- @return true on success, otherwise false
 function TaskUnit:check_unitfile(id)
     -- roachme: not used, but gotta be when load_units()
     local i = 1
@@ -163,6 +163,7 @@ end
 --- Add a new unit for a task.
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
+-- @param prio task priority
 function TaskUnit:add(id, tasktype, prio)
     prio = prio or unit_prios.mid
     local unit = {
@@ -224,9 +225,9 @@ function TaskUnit:load_units(id)
 end
 
 --- Save task units into file.
--- @param unit units to save
--- @param fname filename to save units into
--- @param true on success, otherwise false
+-- @param id task ID
+-- @param taskunits task units to save
+-- @return true on success, otherwise false
 function TaskUnit:save_units(id, taskunits)
     local i = 1
     local fname = globals.tmandb .. id

@@ -1,4 +1,5 @@
 --- Parse config file and provide env for the rest of the code.
+-- @module config
 
 local userhome = os.getenv("HOME")
 

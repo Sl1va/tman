@@ -1,5 +1,6 @@
 --- Module to store variables for other modules.
--- DEPREICATED: its replacement config.lua
+-- DEPREICATED: its replacement config.lua.
+-- @module globals
 
 
 local Globals = {}

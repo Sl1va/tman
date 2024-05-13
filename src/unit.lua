@@ -1,3 +1,8 @@
+--- Core thingy for taskunit.lua.
+-- Status: under development.
+-- @module unit
+
+
 local globals = require("globals")
 
 local unitregex = "(%w*): (.*)"
@@ -71,9 +76,9 @@ local function unit_load(id)
 end
 
 --- Save task units into file.
--- @param unit units to save
--- @param fname filename to save units into
--- @param true on success, otherwise false
+-- @param id task ID
+-- @param taskunits task units to save
+-- @return true on success, otherwise false
 local function unit_save(id, taskunits)
     local i = 1
     local fname = globals.tmandb .. id
