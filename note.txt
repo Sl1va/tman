@@ -1,3 +1,4 @@
+Thoughts out loud:
 1. Let the module handle all its necessary checks
 2. Make everything modular. Benefits:
     a) code is clean and no macarony code
@@ -5,3 +6,27 @@
 3. `:` for object methods and class methods, `.` for static members.
 
 4. Usefull link http://tst2005.github.io/lua-users.org/wiki/SampleCode.html
+
+
+Tman code structure
+main:
+    tman.lua
+    config.lua
+    taskid.lua
+    taskunit.lua
+    struct.lua
+
+aux:
+    db.lua
+    readconf.lua
+    time.lua
+    unit.lua
+    utils.lua
+
+misc:
+    help.lua
+    log.lua
+    backup.lua
+    git.lua
+    make.lua
+
