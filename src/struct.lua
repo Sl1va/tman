@@ -2,7 +2,7 @@
 -- Create repo symlinks, helper dirs, etc.
 -- @module struct
 
-local utils = require("utils")
+local utils = require("aux/utils")
 local config = require("config")
 
 local struct_repos = config.repos

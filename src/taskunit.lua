@@ -2,9 +2,8 @@
 -- Metadata like branch name, date, description and so on.
 -- @module TaskUnit
 
-local gitmod = require("git")
-local log = require("log").init("taskunit")
-local utils = require("utils")
+local gitmod = require("misc/git")
+local log = require("misc/log").init("taskunit")
 local config = require("config")
 
 --- FIXME: If description has a colon (:) in itself this regex causes problems

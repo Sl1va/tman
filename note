@@ -1,30 +1,21 @@
-TaskUint
-
-tman:
-    del:
-        taskunit: delete task unit file
-        git: delete task branches in the repos
-
-
-
-
 main:
     tman.lua
     config.lua
-    struct.lua
     taskid.lua
     taskunit.lua
+    struct.lua
 
-git.lua
-make.lua
-utils.lua
+aux:
+    db.lua
+    readconf.lua
+    time.lua
+    unit.lua
+    utils.lua
 
-common: ??
+misc:
     help.lua
     log.lua
-
-engines for main parts:
-    db.lua
-    unit.lua
-    time.lua
     backup.lua
+    git.lua
+    make.lua
+

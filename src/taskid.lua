@@ -28,8 +28,8 @@ Public functions:
 
 
 local taskunit = require("taskunit")
-local log = require("log")
-local db = require("db")
+local log = require("misc/log")
+local db = require("aux/db")
 
 
 local TaskID = {}

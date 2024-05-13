@@ -12,12 +12,12 @@ local posix = require("posix")
 -- Tman main components.
 local taskid = require("taskid")
 local struct = require("struct")
-local gitmod = require("git")
+local gitmod = require("misc/git")
 local taskunit = require("taskunit")
 
 -- Tman aux components.
-local log = require("log").init("tman")
-local help = require("help")
+local log = require("misc/log").init("tman")
+local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
 
 

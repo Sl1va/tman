@@ -2,7 +2,7 @@
 -- @module Git
 
 local config = require("config")
-local log = require("log").init("git")
+local log = require("misc/log").init("git")
 
 --[[
 Private functions:

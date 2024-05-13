@@ -1,7 +1,7 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
-local readconf = require("readconf")
+local readconf = require("aux/readconf")
 
 
 local userhome = os.getenv("HOME")

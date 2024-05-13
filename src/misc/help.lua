@@ -2,7 +2,7 @@
 -- @module help
 
 
-local log = require("log").init("help")
+local log = require("misc/log").init("help")
 
 local version = "0.2.0"
 local progname = "tman"
