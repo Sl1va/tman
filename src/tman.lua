@@ -85,7 +85,7 @@ end
 function TMan:add(id, tasktype, prio)
     prio = prio or "mid"
     tasktype = tasktype or "bugfix"
-    struct.init(nil, id)
+    struct.init(id)
 
     if not id then
         log:err("task ID required")

@@ -5,7 +5,6 @@
 local utils = require("utils")
 local config = require("config")
 
-local struct_base = config.base
 local struct_repos = config.repos
 local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
@@ -67,10 +66,8 @@ end
 -- Public functions: start --
 
 --- Init strcut.
--- @param fbase
 -- @param taskid task ID
-local function struct_init(fbase, taskid)
-    struct_base = fbase or struct_base
+local function struct_init(taskid)
     path_taskid = struct_taskbase .. "/" .. taskid
 end
 
