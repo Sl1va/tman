@@ -1,8 +1,7 @@
 --- Git wrapper.
 -- @module Git
 
-local posix = require("posix")
-local globals = require("globals")
+local config = require("config")
 local log = require("log").init("git")
 
 --[[
@@ -32,7 +31,7 @@ Git.__index = Git
 --- Load repos from config file.
 function Git:load_repos()
     local repos = {}
-    local f = io.open(globals.repos)
+    local f = io.open(config.repos)
 
     if not f then
         log:err("no file for repos")
@@ -49,7 +48,7 @@ end
 -- @param reponame repo name
 -- @return true on success, otherwise false
 function Git:change_check_repo(reponame)
-    local repopath = globals.cdbase .. reponame
+    local repopath = config.codebase .. reponame
     local cmd = string.format(self.gdiff_word, repopath)
     return os.execute(cmd) == 0
 end
@@ -97,7 +96,7 @@ function Git:branch_switch_default()
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.cdbase .. repo.name
+        local repopath = config.codebase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
     end
     return true
@@ -111,7 +110,7 @@ function Git:branch_switch(branch)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.cdbase .. repo.name
+        local repopath = config.codebase .. repo.name
         os.execute(self.gcheckout:format(repopath, branch))
     end
     return true
@@ -125,7 +124,7 @@ function Git:branch_update(all)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.cdbase .. repo.name
+        local repopath = config.codebase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         if all then
             os.execute(self.gpull_generic:format(repopath))
@@ -144,7 +143,7 @@ function Git:branch_create()
     end
 
     for _, repo in pairs(self.repos) do
-        local repopath = globals.cdbase .. repo.name
+        local repopath = config.codebase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         os.execute(self.gcheckoutb:format(repopath, self.branch))
     end
@@ -158,7 +157,7 @@ function Git:branch_rename(newbranch)
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.cdbase .. repo.name
+        local repopath = config.codebase .. repo.name
         os.execute(self.gbranchm:format(repopath, newbranch))
     end
     return true
@@ -171,7 +170,7 @@ function Git:branch_delete()
         return false
     end
     for _, repo in pairs(self.repos) do
-        local repopath = globals.cdbase .. repo.name
+        local repopath = config.codebase .. repo.name
         os.execute(self.gcheckout:format(repopath, repo.branch))
         os.execute(self.gbranchD:format(repopath, self.branch))
     end

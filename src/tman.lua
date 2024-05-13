@@ -7,7 +7,6 @@ local tman_path = "personal/prjs/tman/src/?.lua"
 package.path = package.path .. ";" .. HOME .. "/" .. tman_path
 
 -- roachme: get rid of 'em
-local global = require("globals")
 local posix = require("posix")
 
 -- Tman main components.

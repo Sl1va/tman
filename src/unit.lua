@@ -3,7 +3,7 @@
 -- @module unit
 
 
-local globals = require("globals")
+local config = require("config")
 
 local unitregex = "(%w*): (.*)"
 
@@ -59,7 +59,7 @@ end
 -- @treturn table task units {{key, value}, ...}
 local function unit_load(id)
     local taskunits = {}
-    local fname = globals.tmandb .. id
+    local fname = config.tmanbase .. id
     local f = io.open(fname)
     local i = 1
 
@@ -81,7 +81,7 @@ end
 -- @return true on success, otherwise false
 local function unit_save(id, taskunits)
     local i = 1
-    local fname = globals.tmandb .. id
+    local fname = config.tmanbase .. id
     local f = io.open(fname, "w")
 
     if not f then

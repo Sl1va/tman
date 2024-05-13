@@ -3,9 +3,9 @@
 -- @module TaskUnit
 
 local gitmod = require("git")
-local globals = require("globals")
 local log = require("log").init("taskunit")
 local utils = require("utils")
+local config = require("config")
 
 --- FIXME: If description has a colon (:) in itself this regex causes problems
 local unitregex = "(%w*): (.*)"
@@ -207,7 +207,7 @@ end
 -- @treturn table task units {{key, value}, ...}
 function TaskUnit:load_units(id)
     local taskunits = {}
-    local fname = globals.tmandb .. id
+    local fname = config.ids .. id
     local f = io.open(fname)
     local i = 1
 
@@ -230,7 +230,7 @@ end
 -- @return true on success, otherwise false
 function TaskUnit:save_units(id, taskunits)
     local i = 1
-    local fname = globals.tmandb .. id
+    local fname = config.ids .. id
     local f = io.open(fname, "w")
 
     if not f then
@@ -300,7 +300,7 @@ end
 --- Delete task unit.
 -- @param id task ID
 function TaskUnit:del(id)
-    local unitfile = globals.tasks .. id
+    local unitfile = config.taskbase .. id
     local branch = self:getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
@@ -309,7 +309,7 @@ function TaskUnit:del(id)
     return true
 end
 function TaskUnit:del2(id)
-    local unitfile = globals.tasks .. id
+    local unitfile = config.taskbase .. id
     return utils.rm(unitfile)
 end
 
@@ -337,8 +337,8 @@ end
 -- @param id current task ID
 -- @param newid new ID
 function TaskUnit:amend_id(id, newid)
-    local old_taskdir = globals.tasks .. id
-    local new_taskdir = globals.tasks .. newid
+    local old_taskdir = config.taskbase .. id
+    local new_taskdir = config.taskbase .. newid
 
     self:setunit(id, "id", newid)
     local taskunits = self:load_units(id)
@@ -359,8 +359,8 @@ function TaskUnit:amend_id(id, newid)
     os.execute(cmd)
 
     -- rename task ID file in .tman
-    local old_file_task = globals.tmandb .. id
-    local new_file_task = globals.tmandb .. newid
+    local old_file_task = config.tmanbase .. id
+    local new_file_task = config.tmanbase .. newid
     local cmd_db = ("mv %s %s"):format(old_file_task, new_file_task)
     return os.execute(cmd_db)
 end

@@ -16,7 +16,6 @@ main:
     taskunit.lua
 
 git.lua
-- globals.lua
 make.lua
 utils.lua
 
