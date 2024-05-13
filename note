@@ -6,3 +6,26 @@ tman:
         git: delete task branches in the repos
 
 
+
+
+main:
+    tman.lua
+    config.lua
+    struct.lua
+    taskid.lua
+    taskunit.lua
+
+git.lua
+- globals.lua
+make.lua
+utils.lua
+
+common: ??
+    help.lua
+    log.lua
+
+engines for main parts:
+    db.lua
+    unit.lua
+    time.lua
+    backup.lua
