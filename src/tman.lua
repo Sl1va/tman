@@ -164,7 +164,7 @@ function TMan:_curr()
             local desc = self.taskunit:getunit(id, "desc")
             print(("* %-10s %s"):format(id, desc))
         elseif optopt == "i" then
-            print(id)
+            print(id or "")
         elseif optopt == "?" then
             log:err("unrecognized option '%s'", arg[optind - 1])
             os.exit(1)
