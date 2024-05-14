@@ -1,8 +1,64 @@
+TMAN_BASE=""
+TMAN_INSTALL=""
+TMAN_CONFIG_FILE="${HOME}/.config/tman/config"
+
+TMAN=""
+
+
+function _tman_get_config()
+{
+   if [ ! -f $TMAN_CONFIG_FILE ]; then
+       echo "err: no config file"
+       return 1
+   fi
+
+    grep -q '\bInstall\b' $TMAN_CONFIG_FILE
+    if [ $? -ne 0 ]; then
+        echo "err:config: no installation path in the config"
+        return 1
+    fi
+
+    grep -q '\bBase\b' $TMAN_CONFIG_FILE
+    if [ $? -ne 0 ]; then
+        echo "err:config: no base path in the config"
+        return 1
+    fi
+
+    # Eval config values
+    TMAN_INSTALL="$(grep '\bInstall\b' ${TMAN_CONFIG_FILE} | tr -s ' ' | cut -d ' ' -f 2)"
+    TMAN_BASE="$(grep '\bBase\b' ${TMAN_CONFIG_FILE} | tr -s ' ' | cut -d ' ' -f 2)"
+    eval TMAN_INSTALL="$(echo ${TMAN_INSTALL} | sed -e 's/~/${HOME}/')"
+    eval TMAN_BASE="$(echo ${TMAN_BASE} | sed -e 's/~/${HOME}/')"
+
+    # Check config values
+   if [ ! -d $TMAN_INSTALL ]; then
+       echo "err: no such INSTALL file '$TMAN_INSTALL'"
+       return 1
+   fi
+   if [ ! -d $TMAN_BASE ]; then
+       echo "err: no such BASE file '$TMAN_BASE'"
+       return 1
+   fi
+
+    return 0
+}
+
 function tman()
 {
-    TASKS="${HOME}/work/tman/tasks"
-    TMAN="${HOME}/personal/prjs/tman/src/tman.lua"
-    lua $TMAN $@
+    _tman_get_config
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    # roachme: refactor this piece of shit
+    TMAN="${TMAN_INSTALL}/src/tman.lua"
+    TASKS="${TMAN_BASE}/tasks"
+    MYLUA_PATH="${TMAN_INSTALL}/src/?.lua;"
+    MYPATH="package.path = '${MYLUA_PATH}' .. package.path"
+    MYLUA="lua -e \"$MYPATH\""
+    TMANCMD="$MYLUA ${TMAN}"
+
+    eval $TMANCMD $@
     RET=$?
 
     if [ $RET -eq 0 ] && [ "$1" = "add" ]; then
@@ -18,7 +74,7 @@ function tman()
         wd task
 
     elif [ $RET -eq 0 ] && [ "$1" = "prev" ]; then
-        TASKID=$(lua $TMAN _curr -i)
+        TASKID=$(eval $TMANCMD _curr -i)
         cd $TASKS/${TASKID}
         wd -q rm task
         wd -q add task
@@ -37,14 +93,14 @@ function tman()
 
     # tman amend DE-me4 -i
     elif [ $RET -eq 0 ] && [ "$1" = "amend" ] && [ "$3" = "-i" ]; then
-        TASKID=$(lua $TMAN _curr -i)
+        TASKID=$(eval $TMANCMD _curr -i)
         cd $TASKS/${TASKID}
         wd -q rm task
         wd -q add task
         wd task
 
     elif [ "$1" = "del" ]; then
-        TASKID="$(lua $TMAN _curr -i)"
+        TASKID="$(eval $TMANCMD _curr -i)"
         if [ -n "$TASKID" ]; then
             cd $TASKS/$TASKID
             wd -q -f add task

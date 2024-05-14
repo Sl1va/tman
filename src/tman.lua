@@ -2,9 +2,11 @@
 -- Simplify workflow when working with many repos.
 -- @module TMan
 
+--[[
 local HOME = os.getenv("HOME")
 local tman_path = "personal/prjs/tman/src/?.lua"
 package.path = package.path .. ";" .. HOME .. "/" .. tman_path
+]]
 
 
 -- Tman main components.
