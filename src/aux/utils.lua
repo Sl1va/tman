@@ -20,9 +20,17 @@ local function create_symlink(target, linkname, soft)
     return posix.link(target, linkname, soft)
 end
 
+local function file_exists(fname)
+    if posix.access(fname) then
+        return true
+    end
+    return false
+end
+
 return {
     mkdir = create_dir,
     rm = remove_dir,
     touch = create_file,
     link = create_symlink,
+    access = file_exists,
 }

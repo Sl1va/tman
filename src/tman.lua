@@ -6,8 +6,6 @@ local HOME = os.getenv("HOME")
 local tman_path = "personal/prjs/tman/src/?.lua"
 package.path = package.path .. ";" .. HOME .. "/" .. tman_path
 
--- roachme: get rid of 'em
-local posix = require("posix")
 
 -- Tman main components.
 local taskid = require("taskid")
@@ -20,6 +18,10 @@ local gitmod = require("misc/git")
 local log = require("misc/log").init("tman")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
+
+-- Tman Aux components.
+local utils = require("aux/utils")
+
 
 
 local TMan = {}
@@ -324,6 +326,7 @@ end
 function TMan:config(subcmd)
     if subcmd == "repo" then
         print("configure repo list")
+    elseif subcmd == "" then
     end
 end
 
@@ -359,7 +362,7 @@ function TMan:backup()
     local tar = "tar -C "
     local tarcmd = tar .. config.taskbase .. " -cf " .. ftar .. " " .. dtar
 
-    if not posix.access(config.taskids) then
+    if not utils.access(config.taskids) then
         return log:err("tman database doesn't exist. Nothing to backup")
     end
 
@@ -381,7 +384,7 @@ function TMan:restore()
     local dtar = ".tman"
     local tar = "tar"
     local tarcmd = tar .. " -xf " .. ftar .. " " .. dtar
-    if not posix.access(ftar) then
+    if not utils.access(ftar) then
         log:err("'%s': no archive such file", ftar)
         os.exit(1)
     end
