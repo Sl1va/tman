@@ -7,10 +7,10 @@ TMAN=""
 
 function _tman_get_config()
 {
-   if [ ! -f $TMAN_CONFIG_FILE ]; then
-       echo "err: no config file"
-       return 1
-   fi
+    if [ ! -f $TMAN_CONFIG_FILE ]; then
+        echo "err: no config file"
+        return 1
+    fi
 
     grep -q '\bInstall\b' $TMAN_CONFIG_FILE
     if [ $? -ne 0 ]; then
@@ -31,15 +31,10 @@ function _tman_get_config()
     eval TMAN_BASE="$(echo ${TMAN_BASE} | sed -e 's/~/${HOME}/')"
 
     # Check config values
-   if [ ! -d $TMAN_INSTALL ]; then
-       echo "err: no such INSTALL file '$TMAN_INSTALL'"
-       return 1
-   fi
-   if [ ! -d $TMAN_BASE ]; then
-       echo "err: no such BASE file '$TMAN_BASE'"
-       return 1
-   fi
-
+    if [ ! -d $TMAN_INSTALL ]; then
+        echo "err: no such INSTALL file '$TMAN_INSTALL'"
+        return 1
+    fi
     return 0
 }
 
@@ -92,22 +87,22 @@ function tman()
         wd -q -f add task
 
     # tman amend DE-me4 -i
-    elif [ $RET -eq 0 ] && [ "$1" = "amend" ] && [ "$3" = "-i" ]; then
-        TASKID=$(eval $TMANCMD _curr -i)
-        cd $TASKS/${TASKID}
-        wd -q rm task
-        wd -q add task
-        wd task
+elif [ $RET -eq 0 ] && [ "$1" = "amend" ] && [ "$3" = "-i" ]; then
+    TASKID=$(eval $TMANCMD _curr -i)
+    cd $TASKS/${TASKID}
+    wd -q rm task
+    wd -q add task
+    wd task
 
-    elif [ "$1" = "del" ]; then
-        TASKID="$(eval $TMANCMD _curr -i)"
-        if [ -n "$TASKID" ]; then
-            cd $TASKS/$TASKID
-            wd -q -f add task
-            wd task
-        else
-            wd -q rm task
-            cd $TASKS
-        fi
+elif [ "$1" = "del" ]; then
+    TASKID="$(eval $TMANCMD _curr -i)"
+    if [ -n "$TASKID" ]; then
+        cd $TASKS/$TASKID
+        wd -q -f add task
+        wd task
+    else
+        wd -q rm task
+        cd $TASKS
+    fi
     fi
 }

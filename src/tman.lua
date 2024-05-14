@@ -32,6 +32,36 @@ TMan.__index = TMan
 --- Class TMan
 -- @type TMan
 
+
+--- Check tman dir ain't corrupted and exists.
+-- @return true on success, otherwise false
+local function check_tman_struct()
+    local files = {
+        config.repos,
+        config.taskids,
+    }
+    local dirs = {
+        config.ids,
+        config.tmanbase,
+        config.taskbase,
+        config.codebase,
+    }
+
+    for _, dir in pairs(dirs) do
+        if not utils.access(dir) then
+            return false
+        end
+    end
+    for _, file in pairs(files) do
+        if not utils.access(file) then
+            return false
+        end
+    end
+    return true
+end
+
+
+
 --- Create a new instance of class TMan.
 function TMan.new()
     local self = setmetatable({}, TMan)
@@ -46,18 +76,16 @@ end
 
 --- Init system to use a util.
 function TMan:tman_init()
-    local mkdir = "mkdir -p %s 2> /dev/null"
-
     print("init tman structure")
     -- dirs
-    os.execute(mkdir:format(config.ids))
-    os.execute(mkdir:format(config.tmanbase))
-    os.execute(mkdir:format(config.taskbase))
-    os.execute(mkdir:format(config.codebase))
+    utils.mkdir(config.ids)
+    utils.mkdir(config.tmanbase)
+    utils.mkdir(config.taskbase)
+    utils.mkdir(config.codebase)
 
     -- files
-    os.execute("touch " .. config.taskids)
-    os.execute("touch " .. config.repos)
+    utils.touch(config.taskids)
+    utils.touch(config.repos)
 end
 
 --- Check paths and configs for proper work.
@@ -402,6 +430,12 @@ local function main()
 
     -- posix getopt does not let permutations as GNU version
     table.remove(arg, 1)
+
+    if not check_tman_struct() and cmd ~= "init" then
+        log:err("tman structure not inited or corrupted")
+        os.exit(1)
+    end
+
 
     -- system commands
     if cmd == "init" then
