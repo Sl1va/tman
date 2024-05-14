@@ -3,10 +3,12 @@
 
 
 local file_config = nil
+local userhome = tostring(os.getenv("HOME"))
 
 local config_vars = {
-    "Base",
-    "Debug",
+    "Base",         -- where tman data's located
+    "Install",      -- where tman itself's installed
+    "Debug",        -- debug mode
 }
 
 local function var_exists(varname)
@@ -55,6 +57,10 @@ local function convert(vars)
 
         if pair.var == "Base" then
             res[var] = pair.val
+            res[var] = string.gsub(res[var], "~", userhome)
+        elseif pair.var == "Install" then
+            res[var] = pair.val
+            res[var] = string.gsub(res[var], "~", userhome)
 
         elseif pair.var == "Debug" then
             if pair.val == "true" then

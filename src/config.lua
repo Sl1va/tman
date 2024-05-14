@@ -5,23 +5,22 @@ local readconf = require("aux/readconf")
 
 
 local userhome = os.getenv("HOME")
+-- TODO: where should `tman` look for config file?
+local fconfig = "/.config/tman/config" -- config file
+
 
 -- roachme: make the util to figure out the location of the config
-readconf.init(userhome .. "/.config/tman/config")
+readconf.init(userhome .. fconfig)
 local configvars = readconf.parse()
 
--- TODO: where should `tman` look for config file?
-local fconfig = nil         -- config file
-
--- TODO: can be changes depending on where the user wants to keep it
-local _base = userhome .. "/work/tman/"
 
 -- tman main dirs
+local _base = configvars.base .. "/"
 local _tmanbase = _base .. ".tman/"
 local _codebase = _base .. "codebase/"
 local _taskbase = _base .. "tasks/"
-
 local _ids = _tmanbase .. "ids/"
+
 local _repos = _tmanbase .. "repos"
 local _taskids = _tmanbase .. "taskids"
 
