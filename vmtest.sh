@@ -7,7 +7,6 @@ git clone https://github.com/roachme/tman.git
 
 # make structure
 mkdir -p ~/.config/tman
-mkdir -p ~/trash/tman
 
 cat << EOF >> ~/.config/tman/config
 Install ~/tman
