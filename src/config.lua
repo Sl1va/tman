@@ -1,16 +1,40 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
+local log = require("misc/log").init("config")
+local utils = require("aux/utils")
 local readconf = require("aux/readconf")
 
 
 local userhome = os.getenv("HOME")
+
+-- Default places to search config file.
+local fconfig_files = {
+    "/.tman/config",
+    "/.config/tman/config",
+}
+
+--- Search config file.
+-- @return true if found, otherwise false
+local function search_config_file()
+    for _, confile in pairs(fconfig_files) do
+        confile = userhome .. "/" .. confile
+        if utils.access(confile) then
+            return confile
+        end
+    end
+    return nil
+end
+
 -- TODO: where should `tman` look for config file?
-local fconfig = "/.config/tman/config" -- config file
+local fconfig = search_config_file()
 
+if not fconfig then
+    log:err("config file not found")
+    os.exit(1)
+end
 
--- roachme: make the util to figure out the location of the config
-readconf.init(userhome .. fconfig)
+readconf.init(fconfig)
 local configvars = readconf.parse()
 
 
@@ -23,23 +47,6 @@ local _ids = _tmanbase .. "ids/"
 
 local _repos = _tmanbase .. "repos"
 local _taskids = _tmanbase .. "taskids"
-
-
---[[
-local dir_tman = nil
-local dir_code = nil
-local dir_task = nil
-
-local file_repo = nil
-local file_taskid = nil
-]]
-
-
-
---[[
-tman.conf:
-    TMANDIR="~/work/tman"
-]]
 
 return {
     -- files
