@@ -1,9 +1,23 @@
+PROGNAME="tman"
 TMAN_BASE=""
 TMAN_INSTALL=""
-TMAN_CONFIG_FILE="${HOME}/.config/tman/config"
-
+TMAN_CONFIG_FILE=""
 TMAN=""
 
+function _tman_config_find()
+{
+    local tman_config_files=(
+        "${HOME}/.tman/config"
+        "${HOME}/.config/tman/config"
+    )
+    for file in ${tman_config_files[@]}; do
+        if [ -f "$file" ]; then
+            TMAN_CONFIG_FILE="${file}"
+            return 0
+        fi
+    done
+    return 1
+}
 
 function _tman_get_config()
 {
@@ -40,6 +54,12 @@ function _tman_get_config()
 
 function tman()
 {
+    _tman_config_find
+    if [ $? -ne 0 ]; then
+        echo "${PROGNAME}: no config file found"
+        return 1
+    fi
+
     _tman_get_config
     if [ $? -ne 0 ]; then
         return 1
