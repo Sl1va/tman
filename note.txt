@@ -7,6 +7,21 @@ Thoughts out loud:
 
 4. Usefull link http://tst2005.github.io/lua-users.org/wiki/SampleCode.html
 
+5. Config files
+    stackoverflow: https://stackoverflow.com/questions/47819464/where-to-save-configuration-data-files-on-gnu-linux
+    book: https://www.pathname.com/fhs/pub/fhs-2.3.pdf
+Question: where to save user specific config file?
+Answer:
+    a) ~/.config - for user specific config files
+    b) /etc      - "static" system-wide configs
+    c) /var      - for data files generated during execution
+Example from `man ssh_config`
+    1.   command-line options
+    2.   user's configuration file (~/.ssh/config)
+    3.   system-wide configuration file (/etc/ssh/ssh_config)
+
+
+
 
 Tman code structure
 main:
