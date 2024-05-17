@@ -12,6 +12,6 @@ cat << EOF >> ~/.config/tman/config
 Install ~/tman
 Base ~/trash/tman
 EOF
-echo "source ${HOME}/tman/shell.sh" >> ~/.zshrc
+echo "source ${HOME}/tman/tman.sh" >> ~/.zshrc
 
 echo "update shell session"
