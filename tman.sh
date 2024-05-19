@@ -41,8 +41,9 @@ function _tman_get_config()
     # Eval config values
     TMAN_INSTALL="$(grep '\bInstall\b' ${TMAN_CONFIG_FILE} | tr -s ' ' | cut -d ' ' -f 2)"
     TMAN_BASE="$(grep '\bBase\b' ${TMAN_CONFIG_FILE} | tr -s ' ' | cut -d ' ' -f 2)"
-    eval TMAN_INSTALL="$(echo ${TMAN_INSTALL} | sed -e 's/~/${HOME}/')"
-    eval TMAN_BASE="$(echo ${TMAN_BASE} | sed -e 's/~/${HOME}/')"
+    # Expand tilde to $HOME
+    TMAN_INSTALL="${TMAN_INSTALL/#\~/$HOME}"
+    TMAN_BASE="${TMAN_BASE/#\~/$HOME}"
 
     # Check config values
     if [ ! -d $TMAN_INSTALL ]; then
