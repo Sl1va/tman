@@ -275,7 +275,9 @@ local function tman_update(opt)
     local branch = taskunit:getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
-    git:branch_switch_default()
+    if not git:branch_switch_default() then
+        return 1
+    end
     if opt == "-c" then
         git:branch_create()
     elseif opt == "-u" then
