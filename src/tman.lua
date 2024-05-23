@@ -127,7 +127,7 @@ end
 
 --- Switch to another task.
 -- @param id task ID
-local function use(id)
+local function tman_use(id)
     if not _checkid(id) then
         os.exit(1)
     end
@@ -435,7 +435,7 @@ local function main()
     elseif cmd == "link" then
         tman_link(arg[1])
     elseif cmd == "use" then
-        use(arg[1])
+        tman_use(arg[1])
     elseif cmd == "show" then
         tman_show(arg[1])
     elseif cmd == "del" then
