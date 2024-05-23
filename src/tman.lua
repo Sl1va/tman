@@ -255,10 +255,18 @@ end
 
 --- Create task symlinks.
 local function tman_link(id)
+    id = id or taskid:getcurr()
+
     if not _checkid(id) then
         os.exit(1)
     end
-    print("under dev: gotta use struct.lua API")
+    struct.create(id)
+
+    -- create git branch if needed
+    local branch = taskunit:getunit(id, "branch")
+    local git = gitmod.new(id, branch)
+    git:branch_create()
+    git:branch_switch(branch)
 end
 
 --- Update git repos.
