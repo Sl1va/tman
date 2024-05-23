@@ -25,11 +25,11 @@ Example from `man ssh_config`
 
 Tman code structure
 main:
-    tman.lua
-    config.lua
-    taskid.lua
-    taskunit.lua
-    struct.lua
+    tman.lua        - Util interface
+    config.lua      - Deal with config files
+    taskid.lua      - Deal with task ID database
+    taskunit.lua    - Deal with task ID unit (description, branch, etc)
+    struct.lua      - Create directory and structure for a task
 
 aux:
     db.lua
