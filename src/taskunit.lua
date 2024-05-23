@@ -195,10 +195,7 @@ function TaskUnit:add(id, tasktype, prio)
     if not self:save_units(id, unit) then
         return false
     end
-
-    -- create task repos and branches in them
-    local git = gitmod.new(unit.id.value, unit.branch.value)
-    return git:branch_create()
+    return true
 end
 
 --- Get task units.

@@ -118,10 +118,17 @@ local function tman_add(id, tasktype, prio)
         taskunit:del(id)
         os.exit(1)
     end
-    --[[
-        TODO: this's how it should go?
-        git.create_branch()
-    ]]
+
+    -- roachme: make its API pretty, idk.
+    local branch = taskunit:getunit(id, "branch")
+    local git = gitmod.new(id, branch)
+    if not git:branch_create() then
+        io.stderr:write("could not create new branch for a task\n")
+        taskid:del(id)
+        taskunit:del(id)
+        struct.delete(id)
+        os.exit(1)
+    end
     return true
 end
 
