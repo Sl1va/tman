@@ -11,7 +11,6 @@ local taskunit = require("taskunit").init()
 
 -- Tman misc components.
 local gitmod = require("misc/git")
-local log = require("misc/log").init("tman")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
 
@@ -62,11 +61,11 @@ end
 local function _checkid(id)
     id = id or taskid:getcurr()
     if not id then
-        log:err("no current task")
+        io.stderr:write("no current task\n")
         return false
     end
     if not taskid:exist(id) then
-        log:err("'%s': no such task ID", id)
+        io.stderr:write(("'%s': no such task ID\n"):format(id))
         return false
     end
     return true
@@ -101,20 +100,20 @@ local function tman_add(id, tasktype, prio)
     tasktype = tasktype or "bugfix"
 
     if not id then
-        log:err("task ID required")
+        io.stderr:write("task ID required\n")
         os.exit(1)
     end
     if not taskid:add(id) then
-        log:err("'%s': already exists", id)
+        io.stderr:write(("'%s': already exists\n"):format(id))
         os.exit(1)
     end
     if not taskunit:add(id, tasktype, prio) then
-        log:err("could not create new task unit")
+        io.stderr:write("could not create new task unit\n")
         taskid:del(id)
         os.exit(1)
     end
     if not struct.create(id) then
-        log:err("could not create new task structure")
+        io.stderr:write("could not create new task structure\n")
         taskid:del(id)
         taskunit:del(id)
         os.exit(1)
@@ -133,14 +132,14 @@ local function use(id)
         os.exit(1)
     end
     if taskid:getcurr() == id then
-        log:warning("'%s': already in use", id)
+        io.stderr:write(("'%s': already in use\n"):format(id))
         os.exit(1)
     end
 
     local branch = taskunit:getunit(id, "branch")
     local git = gitmod.new(id, branch)
     if not git:branch_switch(branch) then
-        log:err("repo has uncommited changes")
+        io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
     taskid:setcurr(id)
@@ -152,13 +151,13 @@ local function tman_prev()
     local prev = taskid:getprev()
 
     if not prev then
-        log:warning("no previous task")
+        io.stderr:write("no previous task\n")
         os.exit(1)
     end
     local branch = taskunit:getunit(prev, "branch")
     local git = gitmod.new(prev, branch)
     if not git:branch_switch(branch) then
-        log:err("repo has uncommited changes")
+        io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
     taskid:swap()
@@ -178,7 +177,7 @@ local function _tman_curr()
         elseif optopt == "i" then
             print(id or "")
         elseif optopt == "?" then
-            log:err("unrecognized option '%s'", arg[optind - 1])
+            io.stderr:write(("unrecognized option '%s'\n"):format(arg[optind - 1]))
             os.exit(1)
         end
     end
@@ -194,7 +193,7 @@ local function tman_list()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
-            return log:err("unrecognized option '%s'", arg[optind - 1])
+            return io.stderr:write(("unrecognized option '%s'\n"):format(arg[optind - 1]))
         end
         if optopt == "A" then
             print("All tasks:")
@@ -247,9 +246,9 @@ local function tman_amend(id, opt)
         taskid:del(id)
         taskid:add(newid)
     elseif not opt then
-        log:err("option missing")
+        io.stderr:write("option missing\n")
     else
-        log:err("'%s': no such option", opt)
+        io.stderr:write(("'%s': no such option\n"):format(opt))
     end
 end
 
@@ -276,7 +275,7 @@ local function tman_update(opt)
     opt = opt or "-u"
     local id = taskid:getcurr()
     if not id then
-        log:warning("no current task")
+        io.stderr:write("no current task\n")
         os.exit(1)
     end
 
@@ -291,7 +290,7 @@ local function tman_update(opt)
     elseif opt == "-u" then
         git:branch_update(true)
     else
-        log:warning("unknown option '%s'", opt)
+        io.stderr:write(("unknown option '%s'\n"):format(opt))
     end
     git:branch_switch(branch)
     return 0
@@ -337,7 +336,7 @@ local function tman_done()
     end
     local git = gitmod.new(id, "develop")
     if not git:branch_switch_default() then
-        log:err("repo has uncommited changes")
+        io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
     taskid:move(taskid.types.COMP)
@@ -385,11 +384,11 @@ local function tman_backup()
     local tarcmd = tar .. config.taskbase .. " -cf " .. ftar .. " " .. dtar
 
     if not utils.access(config.taskids) then
-        return log:err("tman database doesn't exist. Nothing to backup")
+        return io.stderr:write("tman database doesn't exist. Nothing to backup\n")
     end
 
     if not os.execute(tarcmd) then
-        return log:err("couldn't create tman database backup")
+        return io.stderr:write("couldn't create tman database backup\n")
     end
     return print(("create backup file: './%s'"):format(ftar))
 end
@@ -399,7 +398,7 @@ local function tman_restore()
     local ftar = arg[1]
 
     if not ftar then
-        log:err("pass config *.tar file")
+        io.stderr:write("pass config *.tar file\n")
         os.exit(1)
     end
 
@@ -407,7 +406,7 @@ local function tman_restore()
     local tar = "tar"
     local tarcmd = tar .. " -xf " .. ftar .. " " .. dtar
     if not utils.access(ftar) then
-        log:err("'%s': no archive such file", ftar)
+        io.stderr:write(("'%s': no archive such file\n"):format(ftar))
         os.exit(1)
     end
 
@@ -423,7 +422,7 @@ local function main()
     table.remove(arg, 1)
 
     if not _check_tman_struct() and cmd ~= "init" then
-        log:err("tman structure not inited or corrupted")
+        io.stderr:write("tman structure not inited or corrupted\n")
         os.exit(1)
     end
 
@@ -470,7 +469,7 @@ local function main()
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
-        log:err("'%s': no such command", cmd)
+        io.stderr:write(("'%s': no such command\n"):format(cmd))
     end
 end
 
