@@ -27,10 +27,29 @@ local function file_exists(fname)
     return false
 end
 
+local function util_rename(oldname, newname)
+    if not oldname then
+        print("util:rename:error: no oldname")
+        return false
+    end
+    if not newname then
+        print("util:rename:error: no newname")
+        return false
+    end
+    return os.execute(("mv %s %s"):format(oldname, newname))
+end
+
+local function util_exec(cmd)
+    return os.execute(cmd)
+end
+
+
 return {
-    mkdir = create_dir,
     rm = remove_dir,
-    touch = create_file,
     link = create_symlink,
+    exec = util_exec,
+    mkdir = create_dir,
+    touch = create_file,
     access = file_exists,
+    rename = util_rename,
 }
