@@ -7,8 +7,6 @@ local readconf = require("aux/readconf")
 
 
 local userhome = os.getenv("HOME")
-local file_tman_config = nil
-local file_tman_repos = nil
 
 -- Default places to search config file.
 local tman_config_dir = {
@@ -30,8 +28,8 @@ local function search_config_file(file)
 end
 
 -- TODO: where should `tman` look for config file?
-file_tman_config = search_config_file("config")
-file_tman_repos = search_config_file("repos")
+local file_tman_config = search_config_file("config")
+local file_tman_repos = search_config_file("repos")
 
 if not file_tman_config then
     log:err("config file not found")

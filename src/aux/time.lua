@@ -12,6 +12,7 @@ tman time add 3h
 tman time del 4h
 ]]
 
+--[[
 local function day_to_hour(dayval)
     local hours_in_day = 8
     return dayval * hours_in_day
@@ -92,3 +93,4 @@ local res2 = hours_to_time(hours)
 print("res1", res1)
 print("res2", res2)
 print("time_check", time_check(timeval))
+]]

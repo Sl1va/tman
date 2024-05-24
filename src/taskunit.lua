@@ -157,6 +157,7 @@ end
 -- roachme: TODO: use it in code.
 -- @param id task id
 -- @return true on success, otherwise false
+--[[
 local function check_unitfile(id)
     local i = 1
     local taskunits = load_units(id)
@@ -176,6 +177,7 @@ local function check_unitfile(id)
     end
     return true
 end
+]]
 
 --- Save task units into file.
 -- @param id task ID

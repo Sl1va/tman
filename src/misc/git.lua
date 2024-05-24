@@ -161,7 +161,7 @@ function Git:branch_delete()
 end
 
 --- Check that commit fits messages rules.
-function Git:commit_check() end
+--function Git:commit_check() end
 
 -- Public functions: end --
 

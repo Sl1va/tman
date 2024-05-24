@@ -28,13 +28,11 @@ Public functions:
 
 
 local taskunit = require("taskunit")
-local log = require("misc/log")
 local db = require("aux/db")
 
 
 local TaskID = {}
 TaskID.__index = TaskID
-log = log.init("taskid")
 db.init()
 
 
@@ -218,7 +216,7 @@ end
 function TaskID:move(id, _status)
     local prev = self:getprev()
     local curr = self:getcurr()
-    _status = status or status.ACTV
+    _status = _status or status.ACTV
 
     if id == curr then
         return self:movecurr()
@@ -236,7 +234,7 @@ end
 -- @return true on success, otherwise false
 function TaskID:movecurr(_status)
     local prev = self:getprev()
-    _status = status.ACTV
+    _status = _status or status.ACTV
 
     self:_unsetprev(_status)
     self:setcurr(prev)

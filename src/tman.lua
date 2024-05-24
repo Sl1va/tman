@@ -319,7 +319,6 @@ end
 --- Delete task.
 -- @param id task ID
 local function tman_del(id)
-    local confirm = "No"
     local desc = taskunit.getunit(id, "desc")
     local branch = taskunit.getunit(id, "branch")
     local git = gitmod.new(id, branch)
@@ -330,7 +329,7 @@ local function tman_del(id)
 
     print(("> %-8s %s"):format(id, desc))
     io.write("Do you want to continue? [Yes/No] ")
-    confirm = io.read("*line")
+    local confirm = io.read("*line")
     if confirm ~= "Yes" then
         print("deletion is cancelled")
         os.exit(1)
@@ -344,9 +343,11 @@ local function tman_del(id)
 end
 
 --- Check current task and push branch for review.
+--[[
 local function tman_review()
     local id = taskid:getcurr()
 end
+]]
 
 --- Move current task to done status.
 local function tman_done()
@@ -364,13 +365,16 @@ end
 
 --- Config util for your workflow
 -- @param subcmd subcommand
+--[[
 local function tman_config(subcmd)
     if subcmd == "repo" then
         print("configure repo list")
     elseif subcmd == "" then
     end
 end
+]]
 
+--[[
 local function tman_time(oper, val)
     local weeks = ""
     local days = ""
@@ -385,17 +389,17 @@ local function tman_time(oper, val)
         io.write("hours (default none): ")
         hours = io.read("*l")
 
-        --[[
         print("weeks", weeks)
         print("days", days)
         print("hours", hours)
-        ]]
         timeval = weeks .. " " .. days .. " " .. hours
         print(("timeval '%s'"):format(timeval))
     end
 end
+]]
 
 --- Back up util configs into archive.
+--[[
 local function tman_backup()
     -- roachme: need some tuning
     local ftar = "tman_db.tar"
@@ -412,8 +416,10 @@ local function tman_backup()
     end
     return print(("create backup file: './%s'"):format(ftar))
 end
+]]
 
 --- Restore util configs from archive.
+--[[
 local function tman_restore()
     local ftar = arg[1]
 
@@ -433,6 +439,7 @@ local function tman_restore()
     print("tarcmd", tarcmd)
     --os.execute(tarcmd)
 end
+]]
 
 --- Interface.
 local function main()
@@ -466,16 +473,18 @@ local function main()
         tman_list()
     elseif cmd == "update" then
         tman_update(arg[1])
-    elseif cmd == "review" then
-        tman_review()
     elseif cmd == "done" then
         tman_done()
+    --[[
+    elseif cmd == "review" then
+        tman_review()
     elseif cmd == "config" then
         tman_config(arg[1])
-    elseif cmd == "prev" then
-        tman_prev()
     elseif cmd == "time" then
         tman_time(arg[1], arg[2])
+    ]]
+    elseif cmd == "prev" then
+        tman_prev()
     elseif cmd == "backup" then
         --tman:backup()
         print("under development")
