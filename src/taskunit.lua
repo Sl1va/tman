@@ -5,6 +5,8 @@
 local gitmod = require("misc/git")
 local log = require("misc/log").init("taskunit")
 local config = require("config")
+local utils = require("aux/utils")
+
 
 --- FIXME: If description has a colon (:) in itself this regex causes problems
 local unitregex = "(%w*): (.*)"
@@ -293,12 +295,7 @@ end
 -- @param id task ID
 local function taskunit_del(id)
     local unitfile = config.ids .. id
-    local branch = taskunit_getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-
-    git:branch_delete()
-    os.remove(unitfile)
-    return true
+    return utils.rm(unitfile)
 end
 
 --- Amend task description.

@@ -316,27 +316,27 @@ end
 --- Delete task.
 -- @param id task ID
 local function tman_del(id)
+    local confirm = "No"
     local desc = taskunit.getunit(id, "desc")
+    local branch = taskunit.getunit(id, "branch")
+    local git = gitmod.new(id, branch)
 
     if not _checkid(id) then
         os.exit(1)
     end
+
     print(("> %-8s %s"):format(id, desc))
     io.write("Do you want to continue? [Yes/No] ")
-    local confirm = io.read("*line")
+    confirm = io.read("*line")
     if confirm ~= "Yes" then
         print("deletion is cancelled")
         os.exit(1)
     end
+
+    git:branch_delete()
     taskunit.del(id)
     taskid:del(id)
     struct.delete(id)
-    --[[
-    self.git:del(id)        -- delete task branch (need task ID from taskunit.lua)
-    self.struct:del(id)     -- delete task dir
-    self.taskid:del(id)     -- delete task ID from the database
-    self.taskunit.del(id)   -- delete task unit file from .tman
-    ]]
     return 0
 end
 
