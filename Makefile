@@ -2,7 +2,7 @@
 .PHONY: lua_test lua_fmt lua_lint lua_docs
 
 lua_test:
-	@lua test/tests.lua
+	@lua tests/unit/tests.lua
 
 # stylua is install by cargo (rust something)
 lua_fmt:
