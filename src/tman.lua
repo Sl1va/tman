@@ -176,17 +176,27 @@ end
 local function _tman_curr()
     local optstring = "fi"
     local id = taskid:getcurr()
+    local options = {
+        f = false,
+        i = true, -- default option
+    }
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "f" then
-            local desc = taskunit.getunit(id, "desc")
-            print(("* %-10s %s"):format(id, desc))
+            options.f = true
         elseif optopt == "i" then
-            print(id or "")
+            options.i = true
         elseif optopt == "?" then
             io.stderr:write(("unrecognized option '%s'\n"):format(arg[optind - 1]))
             os.exit(1)
         end
+    end
+
+    if options.f then
+        local desc = taskunit.getunit(id, "desc")
+        print(("* %-10s %s"):format(id, desc))
+    elseif options.i then
+        print(id or "")
     end
 end
 
