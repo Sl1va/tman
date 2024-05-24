@@ -48,6 +48,23 @@ end
 readconf.init(file_tman_config)
 local configvars = readconf.parse()
 
+local function load_repos()
+    local repos = {}
+    local f = io.open(file_tman_repos)
+
+    if not f then
+        log:err("couldn't open repos file")
+        return repos
+    end
+    for line in f:lines() do
+        local name, branch, path = string.match(line, "(.*),(.*),(.*)")
+        -- roachme: maybe it's better to leave path as nil
+        table.insert(repos, { name = name, branch = branch, path = path or "" })
+    end
+    return repos
+end
+
+
 
 -- tman main dirs
 local _base = configvars.base .. "/"
@@ -57,11 +74,10 @@ local _taskbase = _base .. "tasks/"
 local _ids = _tmanbase .. "ids/"
 local _taskids = _tmanbase .. "taskids"
 
-local _repos = file_tman_repos
-
 return {
     -- files
-    repos = _repos,
+    repos = load_repos(),
+    repo_file = file_tman_repos,
     taskids = _taskids,
 
     -- dirs

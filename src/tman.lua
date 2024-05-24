@@ -32,7 +32,7 @@ TODO:
 -- @return true on success, otherwise false
 local function _check_tman_struct()
     local files = {
-        config.repos,
+        config.repo_file,
         config.taskids,
     }
     local dirs = {
@@ -87,7 +87,7 @@ local function tman_init()
 
     -- files
     utils.touch(config.taskids)
-    utils.touch(config.repos)
+    utils.touch(config.repo_file)
 end
 
 --- Add a new task.

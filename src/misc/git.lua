@@ -6,7 +6,6 @@ local log = require("misc/log").init("git")
 
 --[[
 Private functions:
-    load_repos    - load repos from config file
     change_check  - check that repo has no unsaved changes
 
 
@@ -27,22 +26,6 @@ Git.__index = Git
 -- @type Git
 
 -- Private functions: end --
-
---- Load repos from config file.
-function Git:load_repos()
-    local repos = {}
-    local f = io.open(config.repos)
-
-    if not f then
-        log:err("no file for repos")
-        return false
-    end
-    for line in f:lines() do
-        local name, branch, path = string.match(line, "(.*),(.*),(.*)")
-        table.insert(repos, { name = name, branch = branch, path = path or "" })
-    end
-    return repos
-end
 
 --- Check that repo has no uncommited changes.
 -- @param reponame repo name
@@ -85,7 +68,7 @@ function Git.new(taskid, branch)
         gbranchD = "git -C %s branch --quiet -D %s",
         gbranchm = "git -C %s branch --quiet -m %s",
     }, Git)
-    self.repos = self:load_repos()
+    self.repos = config.repos
     return self
 end
 
