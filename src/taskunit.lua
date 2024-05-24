@@ -281,12 +281,11 @@ local function taskunit_show(id, count)
     count = count or unit_ids.basic
 
     for _, _ in pairs(taskunits) do
-        if count == 0 then
+        if i > count then
             break
         end
         local unit = taskunits[unit_keys[i]]
         print(("%-8s: %s"):format(unit.key, unit.value))
-        count = count - 1
         i = i + 1
     end
 end
