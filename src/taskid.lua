@@ -34,7 +34,6 @@ local db = require("aux/db")
 
 local TaskID = {}
 TaskID.__index = TaskID
-taskunit = taskunit.init()
 log = log.init("taskid")
 db.init()
 
@@ -255,16 +254,16 @@ function TaskID:list(active, completed)
     for idx = 1, size do
         local unit = db.getidx(idx)
         if unit.status == status.CURR and active then
-            local desc = taskunit:getunit(unit.id, "desc")
+            local desc = taskunit.getunit(unit.id, "desc")
             print(("* %-10s %s"):format(unit.id, desc))
         elseif unit.status == status.PREV and active then
-            local desc = taskunit:getunit(unit.id, "desc")
+            local desc = taskunit.getunit(unit.id, "desc")
             print(("- %-10s %s"):format(unit.id, desc))
         elseif unit.status == status.ACTV and active then
-            local desc = taskunit:getunit(unit.id, "desc")
+            local desc = taskunit.getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
         elseif unit.status == status.COMP and completed then
-            local desc = taskunit:getunit(unit.id, "desc")
+            local desc = taskunit.getunit(unit.id, "desc")
             print(("  %-10s %s"):format(unit.id, desc))
         end
     end

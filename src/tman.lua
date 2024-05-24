@@ -7,7 +7,7 @@
 local struct = require("struct")
 local config = require("config")
 local taskid = require("taskid").init()
-local taskunit = require("taskunit").init()
+local taskunit = require("taskunit")
 
 -- Tman misc components.
 local gitmod = require("misc/git")
@@ -107,7 +107,7 @@ local function tman_add(id, tasktype, prio)
         io.stderr:write(("'%s': already exists\n"):format(id))
         os.exit(1)
     end
-    if not taskunit:add(id, tasktype, prio) then
+    if not taskunit.add(id, tasktype, prio) then
         io.stderr:write("could not create new task unit\n")
         taskid:del(id)
         os.exit(1)
@@ -115,17 +115,17 @@ local function tman_add(id, tasktype, prio)
     if not struct.create(id) then
         io.stderr:write("could not create new task structure\n")
         taskid:del(id)
-        taskunit:del(id)
+        taskunit.del(id)
         os.exit(1)
     end
 
     -- roachme: make its API pretty, idk.
-    local branch = taskunit:getunit(id, "branch")
+    local branch = taskunit.getunit(id, "branch")
     local git = gitmod.new(id, branch)
     if not git:branch_create() then
         io.stderr:write("could not create new branch for a task\n")
         taskid:del(id)
-        taskunit:del(id)
+        taskunit.del(id)
         struct.delete(id)
         os.exit(1)
     end
@@ -143,7 +143,7 @@ local function tman_use(id)
         os.exit(1)
     end
 
-    local branch = taskunit:getunit(id, "branch")
+    local branch = taskunit.getunit(id, "branch")
     local git = gitmod.new(id, branch)
     if not git:branch_switch(branch) then
         io.stderr:write("repo has uncommited changes\n")
@@ -161,7 +161,7 @@ local function tman_prev()
         io.stderr:write("no previous task\n")
         os.exit(1)
     end
-    local branch = taskunit:getunit(prev, "branch")
+    local branch = taskunit.getunit(prev, "branch")
     local git = gitmod.new(prev, branch)
     if not git:branch_switch(branch) then
         io.stderr:write("repo has uncommited changes\n")
@@ -179,7 +179,7 @@ local function _tman_curr()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "f" then
-            local desc = taskunit:getunit(id, "desc")
+            local desc = taskunit.getunit(id, "desc")
             print(("* %-10s %s"):format(id, desc))
         elseif optopt == "i" then
             print(id or "")
@@ -226,7 +226,7 @@ local function tman_show(id)
     if not _checkid(id) then
         os.exit(1)
     end
-    taskunit:show(id)
+    taskunit.show(id)
 end
 
 --- Amend task unit.
@@ -241,15 +241,15 @@ local function tman_amend(id, opt)
     if opt == "-d" then
         io.write("new desc: ")
         local newdesc = io.read("*l")
-        taskunit:amend_desc(id, newdesc)
+        taskunit.amend_desc(id, newdesc)
     elseif opt == "-p" then
         io.write("new priority [highest|high|mid|low|lowest]: ")
         local newprio = io.read("*l")
-        taskunit:amend_prio(id, newprio)
+        taskunit.amend_prio(id, newprio)
     elseif opt == "-i" then
         io.write("new task ID: ")
         local newid = io.read("*l")
-        taskunit:amend_id(id, newid)
+        taskunit.amend_id(id, newid)
         taskid:del(id)
         taskid:add(newid)
     elseif not opt then
@@ -269,7 +269,7 @@ local function tman_link(id)
     struct.create(id)
 
     -- create git branch if needed
-    local branch = taskunit:getunit(id, "branch")
+    local branch = taskunit.getunit(id, "branch")
     local git = gitmod.new(id, branch)
     git:branch_create()
     git:branch_switch(branch)
@@ -286,7 +286,7 @@ local function tman_update(opt)
         os.exit(1)
     end
 
-    local branch = taskunit:getunit(id, "branch")
+    local branch = taskunit.getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
     if not git:branch_switch_default() then
@@ -306,7 +306,7 @@ end
 --- Delete task.
 -- @param id task ID
 local function tman_del(id)
-    local desc = taskunit:getunit(id, "desc")
+    local desc = taskunit.getunit(id, "desc")
 
     if not _checkid(id) then
         os.exit(1)
@@ -318,14 +318,14 @@ local function tman_del(id)
         print("deletion is cancelled")
         os.exit(1)
     end
-    taskunit:del(id)
+    taskunit.del(id)
     taskid:del(id)
     struct.delete(id)
     --[[
     self.git:del(id)        -- delete task branch (need task ID from taskunit.lua)
     self.struct:del(id)     -- delete task dir
     self.taskid:del(id)     -- delete task ID from the database
-    self.taskunit:del(id)   -- delete task unit file from .tman
+    self.taskunit.del(id)   -- delete task unit file from .tman
     ]]
     return 0
 end

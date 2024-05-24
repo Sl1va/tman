@@ -33,9 +33,6 @@ Public functions:
     getunit - get unit value from unit file
 ]]
 
-local TaskUnit = {}
-TaskUnit.__index = TaskUnit
-
 local unit_ids = {
     basic = 4, -- id, prio, type, desc
     full = 8, -- basic + time, date, status, branch
@@ -76,6 +73,8 @@ end
 ]]
 
 
+-- Private functions: end --
+
 local function get_input(prompt)
     io.write(prompt, ": ")
     return io.read("*line")
@@ -93,14 +92,13 @@ end
 -- @treturn bool true if exists, otherwise false
 local function check_tasktype(type)
     local tasktypes = { "bugfix", "feature", "hotfix" }
-    local found = false
 
     for _, dtype in pairs(tasktypes) do
         if type == dtype then
-            found = true
+            return true
         end
     end
-    return found
+    return false
 end
 
 --- Check that priority exists.
@@ -127,31 +125,46 @@ local function check_unit_keys(keyvalue)
     return false
 end
 
---- Class TaskUnit
--- @type TaskUnit
+--- Get task units.
+-- @param id task ID
+-- @treturn table task units {{key, value}, ...}
+local function load_units(id)
+    local taskunits = {}
+    local fname = config.ids .. id
+    local f = io.open(fname)
+    local i = 1
 
---- Init class TaskUnit.
-function TaskUnit.init()
-    local self = setmetatable({}, TaskUnit)
-    return self
+    if not f then
+        log:err("'%s': could not open task unit file", id)
+        return {}
+    end
+    for line in f:lines() do
+        local ukey, uval = string.match(line, unitregex)
+        taskunits[unit_keys[i]] = { key = string.lower(ukey), value = uval }
+        i = i + 1
+    end
+    f:close()
+    return taskunits
 end
 
 --- Check that task unit is not corrupted.
 -- roachme: it should check user key as well, but i just don't know.
+-- roachme: TODO: use it in code.
 -- @param id task id
 -- @return true on success, otherwise false
-function TaskUnit:check_unitfile(id)
-    -- roachme: not used, but gotta be when load_units()
+local function check_unitfile(id)
     local i = 1
-    local taskunits = self:load_units(id)
+    local taskunits = load_units(id)
 
     if not next(taskunits) then
+        print("next")
         return false
     end
 
     for _, _ in pairs(taskunits) do
         local key = unit_keys[i]
         if not taskunits[key] or taskunits[key].value then
+            print("unit")
             return false
         end
         i = i + 1
@@ -159,11 +172,39 @@ function TaskUnit:check_unitfile(id)
     return true
 end
 
+--- Save task units into file.
+-- @param id task ID
+-- @param taskunits task units to save
+-- @return true on success, otherwise false
+local function save_units(id, taskunits)
+    local i = 1
+    local fname = config.ids .. id
+    local f = io.open(fname, "w")
+
+    if not f then
+        log:err("could not create file note", fname)
+        return false
+    end
+
+    for _, _ in pairs(unit_keys) do
+        local unit = taskunits[unit_keys[i]]
+        f:write(("%s: %s\n"):format(unit.key, unit.value))
+        i = i + 1
+    end
+    f:close()
+    return true
+end
+
+-- Private functions: end --
+
+
+-- Public functions: start --
+
 --- Add a new unit for a task.
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
 -- @param prio task priority
-function TaskUnit:add(id, tasktype, prio)
+local function taskunit_add(id, tasktype, prio)
     prio = prio or unit_prios.mid
     local unit = {
         id = { key = "ID", value = id },
@@ -192,54 +233,9 @@ function TaskUnit:add(id, tasktype, prio)
     end
 
     -- save stuff
-    if not self:save_units(id, unit) then
+    if not save_units(id, unit) then
         return false
     end
-    return true
-end
-
---- Get task units.
--- @param id task ID
--- @treturn table task units {{key, value}, ...}
-function TaskUnit:load_units(id)
-    local taskunits = {}
-    local fname = config.ids .. id
-    local f = io.open(fname)
-    local i = 1
-
-    if not f then
-        log:err("'%s': could not open task unit file", id)
-        return {}
-    end
-    for line in f:lines() do
-        local ukey, uval = string.match(line, unitregex)
-        taskunits[unit_keys[i]] = { key = string.lower(ukey), value = uval }
-        i = i + 1
-    end
-    f:close()
-    return taskunits
-end
-
---- Save task units into file.
--- @param id task ID
--- @param taskunits task units to save
--- @return true on success, otherwise false
-function TaskUnit:save_units(id, taskunits)
-    local i = 1
-    local fname = config.ids .. id
-    local f = io.open(fname, "w")
-
-    if not f then
-        log("error: could not create file note", fname)
-        return false
-    end
-
-    for _, _ in pairs(unit_keys) do
-        local unit = taskunits[unit_keys[i]]
-        f:write(("%s: %s\n"):format(unit.key, unit.value))
-        i = i + 1
-    end
-    f:close()
     return true
 end
 
@@ -248,8 +244,8 @@ end
 -- @param key unit key
 -- @return unit value
 -- @return nil if key doesn't exist
-function TaskUnit:getunit(id, key)
-    local taskunits = self:load_units(id)
+local function taskunit_getunit(id, key)
+    local taskunits = load_units(id)
 
     if not next(taskunits) or not check_unit_keys(key) then
         log:err("couldn't get unit from task ID '%s'", id)
@@ -263,24 +259,24 @@ end
 -- @param key key to look up
 -- @param value new value to set
 -- @return true on success, otherwise false
-function TaskUnit:setunit(id, key, value)
-    local taskunits = self:load_units(id)
+local function taskunit_setunit(id, key, value)
+    local taskunits = load_units(id)
 
     if not next(taskunits) or not check_unit_keys(key) then
         log:err("couldn't set key '%s' to task ID '%s'", key, id)
         return false
     end
     taskunits[key].value = value
-    return self:save_units(id, taskunits)
+    return save_units(id, taskunits)
 end
 
 --- Show task unit metadata.
 -- @param id task ID
 -- @param count how many items to show (default: 4)
-function TaskUnit:show(id, count)
+local function taskunit_show(id, count)
     local i = 1
+    local taskunits = load_units(id)
     count = count or unit_ids.basic
-    local taskunits = self:load_units(id)
 
     for _, _ in pairs(taskunits) do
         if count == 0 then
@@ -295,9 +291,9 @@ end
 
 --- Delete task unit.
 -- @param id task ID
-function TaskUnit:del(id)
+local function taskunit_del(id)
     local unitfile = config.ids .. id
-    local branch = self:getunit(id, "branch")
+    local branch = taskunit_getunit(id, "branch")
     local git = gitmod.new(id, branch)
 
     git:branch_delete()
@@ -309,17 +305,17 @@ end
 -- @param id task ID
 -- @param newdesc new description
 -- @return true on success, otherwise false
-function TaskUnit:amend_desc(id, newdesc)
-    self:setunit(id, "desc", newdesc)
+local function taskunt_amend_desc(id, newdesc)
+    taskunit_setunit(id, "desc", newdesc)
 
-    local taskunits = self:load_units(id)
+    local taskunits = load_units(id)
     if not next(taskunits) then
         log:err("task '%s' unit is empty", id)
         return false
     end
 
     local newbranch = format_branch(taskunits)
-    self:setunit(id, "branch", newbranch)
+    taskunit_setunit(id, "branch", newbranch)
 
     local git = gitmod.new(id, newbranch)
     return git:branch_rename(newbranch)
@@ -328,12 +324,12 @@ end
 --- Chaneg task ID.
 -- @param id current task ID
 -- @param newid new ID
-function TaskUnit:amend_id(id, newid)
+local function taskunit_amend_id(id, newid)
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
 
-    self:setunit(id, "id", newid)
-    local taskunits = self:load_units(id)
+    taskunit_setunit(id, "id", newid)
+    local taskunits = load_units(id)
 
     if not next(taskunits) then
         log:err("task '%s' unit is empty", id)
@@ -341,7 +337,7 @@ function TaskUnit:amend_id(id, newid)
     end
 
     local newbranch = format_branch(taskunits)
-    self:setunit(id, "branch", newbranch)
+    taskunit_setunit(id, "branch", newbranch)
 
     local git = gitmod.new(id, newbranch)
     git:branch_rename(newbranch)
@@ -360,14 +356,26 @@ end
 --- Change task priority.
 -- @param id task ID
 -- @param newprio new task priority
-function TaskUnit:amend_prio(id, newprio)
+local function taskunit_amend_prio(id, newprio)
     local key = "prio"
 
     if not check_unit_prios(newprio) then
         log:err("task priority '%s' does not exist", newprio)
         return false
     end
-    return self:setunit(id, key, newprio)
+    return taskunit_setunit(id, key, newprio)
 end
 
-return TaskUnit
+-- Public functions: end --
+
+
+return {
+    add = taskunit_add,
+    del = taskunit_del,
+    show = taskunit_show,
+    getunit = taskunit_getunit,
+    setunit = taskunit_setunit,
+    amend_id = taskunit_amend_id,
+    amend_desc = taskunt_amend_desc,
+    amend_prio = taskunit_amend_prio,
+}
