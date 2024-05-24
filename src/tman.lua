@@ -233,7 +233,10 @@ end
 local function tman_show(id)
     id = id or taskid:getcurr()
 
-    if not _checkid(id) then
+    if not id then
+        os.exit(1)
+    elseif not taskid:exist(id) then
+        io.stderr:write(("'%s': no such task ID\n"):format(id))
         os.exit(1)
     end
     taskunit.show(id)
