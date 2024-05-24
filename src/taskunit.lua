@@ -82,6 +82,9 @@ local function get_input(prompt)
     return io.read("*line")
 end
 
+--- Form branch according to pattern.
+-- roach: Move it pattern to file as it might be diff for other users.
+-- @param task task unit
 local function format_branch(task)
     local branch = task.type.value .. "/" .. task.id.value
     branch = branch .. "_" .. task.desc.value:gsub(" ", "_")
