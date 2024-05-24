@@ -2,6 +2,20 @@ Tool to utilize workflow in embedded development
 
 Status: Active development
 
+## How to install
+
+# Default places to search config file
+
+# Default config structure
+
+
+## How to use
+
+# Geneal help
+
+# More descriptive help message
+
+
 
 Config repo:
 File `repos` contain list of repos that might be possibly used at work. The file
@@ -20,6 +34,7 @@ repo_path - if repo's nested specify its path here, otherwise leave it emtpy,
             default will be used.
 
 
+## Code structure
 
 Basic structure:
 Tman structure:
