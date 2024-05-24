@@ -3,3 +3,4 @@
 3. Properly fix backup and restore commands
 4. Find a good config syntax to fit options, install path, repos, etc.
 5. Move taks dir/file structure into the file. Tho leave system ones in the code.
+6. Add file lock to task units.
