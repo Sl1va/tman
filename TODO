@@ -2,3 +2,4 @@
 2. Refactor git.lua. Looks messy
 3. Properly fix backup and restore commands
 4. Find a good config syntax to fit options, install path, repos, etc.
+5. Move taks dir/file structure into the file. Tho leave system ones in the code.
