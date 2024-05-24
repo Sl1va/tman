@@ -344,10 +344,9 @@ local function taskunit_amend_id(id, newid)
     os.execute(cmd)
 
     -- rename task ID file in .tman
-    local old_file_task = config.tmanbase .. id
-    local new_file_task = config.tmanbase .. newid
-    local cmd_db = ("mv %s %s"):format(old_file_task, new_file_task)
-    return os.execute(cmd_db)
+    local old_file_task = config.ids .. id
+    local new_file_task = config.ids .. newid
+    return utils.rename(old_file_task, new_file_task)
 end
 
 --- Change task priority.
