@@ -10,22 +10,27 @@ local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
 
 
+--[[
+    Determine what task dir will look like
+    -- roachme: move to a separate file
+]]
+local struct_dirs = { "logs", "lab" }
+local struct_files = { "note" }
+
+
+
 -- Private functions: end --
 
 --- Create dirs.
 local function _struct_dirs(base)
-    local dirs = { "logs", "lab" }
-
-    for _, dir in pairs(dirs) do
+    for _, dir in pairs(struct_dirs) do
         utils.mkdir(base .. "/" .. dir)
     end
 end
 
 --- Create files.
 local function _struct_files(base)
-    local files = { "note" }
-
-    for _, file in pairs(files) do
+    for _, file in pairs(struct_files) do
         utils.touch(base .. "/" .. file)
     end
 end
