@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 usage()
 {
     cat << EOF
@@ -52,9 +53,28 @@ install_system_utils()
     sudo apt install -y ${system_utils}
 }
 
+# TODO: add a checker to not install it more than once
+install_shell()
+{
+    # env SHELL might be not set
+    local USERSHELL="$(basename $(getent passwd $(whoami) | awk -F: '{print $7}'))"
+
+    if [ "$USERSHELL" == "bash" ]; then
+        echo "install into bash"
+    elif [ "$USERSHELL" == "zsh" ]; then
+        echo "install into zsh"
+    else
+        echo "Unsupported shell '$USERSHELL'"
+        exit 1
+    fi
+    echo "source $(pwd)/tman.sh" >> "${HOME}/.${USERSHELL}rc"
+    echo "'source ~/$USERSHELL' - to restart shell"
+}
+
 if [ "$1" = "-i" ]; then
     install_system_utils
     install_lua_rocks
+    install_shell
 elif [ -z "$1" -o "$1" = "-c" ]; then
     check_system_utils
     check_lua_rocks
