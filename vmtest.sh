@@ -1,4 +1,5 @@
 # install system deps
+sudo apt update
 sudo apt install -y lua5.1 luarocks
 luarocks install luaposix
 
@@ -12,6 +13,9 @@ cat << EOF >> ~/.config/tman/config
 Install ~/tman
 Base ~/trash/tman
 EOF
+
+touch ~/.config/tman/config
+
 echo "source ${HOME}/tman/tman.sh" >> ~/.zshrc
 
 echo "update shell session"
