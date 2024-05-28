@@ -4,12 +4,14 @@ TMAN_INSTALL=""
 TMAN_CONFIG_FILE=""
 TMAN=""
 
-function _tman_config_find()
+function _tman_find_config()
 {
+    local confname="tman_conf.lua"
     local tman_config_files=(
-        "${HOME}/.tman/config"
-        "${HOME}/.config/tman/config"
+        "${HOME}/.tman/${confname}"
+        "${HOME}/.config/tman/${confname}"
     )
+
     for file in ${tman_config_files[@]}; do
         if [ -f "$file" ]; then
             TMAN_CONFIG_FILE="${file}"
@@ -21,41 +23,26 @@ function _tman_config_find()
 
 function _tman_get_config()
 {
-    if [ ! -f $TMAN_CONFIG_FILE ]; then
-        echo "err: no config file"
-        return 1
-    fi
+    TMAN_BASE="$(cat "$TMAN_CONFIG_FILE" | grep "^\bTMANBase\b" | awk '{print $3}' | tr -d '"')"
+    TMAN_INSTALL="$(cat "$TMAN_CONFIG_FILE" | grep -E "^\bTMANInstall\b" | awk '{print $3}' | tr -d '"')"
 
-    grep -q '\bInstall\b' $TMAN_CONFIG_FILE
-    if [ $? -ne 0 ]; then
-        echo "err:config: no installation path in the config"
-        return 1
-    fi
-
-    grep -q '\bBase\b' $TMAN_CONFIG_FILE
-    if [ $? -ne 0 ]; then
-        echo "err:config: no base path in the config"
-        return 1
-    fi
-
-    # Eval config values
-    TMAN_INSTALL="$(grep '\bInstall\b' ${TMAN_CONFIG_FILE} | tr -s ' ' | cut -d ' ' -f 2)"
-    TMAN_BASE="$(grep '\bBase\b' ${TMAN_CONFIG_FILE} | tr -s ' ' | cut -d ' ' -f 2)"
     # Expand tilde to $HOME
     TMAN_INSTALL="${TMAN_INSTALL/#\~/$HOME}"
     TMAN_BASE="${TMAN_BASE/#\~/$HOME}"
 
-    # Check config values
-    if [ ! -d $TMAN_INSTALL ]; then
+    if [ -z "$TMAN_BASE" ] || [ ! -d $TMAN_BASE ]; then
+        echo "err: no BASE path in the config"
+        return 1
+    fi
+    if [ -z "$TMAN_INSTALL" ] || [ ! -d $TMAN_INSTALL ]; then
         echo "err: no such INSTALL file '$TMAN_INSTALL'"
         return 1
     fi
-    return 0
 }
 
 function tman()
 {
-    _tman_config_find
+    _tman_find_config
     if [ $? -ne 0 ]; then
         echo "${PROGNAME}: no config file found"
         return 1
@@ -69,8 +56,13 @@ function tman()
     # roachme: refactor this piece of shit
     TMAN="${TMAN_INSTALL}/src/tman.lua"
     TASKS="${TMAN_BASE}/tasks"
+
     MYLUA_PATH="${TMAN_INSTALL}/src/?.lua;"
-    MYPATH="package.path = '${MYLUA_PATH}' .. package.path"
+    MYCONF_PATH="$(dirname ${TMAN_CONFIG_FILE})/?.lua"
+
+    MYPATH="package.path = package.path .. ';${MYLUA_PATH};${MYCONF_PATH}'"
+
+
     MYLUA="lua -e \"$MYPATH\""
     TMANCMD="$MYLUA ${TMAN}"
 
