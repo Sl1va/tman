@@ -348,17 +348,22 @@ end
 ]]
 
 --- Move current task to done status.
+-- roachme: It moves to ACTV, COMP status.
 local function tman_done()
-    local id = taskid:getcurr()
+    local curr = taskid:getcurr()
+
     if not _checkid() then
         os.exit(1)
     end
-    local git = gitmod.new(id, "develop")
+    local git = gitmod.new(curr)
     if not git:branch_switch_default() then
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
-    taskid:move(taskid.types.COMP)
+    print("new status: ", taskid.status.COMP)
+    taskid:move(curr, taskid.status.COMP)
+    taskid:unsetcurr()
+    taskid:swap()
 end
 
 --- Config util for your workflow

@@ -93,6 +93,7 @@ end
 -- @return new object
 function TaskID.init()
     local self = setmetatable({}, TaskID)
+    self.status = status
     return self
 end
 
@@ -217,13 +218,17 @@ function TaskID:move(id, _status)
     local prev = self:getprev()
     local curr = self:getcurr()
     _status = _status or status.ACTV
+    print("taskid:move: _status", _status)
 
     if id == curr then
-        return self:movecurr()
+        print("id == curr")
+        return self:movecurr(_status)
     elseif id == prev then
+        print("id == prev")
         self:_unsetprev(_status)
     else
         -- roachme: hadn't tested at all
+        print("id == else")
         db.set(id, _status)
     end
 end
@@ -235,6 +240,7 @@ end
 function TaskID:movecurr(_status)
     local prev = self:getprev()
     _status = _status or status.ACTV
+    print("movecurr: _status", _status, _status == status.COMP)
 
     self:_unsetprev(_status)
     self:setcurr(prev)
