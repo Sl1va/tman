@@ -2,7 +2,9 @@ PROGNAME="tman"
 TMAN_BASE=""
 TMAN_INSTALL=""
 TMAN_CONFIG_FILE=""
-TMAN=""
+TASKS=""
+TMANCMD=""
+
 
 function _tman_find_config()
 {
@@ -40,6 +42,73 @@ function _tman_get_config()
     fi
 }
 
+function _tman_form_command()
+{
+    local lua_path_tman="${TMAN_INSTALL}/src/?.lua;"
+    local lua_path_conf="$(dirname ${TMAN_CONFIG_FILE})/?.lua;"
+    local lua_path="package.path = package.path .. ';${lua_path_tman};${lua_path_conf}'"
+
+    TMAN="${TMAN_INSTALL}/src/tman.lua"
+    TASKS="${TMAN_BASE}/tasks"
+    TMANCMD="lua -e \"$lua_path\" ${TMAN}"
+}
+
+function _tman_handle_commands()
+{
+    local retcode="$1"
+    local command="$2"
+    local taskdir="$3"
+
+    if [ $retcode -eq 0 ] && [ "$command" = "add" ]; then
+        cd "$TASKS/$taskdir"
+        wd -q rm task
+        wd -q add task
+        wd task
+
+    elif [ $retcode -eq 0 ] && [ "$command" = "use" ]; then
+        cd "$TASKS/$taskdir"
+        wd -q rm task
+        wd -q add task
+        wd task
+
+    elif [ $retcode -eq 0 ] && [ "$command" = "prev" ]; then
+        TASKID=$(eval $TMANCMD _curr -i)
+        cd "$TASKS/$TASKID"
+        wd -q rm task
+        wd -q add task
+        wd task
+
+    elif [ $retcode -eq 0 ] && [ "$command" = "move" ]; then
+        if [ ! -z "$4" ] && [ "$3" = "progress" ]; then
+            cd "$TASKS/$taskdir"
+            wd -q -f add task
+            wd task
+        fi
+
+    elif [ $retcode -eq 0 ] && [ "$command" = "done" ]; then
+        cd "$TASKS"
+        wd -q -f add task
+
+    elif [ $retcode -eq 0 ] && [ "$command" = "amend" ] && [ "$4" = "-i" ]; then
+        TASKID=$(eval $TMANCMD _curr -i)
+        cd $TASKS/${TASKID}
+        wd -q rm task
+        wd -q add task
+        wd task
+
+    elif [ "$command" = "del" ]; then
+        TASKID="$(eval $TMANCMD _curr -i)"
+        if [ -n "$TASKID" ]; then
+            cd $TASKS/$TASKID
+            wd -q -f add task
+            wd task
+        else
+            wd -q rm task
+            cd $TASKS
+        fi
+    fi
+}
+
 function tman()
 {
     _tman_find_config
@@ -53,69 +122,8 @@ function tman()
         return 1
     fi
 
-    # roachme: refactor this piece of shit
-    TMAN="${TMAN_INSTALL}/src/tman.lua"
-    TASKS="${TMAN_BASE}/tasks"
-
-    MYLUA_PATH="${TMAN_INSTALL}/src/?.lua;"
-    MYCONF_PATH="$(dirname ${TMAN_CONFIG_FILE})/?.lua"
-
-    MYPATH="package.path = package.path .. ';${MYLUA_PATH};${MYCONF_PATH}'"
-
-
-    MYLUA="lua -e \"$MYPATH\""
-    TMANCMD="$MYLUA ${TMAN}"
-
+    _tman_form_command
     eval $TMANCMD $@
-    RET=$?
 
-    if [ $RET -eq 0 ] && [ "$1" = "add" ]; then
-        cd $TASKS/${2}
-        wd -q rm task
-        wd -q add task
-        wd task
-
-    elif [ $RET -eq 0 ] && [ "$1" = "use" ]; then
-        cd $TASKS/${2}
-        wd -q rm task
-        wd -q add task
-        wd task
-
-    elif [ $RET -eq 0 ] && [ "$1" = "prev" ]; then
-        TASKID=$(eval $TMANCMD _curr -i)
-        cd $TASKS/${TASKID}
-        wd -q rm task
-        wd -q add task
-        wd task
-
-    elif [ $RET -eq 0 ] && [ "$1" = "move" ]; then
-        if [ ! -z "$3" ] && [ "$2" = "progress" ]; then
-            cd $TASKS/${3}
-            wd -q -f add task
-            wd task
-        fi
-
-    elif [ $RET -eq 0 ] && [ "$1" = "done" ]; then
-        cd $TASKS
-        wd -q -f add task
-
-    # tman amend DE-me4 -i
-elif [ $RET -eq 0 ] && [ "$1" = "amend" ] && [ "$3" = "-i" ]; then
-    TASKID=$(eval $TMANCMD _curr -i)
-    cd $TASKS/${TASKID}
-    wd -q rm task
-    wd -q add task
-    wd task
-
-elif [ "$1" = "del" ]; then
-    TASKID="$(eval $TMANCMD _curr -i)"
-    if [ -n "$TASKID" ]; then
-        cd $TASKS/$TASKID
-        wd -q -f add task
-        wd task
-    else
-        wd -q rm task
-        cd $TASKS
-    fi
-    fi
+    _tman_handle_commands $? $@
 }
