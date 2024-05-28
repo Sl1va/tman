@@ -4,19 +4,13 @@
 
 local utils = require("aux/utils")
 local config = require("config")
+local tmanconf = require("tman_conf")
 
 local repos = config.repos
 local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
-
-
---[[
-    Determine what task dir will look like
-    -- roachme: move to a separate file
-]]
-local struct_dirs = { "logs", "lab" }
-local struct_files = { "note" }
-
+local struct_dirs = tmanconf.struct.dirs
+local struct_files = tmanconf.struct.files
 
 
 -- Private functions: end --
