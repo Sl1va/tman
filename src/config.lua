@@ -2,7 +2,12 @@
 -- @module config
 
 local tmanconfig = require("tman_conf")
+
 local userhome = os.getenv("HOME")
+local default_struct = {
+    dirs = {},
+    files = {},
+}
 
 
 local function tilde_to_home()
@@ -13,7 +18,7 @@ end
 tilde_to_home()
 
 -- Add default value if they're not defined in the config file
-tmanconfig.struct = tmanconfig.struct or {}
+tmanconfig.struct = tmanconfig.struct or default_struct
 tmanconfig.repos = tmanconfig.repos or {}
 
 -- Tman dir structure
