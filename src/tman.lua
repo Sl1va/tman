@@ -4,8 +4,8 @@
 
 
 -- Tman main components.
+local core = require("core")
 local struct = require("struct")
-local config = require("config")
 local taskid = require("taskid")
 local taskunit = require("taskunit")
 
@@ -13,10 +13,6 @@ local taskunit = require("taskunit")
 local gitmod = require("misc/git")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
-
--- Tman Aux components.
-local utils = require("aux/utils")
-
 
 
 --[[
@@ -28,31 +24,6 @@ TODO:
 
 -- Private functions: start --
 
---- Check tman dir ain't corrupted and exists.
--- @return true on success, otherwise false
-local function _check_tman_struct()
-    local files = {
-        config.taskids,
-    }
-    local dirs = {
-        config.ids,
-        config.tmanbase,
-        config.taskbase,
-        config.codebase,
-    }
-
-    for _, dir in pairs(dirs) do
-        if not utils.access(dir) then
-            return false
-        end
-    end
-    for _, file in pairs(files) do
-        if not utils.access(file) then
-            return false
-        end
-    end
-    return true
-end
 
 --- Check ID is passed and exists in database.
 -- @param id task ID
@@ -74,19 +45,6 @@ end
 
 
 -- Public functions: start --
-
---- Init system to use a util.
-local function tman_init()
-    print("init tman structure")
-    -- dirs
-    utils.mkdir(config.ids)
-    utils.mkdir(config.tmanbase)
-    utils.mkdir(config.taskbase)
-    utils.mkdir(config.codebase)
-
-    -- files
-    utils.touch(config.taskids)
-end
 
 --- Add a new task.
 -- @param id task ID
@@ -463,13 +421,13 @@ local function main()
     -- posix getopt does not let permutations as GNU version
     table.remove(arg, 1)
 
-    if not _check_tman_struct() and cmd ~= "init" then
+    if not core.check() and cmd ~= "init" then
         io.stderr:write("tman structure not inited or corrupted\n")
         os.exit(1)
     end
 
     if cmd == "init" then
-        return tman_init()
+        return core.init()
     elseif cmd == "add" then
         tman_add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
