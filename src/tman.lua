@@ -317,13 +317,13 @@ end
 --- Delete task.
 -- @param id task ID
 local function tman_del(id)
-    local desc = taskunit.getunit(id, "desc")
-    local branch = taskunit.getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-
     if not _checkid(id) then
         os.exit(1)
     end
+
+    local desc = taskunit.getunit(id, "desc")
+    local branch = taskunit.getunit(id, "branch")
+    local git = gitmod.new(id, branch)
 
     print(("> %-8s %s"):format(id, desc))
     io.write("Do you want to continue? [Yes/No] ")
