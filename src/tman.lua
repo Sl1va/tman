@@ -335,30 +335,6 @@ local function tman_config(subcmd)
 end
 ]]
 
---[[
-local function tman_time(oper, val)
-    local weeks = ""
-    local days = ""
-    local hours = ""
-
-    if oper == "set" then
-        local timeval = ""
-        io.write("weeks (default none): ")
-        weeks = io.read("*l")
-        io.write("days (default none): ")
-        days = io.read("*l")
-        io.write("hours (default none): ")
-        hours = io.read("*l")
-
-        print("weeks", weeks)
-        print("days", days)
-        print("hours", hours)
-        timeval = weeks .. " " .. days .. " " .. hours
-        print(("timeval '%s'"):format(timeval))
-    end
-end
-]]
-
 --- Back up util configs into archive.
 --[[
 local function tman_backup()
@@ -448,14 +424,6 @@ local function main()
         tman_update(arg[1])
     elseif cmd == "done" then
         tman_done()
-    --[[
-    elseif cmd == "review" then
-        tman_review()
-    elseif cmd == "config" then
-        tman_config(arg[1])
-    elseif cmd == "time" then
-        tman_time(arg[1], arg[2])
-    ]]
     elseif cmd == "get" then
         tman_get(arg[1])
     elseif cmd == "prev" then
