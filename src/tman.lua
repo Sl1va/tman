@@ -393,12 +393,16 @@ end
 --- Interface.
 local function main()
     local cmd = arg[1] or "help"
+    local corecheck = core.check()
 
     -- posix getopt does not let permutations as GNU version
     table.remove(arg, 1)
 
-    if not core.check() and cmd ~= "init" then
-        io.stderr:write("tman structure not inited or corrupted\n")
+    if corecheck == 1 and cmd ~= "init" then
+        io.stderr:write("tman: structure not inited\n")
+        os.exit(1)
+    elseif corecheck == 2 and cmd ~= "init" then
+        io.stderr:write("tman: structure corrupted\n")
         os.exit(1)
     end
 

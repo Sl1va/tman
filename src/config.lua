@@ -19,6 +19,7 @@ tmanconfig.repos = tmanconfig.repos or {}
 -- Tman dir structure
 local tmandb = tmanconfig.base
 tmanconfig.tmanbase = tmandb .. "/.tman/"
+tmanconfig.initfile = tmanconfig.tmanbase .. ".tmaninit" -- mark tman dir
 tmanconfig.taskids = tmanconfig.tmanbase .. "taskids"
 tmanconfig.ids = tmanconfig.tmanbase .. "ids/"
 

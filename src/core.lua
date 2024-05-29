@@ -15,6 +15,7 @@ local function core_init()
 
     -- files
     utils.touch(config.taskids)
+    utils.touch(config.initfile)
     print("tman: core structure inited")
 end
 
@@ -23,6 +24,7 @@ end
 local function core_check()
     local files = {
         config.taskids,
+        config.initfile,
     }
     local dirs = {
         config.ids,
@@ -31,17 +33,21 @@ local function core_check()
         config.codebase,
     }
 
+    if not utils.access(config.initfile) then
+        return 1
+    end
+
     for _, dir in pairs(dirs) do
         if not utils.access(dir) then
-            return false
+            return 2
         end
     end
     for _, file in pairs(files) do
         if not utils.access(file) then
-            return false
+            return 2
         end
     end
-    return true
+    return 0
 end
 
 local function core_repair()
