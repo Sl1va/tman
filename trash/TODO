@@ -5,6 +5,7 @@
 5. Move taks dir/file structure into the file. Tho leave system ones in the code.
 6. Add file lock to task units.
 7. Move branch formation pattern to config file cuz it can be diff for other.
+8. Move git.lua modulo more rubost and bring some order into it.
 
 Done
 5. Move taks dir/file structure into the file. Tho leave system ones in the code.
