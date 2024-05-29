@@ -444,6 +444,18 @@ local function tman_restore()
 end
 ]]
 
+--- Get special task ID's ID.
+-- @param ID task id
+local function tman_get(idtype)
+    if idtype == "curr" then
+        print(taskid:getcurr())
+    elseif idtype == "prev" then
+        print(taskid:getprev())
+    else
+        io.stderr:write(("err: no such ID type '%s'"):format(idtype or "no idtype"))
+    end
+end
+
 --- Interface.
 local function main()
     local cmd = arg[1] or "help"
@@ -486,6 +498,8 @@ local function main()
     elseif cmd == "time" then
         tman_time(arg[1], arg[2])
     ]]
+    elseif cmd == "get" then
+        tman_get(arg[1])
     elseif cmd == "prev" then
         tman_prev()
     elseif cmd == "backup" then
