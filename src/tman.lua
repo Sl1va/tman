@@ -6,7 +6,7 @@
 -- Tman main components.
 local struct = require("struct")
 local config = require("config")
-local taskid = require("taskid").init()
+local taskid = require("taskid")
 local taskunit = require("taskunit")
 
 -- Tman misc components.
@@ -58,12 +58,12 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 local function _checkid(id)
-    id = id or taskid:getcurr()
+    id = id or taskid.getcurr()
     if not id then
         io.stderr:write("no current task\n")
         return false
     end
-    if not taskid:exist(id) then
+    if not taskid.exist(id) then
         io.stderr:write(("'%s': no such task ID\n"):format(id))
         return false
     end
@@ -101,18 +101,18 @@ local function tman_add(id, tasktype, prio)
         io.stderr:write("task ID required\n")
         os.exit(1)
     end
-    if not taskid:add(id) then
+    if not taskid.add(id) then
         io.stderr:write(("'%s': already exists\n"):format(id))
         os.exit(1)
     end
     if not taskunit.add(id, tasktype, prio) then
         io.stderr:write("could not create new task unit\n")
-        taskid:del(id)
+        taskid.del(id)
         os.exit(1)
     end
     if not struct.create(id) then
         io.stderr:write("could not create new task structure\n")
-        taskid:del(id)
+        taskid.del(id)
         taskunit.del(id)
         os.exit(1)
     end
@@ -122,7 +122,7 @@ local function tman_add(id, tasktype, prio)
     local git = gitmod.new(id, branch)
     if not git:branch_create() then
         io.stderr:write("could not create new branch for a task\n")
-        taskid:del(id)
+        taskid.del(id)
         taskunit.del(id)
         struct.delete(id)
         os.exit(1)
@@ -136,7 +136,7 @@ local function tman_use(id)
     if not _checkid(id) then
         os.exit(1)
     end
-    if taskid:getcurr() == id then
+    if taskid.getcurr() == id then
         io.stderr:write(("'%s': already in use\n"):format(id))
         os.exit(1)
     end
@@ -147,13 +147,13 @@ local function tman_use(id)
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
-    taskid:setcurr(id)
+    taskid.setcurr(id)
     return 0
 end
 
 --- Switch to previous task.
 local function tman_prev()
-    local prev = taskid:getprev()
+    local prev = taskid.getprev()
 
     if not prev then
         io.stderr:write("no previous task\n")
@@ -165,7 +165,7 @@ local function tman_prev()
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
-    taskid:swap()
+    taskid.swap()
     return 0
 end
 
@@ -173,7 +173,7 @@ end
 -- @return currentn task ID
 local function _tman_curr()
     local optstring = "fi"
-    local id = taskid:getcurr()
+    local id = taskid.getcurr()
     local options = {
         f = false,
         i = true, -- default option
@@ -223,17 +223,17 @@ local function tman_list()
             completed = true
         end
     end
-    taskid:list(active, completed)
+    taskid.list(active, completed)
 end
 
 --- Show task unit metadata.
 -- @param id task ID
 local function tman_show(id)
-    id = id or taskid:getcurr()
+    id = id or taskid.getcurr()
 
     if not id then
         os.exit(1)
-    elseif not taskid:exist(id) then
+    elseif not taskid.exist(id) then
         io.stderr:write(("'%s': no such task ID\n"):format(id))
         os.exit(1)
     end
@@ -244,7 +244,7 @@ end
 -- @param id task ID
 -- @param opt option
 local function tman_amend(id, opt)
-    id = id or taskid:getcurr()
+    id = id or taskid.getcurr()
 
     if not _checkid(id) then
         os.exit(1)
@@ -261,8 +261,8 @@ local function tman_amend(id, opt)
         io.write("new task ID: ")
         local newid = io.read("*l")
         taskunit.amend_id(id, newid)
-        taskid:del(id)
-        taskid:add(newid)
+        taskid.del(id)
+        taskid.add(newid)
     elseif not opt then
         io.stderr:write("option missing\n")
     else
@@ -272,7 +272,7 @@ end
 
 --- Create task symlinks.
 local function tman_link(id)
-    id = id or taskid:getcurr()
+    id = id or taskid.getcurr()
 
     if not _checkid(id) then
         os.exit(1)
@@ -291,7 +291,7 @@ end
 -- roachme: It doesn't work if there is no current task
 local function tman_update(opt)
     opt = opt or "-u"
-    local id = taskid:getcurr()
+    local id = taskid.getcurr()
     if not id then
         io.stderr:write("no current task\n")
         os.exit(1)
@@ -335,7 +335,7 @@ local function tman_del(id)
 
     git:branch_delete()
     taskunit.del(id)
-    taskid:del(id)
+    taskid.del(id)
     struct.delete(id)
     return 0
 end
@@ -343,14 +343,14 @@ end
 --- Check current task and push branch for review.
 --[[
 local function tman_review()
-    local id = taskid:getcurr()
+    local id = taskid.getcurr()
 end
 ]]
 
 --- Move current task to done status.
 -- roachme: It moves to ACTV, COMP status.
 local function tman_done()
-    local curr = taskid:getcurr()
+    local curr = taskid.getcurr()
 
     if not _checkid() then
         os.exit(1)
@@ -361,9 +361,9 @@ local function tman_done()
         os.exit(1)
     end
     print("new status: ", taskid.status.COMP)
-    taskid:move(curr, taskid.status.COMP)
-    taskid:unsetcurr()
-    taskid:swap()
+    taskid.move(curr, taskid.status.COMP)
+    taskid.unsetcurr()
+    taskid.swap()
 end
 
 --- Config util for your workflow
@@ -448,9 +448,9 @@ end
 -- @param ID task id
 local function tman_get(idtype)
     if idtype == "curr" then
-        print(taskid:getcurr())
+        print(taskid.getcurr())
     elseif idtype == "prev" then
-        print(taskid:getprev())
+        print(taskid.getprev())
     else
         io.stderr:write(("err: no such ID type '%s'"):format(idtype or "no idtype"))
     end
