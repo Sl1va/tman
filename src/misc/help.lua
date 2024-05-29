@@ -1,21 +1,25 @@
---- Provide help.
+--- Provide help on commands and general usage.
 -- @module help
 
-
-local log = require("misc/log").init("help")
 
 local version = "0.2.0"
 local progname = "tman"
 
-local function help_usage()
+
+local function show_usage()
     print(([[
-Usage: %s COMMAND [ID]
+Usage: %s COMMAND [OPTIONS] [ID]
+
+Kickoffs:
+  init    - download repos and create symlinks for all of them
+  backup  - backup configs and metadata
+  restore - restore configs and metadata
+
 Basic:
   use     - mark a task as current
   prev    - switch to previous task
   list    - list all tasks. Default: active tasks
   show    - show task info. Default: current task
-  time    - time spent on task
 
 Amend:
   add     - add new task
@@ -30,18 +34,8 @@ Info:
   help    - show this help message
   info    - show detailed info about commands and important info
 
-Contribute:
-  review  - push commits for review
-  done    - move task to status complete
-
-For developers:
-  init    - download repos and create symlinks for all of them
-  check   - check paths and configs for proper work
-  backup  - backup configs and metadata
-  restore - restore configs and metadata
-
 For utils:
-  _curr    - show current task
+  _curr   - show current task
 ]]):format(progname))
 end
 
@@ -148,12 +142,14 @@ Show tman version.
     },
 }
 
---- Get detailed info about command.
+--- Get general and detailed info about command.
 -- @param cmdname command name to get info about
-local function help_info(cmdname)
+local function help_usage(cmdname)
+    local errmsg = "%s: no such command '%s'. Use '%s help' for more info.\n"
+
     if not cmdname then
-        log:warning("command to look up is missing")
-        return false
+        show_usage()
+        return true
     end
 
     for _, cmd in ipairs(cmds) do
@@ -161,12 +157,12 @@ local function help_info(cmdname)
             return print(cmd.desc)
         end
     end
-    return log:warning("no such command '%s'", cmdname)
+    io.stderr:write(errmsg:format(progname, cmdname, progname))
+    return false
 end
 
 return {
     usage = help_usage,
-    info = help_info,
     version = version,
     progname = progname,
 }

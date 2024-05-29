@@ -439,13 +439,11 @@ local function main()
         print("under development")
         --tman_restore()
     elseif cmd == "help" then
-        help.usage()
-    elseif cmd == "info" then
-        help.info(arg[1])
+        help.usage(arg[1])
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
-        io.stderr:write(("'%s': no such command\n"):format(cmd))
+        help.usage(cmd)
     end
 end
 
