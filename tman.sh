@@ -4,14 +4,14 @@ TMAN_INSTALL=""
 TMAN_CONFIG_FILE=""
 TASKS=""
 TMANCMD=""
+CONFNAME="tman_conf.lua"
 
 
 function _tman_find_config()
 {
-    local confname="tman_conf.lua"
     local tman_config_files=(
-        "${HOME}/.tman/${confname}"
-        "${HOME}/.config/tman/${confname}"
+        "${HOME}/.tman/${CONFNAME}"
+        "${HOME}/.config/tman/${CONFNAME}"
     )
 
     for file in ${tman_config_files[@]}; do
@@ -32,12 +32,19 @@ function _tman_get_config()
     TMAN_INSTALL="${TMAN_INSTALL/#\~/$HOME}"
     TMAN_BASE="${TMAN_BASE/#\~/$HOME}"
 
-    if [ -z "$TMAN_BASE" ] || [ ! -d $TMAN_BASE ]; then
-        echo "err: no BASE path in the config"
+    if [ -z "$TMAN_BASE" ]; then
+        echo "err: no TMANBase path in the config"
+        return 1
+    elif [ ! -d $TMAN_BASE ]; then
+        echo "err:TMANBase: no such directory $TMAN_BASE"
         return 1
     fi
-    if [ -z "$TMAN_INSTALL" ] || [ ! -d $TMAN_INSTALL ]; then
-        echo "err: no such INSTALL file '$TMAN_INSTALL'"
+
+    if [ -z "$TMAN_INSTALL" ]; then
+        echo "err: no TMANInstall path in config"
+        return 1
+    elif [ ! -d $TMAN_INSTALL ]; then
+        echo "err:TMANInstall: no such directory $TMAN_INSTALL"
         return 1
     fi
 }
@@ -113,7 +120,7 @@ function tman()
 {
     _tman_find_config
     if [ $? -ne 0 ]; then
-        echo "${PROGNAME}: no config file found"
+        echo "${PROGNAME}: not found: '$CONFNAME'"
         return 1
     fi
 
