@@ -7,19 +7,21 @@ local progname = "tman"
 
 
 local function show_usage()
-    print(([[
-Usage: %s COMMAND [OPTIONS] [ID]
+    io.stdout:write(([[
+Usage: %s COMMAND [OPTION] [ID]
+Use '%s help COMMAND' to get detailed info about command and its options.
 
+COMMANDS:
 Kickoffs:
-  init    - download repos and create symlinks for all of them
+  init    - init util structure.
   backup  - backup configs and metadata
   restore - restore configs and metadata
 
 Basic:
+  list    - list tasks
+  show    - show task info
   use     - mark a task as current
   prev    - switch to previous task
-  list    - list all tasks. Default: active tasks
-  show    - show task info. Default: current task
 
 Amend:
   add     - add new task
@@ -35,14 +37,14 @@ Info:
 
 For utils:
   _curr   - show current task
-]]):format(progname))
+]]):format(progname, progname))
 end
 
 local cmds = {
     {
         name = "add",
         desc = [[
-Usage: tman add TASKID TASKTYPE PRIORITY
+Usage: tman add TASKID [TASKTYPE] [PRIORITY]
 Add new task.
 
 Notes:
@@ -54,11 +56,11 @@ Notes:
     {
         name = "del",
         desc = [[
-Usage: tman del TASKID
+Usage: tman del [TASKID]
 Delete task.
 
 Notes:
-    TASKID      task ID
+    TASKID      task ID. Default current task ID
 ]],
     },
     {
@@ -153,7 +155,7 @@ local function help_usage(cmdname)
 
     for _, cmd in ipairs(cmds) do
         if cmd.name == cmdname then
-            return print(cmd.desc)
+            return io.stdout:write(cmd.desc)
         end
     end
     io.stderr:write(errmsg:format(progname, cmdname, progname))
