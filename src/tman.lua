@@ -444,7 +444,8 @@ local function main()
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
-        help.usage(cmd)
+        local errmsg = "%s: no such command '%s'. Use '%s help' for more info."
+        print(errmsg:format(help.progname, cmd, help.progname))
     end
 end
 
