@@ -275,6 +275,8 @@ end
 --- Delete task.
 -- @param id task ID
 local function tman_del(id)
+    id = id or taskid.getcurr()
+
     if not _checkid(id) then
         os.exit(1)
     end
