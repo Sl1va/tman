@@ -32,7 +32,6 @@ Amend:
 Info:
   ver     - show version
   help    - show this help message
-  info    - show detailed info about commands and important info
 
 For utils:
   _curr   - show current task
