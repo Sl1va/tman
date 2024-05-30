@@ -169,7 +169,7 @@ end
 --- Set current task ID.
 -- Set previous task ID if needed.
 local function taskid_setcurr(id)
-    local prev = taskid_getprev()
+    local prev = taskid_getcurr()
 
     -- roachme: a lil bit vague check...
     if setcurr(id) == true then
