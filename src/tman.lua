@@ -442,7 +442,7 @@ local function main()
         print("under development")
         --tman_restore()
     elseif cmd == "help" then
-        help.usage(arg[1])
+        help.usage()
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
