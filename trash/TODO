@@ -17,3 +17,4 @@ Gotta work on:
 Done:
 4. Find a good config syntax to fit options, install path, repos, etc.
 5. Move taks dir/file structure into the file. Tho leave system ones in the code.
+10. Do git rebase if it's possible without merge conflics.

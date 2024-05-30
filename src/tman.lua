@@ -245,10 +245,8 @@ local function tman_link(id)
 end
 
 --- Update git repos.
--- @param opt options
 -- roachme: It doesn't work if there is no current task
-local function tman_update(opt)
-    opt = opt or "-u"
+local function tman_update()
     local id = taskid.getcurr()
     if not id then
         io.stderr:write("no current task\n")
@@ -261,14 +259,10 @@ local function tman_update(opt)
     if not git:branch_switch_default() then
         return 1
     end
-    if opt == "-c" then
-        git:branch_create()
-    elseif opt == "-u" then
-        git:branch_update(true)
-    else
-        io.stderr:write(("unknown option '%s'\n"):format(opt))
-    end
+
+    git:branch_update(true)
     git:branch_switch(branch)
+    git:branch_rebase()
     return 0
 end
 
@@ -427,7 +421,7 @@ local function main()
     elseif cmd == "list" then
         tman_list()
     elseif cmd == "update" then
-        tman_update(arg[1])
+        tman_update()
     elseif cmd == "done" then
         print("too buggy: under development")
         --tman_done()

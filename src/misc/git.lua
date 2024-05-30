@@ -67,6 +67,8 @@ function Git.new(taskid, branch)
         gpull_generic = "git -C %s pull --quiet",
         gbranchD = "git -C %s branch --quiet -D %s",
         gbranchm = "git -C %s branch --quiet -m %s",
+        grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null",
+        grebaseabort = "git -C %s rebase --abort",
     }, Git)
     self.repos = config.repos
     return self
@@ -113,6 +115,20 @@ function Git:branch_update(all)
             os.execute(self.gpull_generic:format(repopath))
         else
             os.execute(self.gpull:format(repopath, repo.branch))
+        end
+    end
+end
+
+--- Rebase task branch against default.
+function Git:branch_rebase()
+    if not self:changes_check() then
+        return false
+    end
+    for _, repo in pairs(self.repos) do
+        local repopath = config.codebase .. repo.name
+        if os.execute(self.grebase:format(repopath, repo.branch)) ~= 0 then
+            io.stderr:write(("repo '%s': rebase conflic. Resolve it manually.\n"):format(repo.name))
+            os.execute(self.grebaseabort:format(repopath))
         end
     end
 end
