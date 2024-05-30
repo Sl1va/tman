@@ -427,7 +427,8 @@ local function main()
     elseif cmd == "update" then
         tman_update(arg[1])
     elseif cmd == "done" then
-        tman_done()
+        print("too buggy: under development")
+        --tman_done()
     elseif cmd == "get" then
         tman_get(arg[1])
     elseif cmd == "prev" then
