@@ -440,7 +440,7 @@ local function main()
     elseif cmd == "config" then
         tman_config(arg[1])
     elseif cmd == "help" then
-        help.usage()
+        help.usage(arg[1])
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
     else
