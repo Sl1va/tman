@@ -17,6 +17,6 @@ lua_docs:
 
 lua_lint:
 	echo "===> Linting"
-	luacheck .
+	luacheck src
 
 release: lua_fmt lua_docs lua_lint
