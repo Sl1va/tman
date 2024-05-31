@@ -6,7 +6,6 @@ local config = require("config")
 local taskids = {}
 local meta = config.taskids
 
-
 -- Private functions: start --
 
 --- Sort task IDs in database.
@@ -44,7 +43,6 @@ local function _db_load()
 end
 
 -- Private functions: end --
-
 
 -- Public functions: start ---
 

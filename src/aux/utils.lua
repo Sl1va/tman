@@ -43,7 +43,6 @@ local function util_exec(cmd)
     return os.execute(cmd)
 end
 
-
 return {
     rm = remove_dir,
     link = create_symlink,

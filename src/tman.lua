@@ -2,7 +2,6 @@
 -- Simplify workflow when working with many repos.
 -- @module TMan
 
-
 -- Tman main components.
 local core = require("core")
 local struct = require("struct")
@@ -14,7 +13,6 @@ local gitmod = require("misc/git")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
 
-
 --[[
 TODO:
     1. Make all commands alike so they can be put in array and called
@@ -23,7 +21,6 @@ TODO:
 ]]
 
 -- Private functions: start --
-
 
 --- Check ID is passed and exists in database.
 -- @param id task ID
@@ -42,7 +39,6 @@ local function _checkid(id)
 end
 
 -- Private functions: end --
-
 
 -- Public functions: start --
 
@@ -143,7 +139,9 @@ local function _tman_curr()
         elseif optopt == "i" then
             options.i = true
         elseif optopt == "?" then
-            io.stderr:write(("unrecognized option '%s'\n"):format(arg[optind - 1]))
+            io.stderr:write(
+                ("unrecognized option '%s'\n"):format(arg[optind - 1])
+            )
             os.exit(1)
         end
     end
@@ -166,7 +164,9 @@ local function tman_list()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
-            return io.stderr:write(("unrecognized option '%s'\n"):format(arg[optind - 1]))
+            return io.stderr:write(
+                ("unrecognized option '%s'\n"):format(arg[optind - 1])
+            )
         end
         if optopt == "A" then
             print("All tasks:")
@@ -389,7 +389,9 @@ local function tman_get(idtype)
     elseif idtype == "prev" then
         print(taskid.getprev() or "")
     else
-        io.stderr:write(("err: no such ID type '%s'"):format(idtype or "no idtype"))
+        io.stderr:write(
+            ("err: no such ID type '%s'"):format(idtype or "no idtype")
+        )
     end
 end
 

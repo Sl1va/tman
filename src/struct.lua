@@ -12,7 +12,6 @@ local struct_taskbase = config.taskbase
 local struct_dirs = tmanconf.struct.dirs
 local struct_files = tmanconf.struct.files
 
-
 -- Private functions: end --
 
 --- Create dirs.
@@ -42,7 +41,6 @@ end
 
 -- Private functions: end --
 
-
 -- Public functions: start --
 
 --- Create new task filesystem structure.
@@ -65,7 +63,6 @@ local function struct_delete(id)
 end
 
 -- Public functions: end --
-
 
 return {
     create = struct_create,

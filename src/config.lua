@@ -9,7 +9,6 @@ local default_struct = {
     files = {},
 }
 
-
 local function tilde_to_home()
     tmanconfig.base = string.gsub(tmanconfig.base, "~", userhome or "")
     tmanconfig.install = string.gsub(tmanconfig.install, "~", userhome or "")

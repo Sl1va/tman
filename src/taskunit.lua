@@ -7,7 +7,6 @@ local log = require("misc/log").init("taskunit")
 local config = require("config")
 local utils = require("aux/utils")
 
-
 --- FIXME: If description has a colon (:) in itself this regex causes problems
 local unitregex = "(%w*): (.*)"
 
@@ -73,7 +72,6 @@ function table.size(tab)
     return size
 end
 ]]
-
 
 -- Private functions: end --
 
@@ -203,7 +201,6 @@ local function save_units(id, taskunits)
 end
 
 -- Private functions: end --
-
 
 -- Public functions: start --
 
@@ -367,7 +364,6 @@ local function taskunit_amend_prio(id, newprio)
 end
 
 -- Public functions: end --
-
 
 return {
     add = taskunit_add,

@@ -7,11 +7,8 @@ TODO:
     1. exist() is duplicated: taskid.lua and db.lua cuz tman.lua uses it
 ]]
 
-
 local taskunit = require("taskunit")
 local db = require("aux/db")
-
-
 
 --- Types of task IDs.
 local status = {
@@ -77,9 +74,7 @@ local function setcurr(id)
     return db.set(id, status.CURR)
 end
 
-
 --- Private functions: end --
-
 
 -- Public functions: start --
 
@@ -87,7 +82,7 @@ end
 -- @return current task ID
 -- @return nil if there's no current task ID
 local function taskid_getcurr()
-    local size =  db.size()
+    local size = db.size()
 
     for i = 1, size do
         local unit = db.getidx(i)
@@ -102,7 +97,7 @@ end
 -- @return previous task ID
 -- @return nil if there's no previous task ID
 local function taskid_getprev()
-    local size =  db.size()
+    local size = db.size()
 
     for i = 1, size do
         local unit = db.getidx(i)
@@ -250,7 +245,6 @@ local function taskid_list(active, completed)
 end
 
 -- Public functions: end --
-
 
 db.init()
 

@@ -4,7 +4,6 @@
 local utils = require("aux/utils")
 local config = require("config")
 
-
 --- Init system to use a util.
 local function core_init()
     -- dirs
@@ -50,9 +49,7 @@ local function core_check()
     return 0
 end
 
-local function core_repair()
-end
-
+local function core_repair() end
 
 local function core_show_config()
     print("base", config.base)

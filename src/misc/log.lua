@@ -1,7 +1,6 @@
 --- Provide log functionality.
 -- @module log
 
-
 local Log = {}
 Log.__index = Log
 
