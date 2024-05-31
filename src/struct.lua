@@ -4,13 +4,12 @@
 
 local utils = require("aux/utils")
 local config = require("config")
-local tmanconf = require("tman_conf")
 
 local repos = config.repos
 local struct_codebase = config.codebase
 local struct_taskbase = config.taskbase
-local struct_dirs = tmanconf.struct.dirs
-local struct_files = tmanconf.struct.files
+local struct_dirs = config.struct.dirs
+local struct_files = config.struct.files
 
 
 -- Private functions: end --
