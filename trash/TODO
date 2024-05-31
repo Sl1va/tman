@@ -2,13 +2,10 @@ In progress:
 1. Refactor taskunit.lua. It looks messy and disgusting
 2. Refactor git.lua. Looks messy
 3. Properly fix backup and restore commands
-4. Find a good config syntax to fit options, install path, repos, etc.
-5. Move taks dir/file structure into the file. Tho leave system ones in the code.
 6. Add file lock to task units.
 7. Move branch formation pattern to config file cuz it can be diff for other.
 8. Move git.lua modulo more rubost and bring some order into it.
 9. Add task and command suggestions.
-10. Do git rebase if it's possible without merge conflics.
 11. Add git commit checker and pattern.
 
 Gotta work on:
