@@ -327,14 +327,11 @@ end
 
 --- Config util for your workflow
 -- @param subcmd subcommand
---[[
 local function tman_config(subcmd)
-    if subcmd == "repo" then
-        print("configure repo list")
-    elseif subcmd == "" then
+    if not subcmd then
+        return core.showconf()
     end
 end
-]]
 
 --- Back up util configs into archive.
 --[[
@@ -440,6 +437,8 @@ local function main()
     elseif cmd == "restore" then
         print("under development")
         --tman_restore()
+    elseif cmd == "config" then
+        tman_config(arg[1])
     elseif cmd == "help" then
         help.usage()
     elseif cmd == "ver" then

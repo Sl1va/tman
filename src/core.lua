@@ -54,8 +54,31 @@ local function core_repair()
 end
 
 
+local function core_show_config()
+    print("base", config.base)
+    print("install", config.install)
+    print("brpanchpatt", config.branchpatt)
+    io.write("struct dirs: { ")
+    for _, dir in pairs(config.struct.dirs) do
+        io.write(dir, " ")
+    end
+    print("}")
+    io.write("struct files: { ")
+    for _, file in pairs(config.struct.files) do
+        io.write(file, " ")
+    end
+    print("}")
+
+    print("repos: {")
+    for _, item in pairs(config.repos) do
+        print("  {", item.name, item.branch, item.path or "", "}")
+    end
+    print("}")
+end
+
 return {
     init = core_init,
     check = core_check,
     repair = core_repair,
+    showconf = core_show_config,
 }
