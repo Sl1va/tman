@@ -180,7 +180,7 @@ local function taskid_setcurr(id)
 end
 
 --- Unset current task ID.
--- @see _unsetcurr
+-- @see unsetcurr
 local function taskid_unsetcurr(taskstatus)
     return unsetcurr(taskstatus)
 end

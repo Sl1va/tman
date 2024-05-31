@@ -377,7 +377,7 @@ end
 ]]
 
 --- Get special task ID's ID.
--- @param ID task id
+-- @param idtype task id
 local function tman_get(idtype)
     if idtype == "curr" then
         print(taskid.getcurr() or "")
