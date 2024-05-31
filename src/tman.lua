@@ -214,6 +214,10 @@ local function tman_amend(id, opt)
         taskunit.amend_id(id, newid)
         taskid.del(id)
         taskid.add(newid)
+    elseif opt == "-l" then
+        io.write("task link (under development): ")
+        local newlink = io.read("*l")
+        taskunit.amend_link(id, newlink)
     elseif not opt then
         io.stderr:write("option missing\n")
     else

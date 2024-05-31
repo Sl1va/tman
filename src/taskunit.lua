@@ -52,6 +52,8 @@ local unit_keys = {
     "prio",
     "type",
     "desc",
+    -- "link",
+    -- "linked",
 
     "time",
     "date",
@@ -278,6 +280,13 @@ local function taskunt_amend_desc(id, newdesc)
     return git:branch_rename(newbranch)
 end
 
+--- Amend (add) link to work task manager.
+-- @param id task ID
+-- @param newlink link the task
+local function taskunit_amend_link(id, newlink)
+    print("under development")
+end
+
 --- Chaneg task ID.
 -- @param id current task ID
 -- @param newid new ID
@@ -333,4 +342,5 @@ return {
     amend_id = taskunit_amend_id,
     amend_desc = taskunt_amend_desc,
     amend_prio = taskunit_amend_prio,
+    amend_link = taskunit_amend_link,
 }
