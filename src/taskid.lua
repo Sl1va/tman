@@ -185,23 +185,18 @@ end
 local function taskid_move(taskid, taskstatus)
     local prev = taskid_getprev()
     local curr = taskid_getcurr()
-    local retcode
 
     if taskid == curr then
-        retcode = 0
         unsetprev(status.ACTV)
         db.set(prev, status.CURR)
         db.set(curr, taskstatus)
     elseif taskid == prev then
-        retcode = 1
         db.set(prev, status.COMP)
     else
-        retcode = 2
         db.set(taskid, taskstatus)
     end
 
-    db.save()
-    return retcode
+    return db.save()
 end
 
 --- List task IDs.

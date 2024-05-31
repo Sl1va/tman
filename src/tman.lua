@@ -293,11 +293,23 @@ end
 -- roachme: It moves to ACTV, COMP status.
 local function tman_done(id)
     local retcode
-    id = id or taskid.getcurr()
+    local curr = taskid.getcurr()
+    local prev = taskid.getprev()
+    id = id or curr
 
     if not _checkid() then
         os.exit(1)
     end
+
+    -- provide retcode for shell command
+    if id == curr then
+        retcode = 0
+    elseif id == prev then
+        retcode = 1
+    else
+        retcode = 2
+    end
+
     local git = gitmod.new(id)
     if not git:branch_switch_default() then
         io.stderr:write("repo has uncommited changes\n")
@@ -308,7 +320,7 @@ local function tman_done(id)
     --          MAYBE task dir as well (nah, leave it)
     --          BUT make sure task branch's merged into default branch
 
-    retcode = taskid.move(id, taskid.status.COMP)
+    taskid.move(id, taskid.status.COMP)
     return retcode
 end
 
