@@ -307,6 +307,10 @@ end
 local function tman_done()
     local curr = taskid.getcurr()
 
+    if taskid.getprev() ~= "TOO BUGGY" then
+        os.exit(1)
+    end
+
     if not _checkid() then
         os.exit(1)
     end
@@ -426,7 +430,7 @@ local function main()
         tman_update()
     elseif cmd == "done" then
         print("too buggy: under development")
-        --tman_done()
+        tman_done()
     elseif cmd == "get" then
         tman_get(arg[1])
     elseif cmd == "prev" then
