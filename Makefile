@@ -8,15 +8,14 @@ lua_test:
 
 # stylua is install by cargo (rust something)
 lua_fmt:
-	echo "===> Formatting (under development)"
-	#stylua . --config-path=.stylua.toml
+	@echo "===> Formatting (under development)"
 
 lua_docs:
-	echo "===> Docs"
+	@echo "\n===> Docs"
 	ldoc .
 
 lua_lint:
-	echo "===> Linting"
+	@echo "\n===> Linting"
 	luacheck src
 
 release: lua_fmt lua_docs lua_lint
