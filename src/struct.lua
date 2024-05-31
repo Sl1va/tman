@@ -12,9 +12,11 @@ local struct_taskbase = config.taskbase
 local struct_dirs = tmanconf.struct.dirs
 local struct_files = tmanconf.struct.files
 
+
 -- Private functions: end --
 
 --- Create dirs.
+-- @param base directry structure base
 local function _struct_dirs(base)
     for _, dir in pairs(struct_dirs) do
         utils.mkdir(base .. "/" .. dir)
@@ -22,6 +24,7 @@ local function _struct_dirs(base)
 end
 
 --- Create files.
+-- @param base file structure base
 local function _struct_files(base)
     for _, file in pairs(struct_files) do
         utils.touch(base .. "/" .. file)
@@ -41,10 +44,11 @@ end
 
 -- Private functions: end --
 
+
 -- Public functions: start --
 
---- Create new task filesystem structure.
--- @param id task id
+--- Create task filesystem structure.
+-- @param id task ID
 local function struct_create(id)
     local taskdir = struct_taskbase .. "/" .. id
 
@@ -56,13 +60,14 @@ local function struct_create(id)
 end
 
 --- Delete task filesystem structure.
--- @param id task id
+-- @param id task ID
 local function struct_delete(id)
     local taskdir = struct_taskbase .. "/" .. id
     return utils.rm(taskdir)
 end
 
 -- Public functions: end --
+
 
 return {
     create = struct_create,
