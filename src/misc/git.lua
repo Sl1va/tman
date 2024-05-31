@@ -62,7 +62,7 @@ function Git.new(taskid, branch)
         git = "git -C %s ", -- roachme: how to use it in here?
         gdiff_word = "git -C %s diff --quiet --exit-code",
         gcheckout = "git -C %s checkout --quiet %s",
-        gcheckoutb = "git -C %s checkout --quiet -b %s",
+        gcheckoutb = "git -C %s checkout --quiet -b %s 2>/dev/null",
         gpull = "git -C %s pull --quiet origin %s",
         gpull_generic = "git -C %s pull --quiet",
         gbranchD = "git -C %s branch --quiet -D %s",

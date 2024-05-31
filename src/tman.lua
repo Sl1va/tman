@@ -225,22 +225,6 @@ local function tman_amend(id, opt)
     end
 end
 
---- Create task symlinks.
-local function tman_link(id)
-    id = id or taskid.getcurr()
-
-    if not _checkid(id) then
-        os.exit(1)
-    end
-    struct.create(id)
-
-    -- create git branch if needed
-    local branch = taskunit.getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-    git:branch_create()
-    git:branch_switch(branch)
-end
-
 --- Update git repos.
 -- @param id task id.
 local function tman_update(id)
@@ -251,8 +235,14 @@ local function tman_update(id)
         os.exit(1)
     end
 
+    -- create task structure if needed
+    struct.create(id)
+
     local branch = taskunit.getunit(id, "branch")
     local git = gitmod.new(id, branch)
+
+    -- create git branch if needed
+    git:branch_create()
 
     if not git:branch_switch_default() then
         return 1
@@ -372,8 +362,6 @@ local function main()
         tman_add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
         tman_amend(arg[1], arg[2])
-    elseif cmd == "link" then
-        tman_link(arg[1])
     elseif cmd == "use" then
         tman_use(arg[1])
     elseif cmd == "show" then
