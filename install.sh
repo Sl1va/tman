@@ -15,7 +15,7 @@ EOF
 
 check_system_utils()
 {
-    local system_utils=("tar" "luarocks")
+    local system_utils=("tar" "luarocks" "cargo")
     for sutil in ${system_utils[@]}; do
         which -s $sutil > /dev/null
         if [ $? -ne 0 ]; then
@@ -75,6 +75,7 @@ if [ "$1" = "-i" ]; then
     install_system_utils
     install_lua_rocks
     install_shell
+    cargo install stylua # roachme: find a better way
 elif [ -z "$1" -o "$1" = "-c" ]; then
     check_system_utils
     check_lua_rocks

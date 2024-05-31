@@ -7,6 +7,7 @@ In progress:
 8. Move git.lua modulo more rubost and bring some order into it.
 9. Add task and command suggestions.
 11. Add git commit checker and pattern.
+12. Keep an eye on the Cargo's stylua. It's good but heavy.
 
 Gotta work on:
 4. Maybe there's a better config file than Lua module.
