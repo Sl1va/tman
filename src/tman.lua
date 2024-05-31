@@ -291,6 +291,11 @@ local function tman_done(id)
     local prev = taskid.getprev()
     id = id or curr
 
+    if id ~= "under development" then
+        print("under development. Gotta check that task branch is merged")
+        return 2
+    end
+
     if not _checkid() then
         os.exit(1)
     end
