@@ -319,6 +319,10 @@ local function tman_done()
     taskid.move(curr, taskid.status.COMP)
     taskid.unsetcurr()
     taskid.swap()
+
+    -- roachme: if task's done delete git branch,
+    --          MAYBE task dir as well.
+    --          BUT make sure task branch's merged into default branch
 end
 
 --- Config util for your workflow
