@@ -7,7 +7,7 @@ local progname = "tman"
 local function show_usage()
     io.stdout:write(([[
 Usage: %s COMMAND [OPTION] [ID]
-Use '%s help COMMAND' to get detailed info about command and its options.
+Use '%s help COMMAND' to get command's detailed info.
 
 COMMANDS:
 Kickoffs:
@@ -16,10 +16,11 @@ Kickoffs:
   restore - restore configs and metadata
 
 Basic:
+  use     - mark a task as current
   list    - list tasks
   show    - show task info
-  use     - mark a task as current
   prev    - switch to previous task
+  done    - move task to completed status
 
 Amend:
   add     - add new task
@@ -77,8 +78,8 @@ Options:
     {
         name = "done",
         desc = [[
-Usage: tman done TASKID
-Move task to done status.
+Usage: tman done [TASKID]
+Move task to completed status.
 ]],
     },
 
