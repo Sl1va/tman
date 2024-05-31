@@ -13,13 +13,6 @@ local gitmod = require("misc/git")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
 
---[[
-TODO:
-    1. Make all commands alike so they can be put in array and called
-       in main().
-
-]]
-
 -- Private functions: start --
 
 --- Check ID is passed and exists in database.
@@ -295,13 +288,6 @@ local function tman_del(id)
     return 0
 end
 
---- Check current task and push branch for review.
---[[
-local function tman_review()
-    local id = taskid.getcurr()
-end
-]]
-
 --- Move current task to done status.
 -- @param id task id
 -- roachme: It moves to ACTV, COMP status.
@@ -334,49 +320,6 @@ local function tman_config(subcmd)
     end
 end
 
---- Back up util configs into archive.
---[[
-local function tman_backup()
-    -- roachme: need some tuning
-    local ftar = "tman_db.tar"
-    local dtar = ".tman"
-    local tar = "tar -C "
-    local tarcmd = tar .. config.taskbase .. " -cf " .. ftar .. " " .. dtar
-
-    if not utils.access(config.taskids) then
-        return io.stderr:write("tman database doesn't exist. Nothing to backup\n")
-    end
-
-    if not os.execute(tarcmd) then
-        return io.stderr:write("couldn't create tman database backup\n")
-    end
-    return print(("create backup file: './%s'"):format(ftar))
-end
-]]
-
---- Restore util configs from archive.
---[[
-local function tman_restore()
-    local ftar = arg[1]
-
-    if not ftar then
-        io.stderr:write("pass config *.tar file\n")
-        os.exit(1)
-    end
-
-    local dtar = ".tman"
-    local tar = "tar"
-    local tarcmd = tar .. " -xf " .. ftar .. " " .. dtar
-    if not utils.access(ftar) then
-        io.stderr:write(("'%s': no archive such file\n"):format(ftar))
-        os.exit(1)
-    end
-
-    print("tarcmd", tarcmd)
-    --os.execute(tarcmd)
-end
-]]
-
 --- Get special task ID's ID.
 -- @param idtype task id
 local function tman_get(idtype)
@@ -391,7 +334,7 @@ local function tman_get(idtype)
     end
 end
 
---- Interface.
+--- Util interface.
 local function main()
     local cmd = arg[1] or "help"
     local corecheck = core.check()
@@ -428,17 +371,12 @@ local function main()
     elseif cmd == "update" then
         tman_update()
     elseif cmd == "done" then
+        -- use exit so util shell command knows when switch task dir
         os.exit(tman_done(arg[1]))
     elseif cmd == "get" then
         tman_get(arg[1])
     elseif cmd == "prev" then
         tman_prev()
-    elseif cmd == "backup" then
-        --tman:backup()
-        print("under development")
-    elseif cmd == "restore" then
-        print("under development")
-        --tman_restore()
     elseif cmd == "config" then
         tman_config(arg[1])
     elseif cmd == "help" then

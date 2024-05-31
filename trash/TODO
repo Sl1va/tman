@@ -9,11 +9,12 @@ In progress:
 11. Add git commit checker and pattern.
 12. Keep an eye on the Cargo's stylua. It's good but heavy.
 13. install.sh: separate user and developer tool installation.
+14. Make all commands alike so they can be put in array and called in main().
 
 Gotta work on:
 4. Maybe there's a better config file than Lua module.
 
 Done:
 4. Find a good config syntax to fit options, install path, repos, etc.
-5. Move taks dir/file structure into the file. Tho leave system ones in the code.
+5. Move taks dir/file structure into the file. Leave system ones in the code.
 10. Do git rebase if it's possible without merge conflics.

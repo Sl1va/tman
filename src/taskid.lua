@@ -2,11 +2,6 @@
 -- Like add, delete, list task IDs and so on.
 -- @module TaskID
 
---[[
-TODO:
-    1. exist() is duplicated: taskid.lua and db.lua cuz tman.lua uses it
-]]
-
 local taskunit = require("taskunit")
 local db = require("aux/db")
 
