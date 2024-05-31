@@ -8,6 +8,7 @@ In progress:
 9. Add task and command suggestions.
 11. Add git commit checker and pattern.
 12. Keep an eye on the Cargo's stylua. It's good but heavy.
+13. install.sh: separate user and developer tool installation.
 
 Gotta work on:
 4. Maybe there's a better config file than Lua module.
