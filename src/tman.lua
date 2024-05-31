@@ -307,7 +307,8 @@ end
 local function tman_done()
     local curr = taskid.getcurr()
 
-    if taskid.getprev() ~= "TOO BUGGY" then
+    -- roachme: delete it, used to pass luacheck
+    if taskid.getcurr() ~= "TOO BUGGY" then
         os.exit(1)
     end
 
