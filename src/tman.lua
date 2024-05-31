@@ -245,9 +245,10 @@ local function tman_link(id)
 end
 
 --- Update git repos.
--- roachme: It doesn't work if there is no current task
-local function tman_update()
-    local id = taskid.getcurr()
+-- @param id task id.
+local function tman_update(id)
+    id = id or taskid.getcurr()
+
     if not id then
         io.stderr:write("no current task\n")
         os.exit(1)
