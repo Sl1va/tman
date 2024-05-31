@@ -127,11 +127,8 @@ function Git:branch_rebase()
     for _, repo in pairs(self.repos) do
         local repopath = config.codebase .. repo.name
         if os.execute(self.grebase:format(repopath, repo.branch)) ~= 0 then
-            io.stderr:write(
-                ("repo '%s': rebase conflic. Resolve it manually.\n"):format(
-                    repo.name
-                )
-            )
+            local errmsg = "repo '%s': rebase conflic. Resolve it manually.\n"
+            io.stderr:write((errmsg):format(repo.name))
             os.execute(self.grebaseabort:format(repopath))
         end
     end
