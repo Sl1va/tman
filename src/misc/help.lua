@@ -1,7 +1,7 @@
 --- Provide help on commands and general usage.
 -- @module help
 
-local version = "0.2.0"
+local version = "0.1.0"
 local progname = "tman"
 
 local function show_usage()
