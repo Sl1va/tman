@@ -187,6 +187,7 @@ end
 -- Update previous one if needed.
 -- @param _status current task new status (default: active)
 -- @return true on success, otherwise false
+--[[
 local function taskid_movecurr(_status)
     local curr = taskid_getcurr()
     local prev = taskid_getprev()
@@ -199,6 +200,7 @@ local function taskid_movecurr(_status)
     db.set(curr, status.COMP)
     return db.save()
 end
+]]
 
 --- Move task ID to new status.
 -- roachme: Under development.
@@ -274,5 +276,5 @@ return {
 
     -- roachme: under development & tests
     move = taskid_move,
-    movecurr = taskid_movecurr,
+    --movecurr = taskid_movecurr,
 }
