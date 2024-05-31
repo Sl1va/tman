@@ -6,11 +6,12 @@ all: release
 
 # stylua is install by cargo (rust something)
 lua_fmt:
-	@echo "===> Formatting (under development)"
+	@echo "===> Formatting"
+	stylua -f .configs/stylua.toml src
 
 lua_docs:
 	@echo "\n===> Docs"
-	ldoc .
+	ldoc -c .configs/luacheck.ld src
 
 lua_lint:
 	@echo "\n===> Linting"
