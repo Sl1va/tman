@@ -303,31 +303,27 @@ end
 ]]
 
 --- Move current task to done status.
+-- @param id task id
 -- roachme: It moves to ACTV, COMP status.
-local function tman_done()
-    local curr = taskid.getcurr()
-
-    -- roachme: delete it, used to pass luacheck
-    if taskid.getcurr() ~= "TOO BUGGY" then
-        os.exit(1)
-    end
+local function tman_done(id)
+    local retcode
+    id = id or taskid.getcurr()
 
     if not _checkid() then
         os.exit(1)
     end
-    local git = gitmod.new(curr)
+    local git = gitmod.new(id)
     if not git:branch_switch_default() then
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
-    print("new status: ", taskid.status.COMP)
-    taskid.move(curr, taskid.status.COMP)
-    taskid.unsetcurr()
-    taskid.swap()
 
     -- roachme: if task's done delete git branch,
-    --          MAYBE task dir as well.
+    --          MAYBE task dir as well (nah, leave it)
     --          BUT make sure task branch's merged into default branch
+
+    retcode = taskid.move(id, taskid.status.COMP)
+    return retcode
 end
 
 --- Config util for your workflow
@@ -432,8 +428,7 @@ local function main()
     elseif cmd == "update" then
         tman_update()
     elseif cmd == "done" then
-        print("too buggy: under development")
-        tman_done()
+        os.exit(tman_done(arg[1]))
     elseif cmd == "get" then
         tman_get(arg[1])
     elseif cmd == "prev" then

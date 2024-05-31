@@ -181,16 +181,22 @@ local function taskid_unsetcurr(taskstatus)
 end
 
 --- Move current task to new status.
--- roachme: Under development.
+-- roachme: Under development. And it vague what's goin' on.
+-- Is this function any usefull?
+-- @see taskid_move
 -- Update previous one if needed.
 -- @param _status current task new status (default: active)
 -- @return true on success, otherwise false
 local function taskid_movecurr(_status)
+    local curr = taskid_getcurr()
     local prev = taskid_getprev()
     _status = _status or status.ACTV
 
-    unsetprev(_status)
-    taskid_setcurr(prev)
+    if prev then
+        unsetprev(status.ACTV)
+        taskid_setcurr(prev)
+    end
+    db.set(curr, status.COMP)
     return db.save()
 end
 
@@ -199,22 +205,26 @@ end
 -- @param id task ID
 -- @param _status task new status (default: active)
 -- @return true on success, otherwise false
-local function taskid_move(id, _status)
+local function taskid_move(taskid, taskstatus)
     local prev = taskid_getprev()
     local curr = taskid_getcurr()
-    _status = _status or status.ACTV
+    local retcode
 
-    if id == curr then
-        print("id == curr")
-        return taskid_movecurr(_status)
-    elseif id == prev then
-        print("id == prev")
-        unsetprev(_status)
+    if taskid == curr then
+        retcode = 0
+        unsetprev(status.ACTV)
+        db.set(prev, status.CURR)
+        db.set(curr, taskstatus)
+    elseif taskid == prev then
+        retcode = 1
+        db.set(prev, status.COMP)
     else
-        -- roachme: hadn't tested at all
-        print("id == else")
-        db.set(id, _status)
+        retcode = 2
+        db.set(taskid, taskstatus)
     end
+
+    db.save()
+    return retcode
 end
 
 --- List task IDs.
