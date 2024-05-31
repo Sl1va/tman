@@ -74,7 +74,7 @@ local function setcurr(id)
     return db.set(id, status.CURR)
 end
 
---- Private functions: end --
+-- Private functions: end --
 
 -- Public functions: start --
 
@@ -113,9 +113,8 @@ end
 -- @treturn bool true on success, otherwise false
 local function taskid_add(id)
     local prev = taskid_getcurr()
-    local stat = status.CURR
 
-    if db.add(id, stat) == false then
+    if db.add(id, status.CURR) == false then
         return false
     end
 
@@ -135,12 +134,14 @@ local function taskid_del(id)
         return false
     end
 
+    -- update special task IDs
     if id == curr then
         unsetprev()
         setcurr(prev)
     elseif id == prev then
         unsetprev()
     end
+
     return db.save()
 end
 
@@ -163,6 +164,7 @@ end
 
 --- Set current task ID.
 -- Set previous task ID if needed.
+-- roachme: NO clue what's goin' on.
 local function taskid_setcurr(id)
     local prev = taskid_getcurr()
 
@@ -180,32 +182,10 @@ local function taskid_unsetcurr(taskstatus)
     return unsetcurr(taskstatus)
 end
 
---- Move current task to new status.
--- roachme: Under development. And it vague what's goin' on.
--- Is this function any usefull?
--- @see taskid_move
--- Update previous one if needed.
--- @param _status current task new status (default: active)
--- @return true on success, otherwise false
---[[
-local function taskid_movecurr(_status)
-    local curr = taskid_getcurr()
-    local prev = taskid_getprev()
-    _status = _status or status.ACTV
-
-    if prev then
-        unsetprev(status.ACTV)
-        taskid_setcurr(prev)
-    end
-    db.set(curr, status.COMP)
-    return db.save()
-end
-]]
-
 --- Move task ID to new status.
 -- roachme: Under development.
--- @param id task ID
--- @param _status task new status (default: active)
+-- @param taskid task ID
+-- @param taskstatus task new status (default: active)
 -- @return true on success, otherwise false
 local function taskid_move(taskid, taskstatus)
     local prev = taskid_getprev()
@@ -276,5 +256,4 @@ return {
 
     -- roachme: under development & tests
     move = taskid_move,
-    --movecurr = taskid_movecurr,
 }
