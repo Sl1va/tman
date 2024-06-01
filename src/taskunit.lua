@@ -68,15 +68,63 @@ local function get_input(prompt)
     return io.read("*line")
 end
 
---- Form branch according to pattern.
--- roach: Move it pattern to file as it might be diff for other users.
+--- String separator.
+-- @param inputstr input string
+-- @param sep separator
+-- @return table op tokens
+local function pattsplit(inputstr, sep)
+    local res = {}
+
+    if sep == nil then
+        sep = "%s"
+    end
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        table.insert(res, str)
+    end
+    return res
+end
+
+--- Check branch pattern is valid.
 -- @param task task unit
-local function format_branch(task)
-    -- local branchpatt = "${TYPE}/${ID}_${DESC}_${TIME}"
-    -- local branchpatt = "TYPE/ID_DESC_TIME"
-    local branch = task.type.value .. "/" .. task.id.value
-    branch = branch .. "_" .. task.desc.value:gsub(" ", "_")
-    branch = branch .. "_" .. task.date.value
+-- @return true on success, otherwise false
+local function check_branchpatt(items)
+    local separators = "/_-"
+    local sepcomponents = pattsplit(config.branchpatt, separators)
+    local branch = config.branchpatt
+
+    -- roachme: it should be somewhere else:
+    -- HOTFIX: corrently transform description
+    items.desc.value = string.gsub(items.desc.value, " ", "_")
+
+    for _, item in pairs(sepcomponents) do
+        if not items[string.lower(item)] then
+            local errmsg = "error: branch formatiton: unknown pattern '%s'\n"
+            io.stderr:write(errmsg:format(item))
+            return false
+        end
+    end
+    return true
+end
+
+--- Form branch according to pattern.
+-- @param task task unit
+local function format_branch(items)
+    local separators = "/_-"
+    local sepcomponents = pattsplit(config.branchpatt, separators)
+    local branch = config.branchpatt
+
+    -- roachme: it should be somewhere else:
+    -- HOTFIX: corrently transform description
+    items.desc.value = string.gsub(items.desc.value, " ", "_")
+
+    for _, item in pairs(sepcomponents) do
+        if not items[string.lower(item)] then
+            local errmsg = "error: branch formatiton: unknown pattern '%s'\n"
+            io.stderr:write(errmsg:format(item))
+            return nil
+        end
+        branch = string.gsub(branch, item, items[string.lower(item)].value)
+    end
     return branch
 end
 
@@ -186,6 +234,11 @@ local function taskunit_add(id, tasktype, prio)
         status = { key = "Status", value = "progress" },
         branch = { key = "Branch", value = "" },
     }
+
+    if not check_branchpatt(unit) then
+        return false
+    end
+
     unit.desc.value = get_input(unit.desc.key)
     unit.branch.value = format_branch(unit)
 
@@ -274,6 +327,9 @@ local function taskunt_amend_desc(id, newdesc)
         log:err("task '%s' unit is empty", id)
         return false
     end
+    if not check_branchpatt(taskunits) then
+        return false
+    end
 
     local newbranch = format_branch(taskunits)
     taskunit_setunit(id, "branch", newbranch)
@@ -301,6 +357,9 @@ local function taskunit_amend_id(id, newid)
 
     if not next(taskunits) then
         log:err("task '%s' unit is empty", id)
+        return false
+    end
+    if not check_branchpatt(taskunits) then
         return false
     end
 
