@@ -78,19 +78,18 @@ local function pattsplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
         table.insert(res, str)
     end
     return res
 end
 
 --- Check branch pattern is valid.
--- @param task task unit
+-- @param items task unit
 -- @return true on success, otherwise false
 local function check_branchpatt(items)
     local separators = "/_-"
     local sepcomponents = pattsplit(config.branchpatt, separators)
-    local branch = config.branchpatt
 
     -- roachme: it should be somewhere else:
     -- HOTFIX: corrently transform description
@@ -107,7 +106,7 @@ local function check_branchpatt(items)
 end
 
 --- Form branch according to pattern.
--- @param task task unit
+-- @param items task unit
 local function format_branch(items)
     local separators = "/_-"
     local sepcomponents = pattsplit(config.branchpatt, separators)
@@ -342,7 +341,7 @@ end
 -- @param id task ID
 -- @param newlink link the task
 local function taskunit_amend_link(id, newlink)
-    print("under development")
+    print("under development", id, newlink)
 end
 
 --- Chaneg task ID.
