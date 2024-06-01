@@ -2,13 +2,10 @@
 -- Metadata like branch name, date, description and so on.
 -- @module TaskUnit
 
-local gitmod = require("misc/git")
 local log = require("misc/log").init("taskunit")
 local config = require("config")
 local utils = require("aux/utils")
-
---- FIXME: If description has a colon (:) in itself this regex causes problems
-local unitregex = "(%w*): (.*)"
+local unit = require("aux.unit")
 
 --[[
 1 - main ones
@@ -39,28 +36,6 @@ local unit_ids = {
     full = 8, -- basic + time, date, status, branch
 }
 
-local unit_prios = {
-    highest = "highest",
-    high = "high",
-    mid = "mid",
-    low = "low",
-    lowest = "lowest",
-}
-
-local unit_keys = {
-    "id",
-    "prio",
-    "type",
-    "desc",
-    -- "link",
-    -- "linked",
-
-    "time",
-    "date",
-    "status",
-    "branch",
-}
-
 -- Private functions: end --
 
 local function get_input(prompt)
@@ -84,29 +59,10 @@ local function pattsplit(inputstr, sep)
     return res
 end
 
---- Check branch pattern is valid.
--- @param items task unit
--- @return true on success, otherwise false
-local function check_branchpatt(items)
-    local separators = "/_-"
-    local sepcomponents = pattsplit(config.branchpatt, separators)
-
-    -- roachme: it should be somewhere else:
-    -- HOTFIX: corrently transform description
-    items.desc.value = string.gsub(items.desc.value, " ", "_")
-
-    for _, item in pairs(sepcomponents) do
-        if not items[string.lower(item)] then
-            local errmsg = "error: branch formatiton: unknown pattern '%s'\n"
-            io.stderr:write(errmsg:format(item))
-            return false
-        end
-    end
-    return true
-end
-
 --- Form branch according to pattern.
 -- @param items task unit
+-- @return branch name if branch pattern is valid
+-- @return nil if branch pattern isn't valid
 local function format_branch(items)
     local separators = "/_-"
     local sepcomponents = pattsplit(config.branchpatt, separators)
@@ -114,15 +70,16 @@ local function format_branch(items)
 
     -- roachme: it should be somewhere else:
     -- HOTFIX: corrently transform description
-    items.desc.value = string.gsub(items.desc.value, " ", "_")
+    items.desc = string.gsub(items.desc, " ", "_")
 
+    -- roachme: use unit.get() to retrieve keys and values
     for _, item in pairs(sepcomponents) do
         if not items[string.lower(item)] then
             local errmsg = "error: branch formatiton: unknown pattern '%s'\n"
             io.stderr:write(errmsg:format(item))
             return nil
         end
-        branch = string.gsub(branch, item, items[string.lower(item)].value)
+        branch = string.gsub(branch, item, items[string.lower(item)])
     end
     return branch
 end
@@ -145,69 +102,12 @@ end
 -- @param priority priority to check
 -- @return true on success, otherwise false
 local function check_unit_prios(priority)
-    for _, prio in pairs(unit_prios) do
+    for _, prio in pairs(unit.prios) do
         if prio == priority then
             return true
         end
     end
     return false
-end
-
---- Check that unit key exist.
--- @param keyvalue key to check
--- @return true on success, otherwise false
-local function check_unit_keys(keyvalue)
-    for _, kval in pairs(unit_keys) do
-        if kval == keyvalue then
-            return true
-        end
-    end
-    return false
-end
-
---- Get task units.
--- @param id task ID
--- @treturn table task units {{key, value}, ...}
-local function load_units(id)
-    local taskunits = {}
-    local fname = config.ids .. id
-    local f = io.open(fname)
-    local i = 1
-
-    if not f then
-        log:err("'%s': could not open task unit file", id)
-        return {}
-    end
-    for line in f:lines() do
-        local ukey, uval = string.match(line, unitregex)
-        taskunits[unit_keys[i]] = { key = string.lower(ukey), value = uval }
-        i = i + 1
-    end
-    f:close()
-    return taskunits
-end
-
---- Save task units into file.
--- @param id task ID
--- @param taskunits task units to save
--- @return true on success, otherwise false
-local function save_units(id, taskunits)
-    local i = 1
-    local fname = config.ids .. id
-    local f = io.open(fname, "w")
-
-    if not f then
-        log:err("could not create file note", fname)
-        return false
-    end
-
-    for _, _ in pairs(unit_keys) do
-        local unit = taskunits[unit_keys[i]]
-        f:write(("%s: %s\n"):format(unit.key, unit.value))
-        i = i + 1
-    end
-    f:close()
-    return true
 end
 
 -- Private functions: end --
@@ -219,28 +119,34 @@ end
 -- @param tasktype task type: bugfix, hotfix, feature
 -- @param prio task priority
 local function taskunit_add(id, tasktype, prio)
-    prio = prio or unit_prios.mid
-    local unit = {
-        id = { key = "ID", value = id },
-        prio = { key = "Prio", value = prio },
-        type = { key = "Type", value = tasktype },
-        desc = { key = "Desc", value = "" },
+    local desc = get_input("Desc")
+    prio = prio or unit.prios.mid
+    unit.init(config.ids .. id)
 
-        -- roachme: find a way to include it properly
-        --time = { prio = 0, key = "Time", value = {capac = "N/A", left = "N/A"}},
-        time = { key = "Time", value = "N/A" },
-        date = { key = "Date", value = os.date("%Y%m%d") },
-        status = { key = "Status", value = "progress" },
-        branch = { key = "Branch", value = "" },
-    }
+    unit.set("id", id)
+    unit.set("prio", prio)
+    unit.set("type", tasktype)
+    unit.set("desc", desc)
 
-    if not check_branchpatt(unit) then
+    unit.set("time", "N/A")
+    unit.set("date", os.date("%Y%m%d"))
+    unit.set("status", "progress")
+
+    -- roachme: looks a bit messy to me. Outta fix it.
+    unit.set(
+        "branch",
+        format_branch({
+            type = tasktype,
+            id = id,
+            desc = desc,
+            date = unit.get("date"),
+        })
+    )
+
+    -- Check branch pattern and that branch isn't nil
+    if not unit.get("branch") then
         return false
     end
-
-    unit.desc.value = get_input(unit.desc.key)
-    unit.branch.value = format_branch(unit)
-
     -- Check user input
     if not check_tasktype(tasktype) then
         log:err("unknown task type: '%s'", tasktype)
@@ -250,12 +156,7 @@ local function taskunit_add(id, tasktype, prio)
         log:err("unknown task priority: '%s'", prio)
         return false
     end
-
-    -- save stuff
-    if not save_units(id, unit) then
-        return false
-    end
-    return true
+    return unit.save()
 end
 
 --- Get unit from task metadata.
@@ -264,13 +165,8 @@ end
 -- @return unit value
 -- @return nil if key doesn't exist
 local function taskunit_getunit(id, key)
-    local taskunits = load_units(id)
-
-    if not next(taskunits) or not check_unit_keys(key) then
-        log:err("couldn't get unit from task ID '%s'", id)
-        return nil
-    end
-    return taskunits[key].value
+    unit.init(config.ids .. id)
+    return unit.get(key)
 end
 
 --- Set unit key value.
@@ -279,14 +175,8 @@ end
 -- @param value new value to set
 -- @return true on success, otherwise false
 local function taskunit_setunit(id, key, value)
-    local taskunits = load_units(id)
-
-    if not next(taskunits) or not check_unit_keys(key) then
-        log:err("couldn't set key '%s' to task ID '%s'", key, id)
-        return false
-    end
-    taskunits[key].value = value
-    return save_units(id, taskunits)
+    unit.init(config.ids .. id)
+    return unit.set(key, value)
 end
 
 --- Show task unit metadata.
@@ -294,15 +184,15 @@ end
 -- @param count how many items to show (default: 4)
 local function taskunit_show(id, count)
     local i = 1
-    local taskunits = load_units(id)
     count = count or unit_ids.basic
 
-    for _, _ in pairs(taskunits) do
+    unit.init(config.ids .. id)
+
+    for _, ukey in pairs(unit.keys) do
         if i > count then
             break
         end
-        local unit = taskunits[unit_keys[i]]
-        print(("%-8s: %s"):format(unit.key, unit.value))
+        print(("%-8s: %s"):format(ukey, unit.get(ukey)))
         i = i + 1
     end
 end
@@ -319,76 +209,67 @@ end
 -- @param newdesc new description
 -- @return true on success, otherwise false
 local function taskunt_amend_desc(id, newdesc)
-    taskunit_setunit(id, "desc", newdesc)
+    unit.init(config.ids .. id)
+    unit.set("desc", newdesc)
 
-    local taskunits = load_units(id)
-    if not next(taskunits) then
-        log:err("task '%s' unit is empty", id)
-        return false
-    end
-    if not check_branchpatt(taskunits) then
-        return false
-    end
-
-    local newbranch = format_branch(taskunits)
-    taskunit_setunit(id, "branch", newbranch)
-
-    local git = gitmod.new(id, newbranch)
-    return git:branch_rename(newbranch)
-end
-
---- Amend (add) link to work task manager.
--- @param id task ID
--- @param newlink link the task
-local function taskunit_amend_link(id, newlink)
-    print("under development", id, newlink)
+    -- roachme: looks a bit messy to me. Outta fix it.
+    unit.set(
+        "branch",
+        format_branch({
+            id = unit.get("id"),
+            type = unit.get("type"),
+            desc = unit.get("desc"),
+            date = unit.get("date"),
+        })
+    )
+    return unit.save()
 end
 
 --- Chaneg task ID.
 -- @param id current task ID
 -- @param newid new ID
 local function taskunit_amend_id(id, newid)
+    -- roachme: TOO BUGGY
+    -- also gotta move git logic from here
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
 
-    taskunit_setunit(id, "id", newid)
-    local taskunits = load_units(id)
+    unit.init(config.ids .. id)
 
-    if not next(taskunits) then
-        log:err("task '%s' unit is empty", id)
-        return false
-    end
-    if not check_branchpatt(taskunits) then
-        return false
-    end
+    unit.set("id", newid)
+    -- roachme: looks a bit messy to me. Outta fix it.
+    unit.set(
+        "branch",
+        format_branch({
+            id = unit.get("id"),
+            type = unit.get("type"),
+            desc = unit.get("desc"),
+            date = unit.get("date"),
+        })
+    )
+    unit.save()
 
-    local newbranch = format_branch(taskunits)
-    taskunit_setunit(id, "branch", newbranch)
-
-    local git = gitmod.new(id, newbranch)
-    git:branch_rename(newbranch)
-
-    -- rename task folder
-    local cmd = ("mv %s %s"):format(old_taskdir, new_taskdir)
-    os.execute(cmd)
+    -- rename task dir
+    -- roachme: it's fregile: utils.rename() doesn't work.
+    utils.rename(old_taskdir, new_taskdir)
 
     -- rename task ID file in .tman
-    local old_file_task = config.ids .. id
-    local new_file_task = config.ids .. newid
-    return utils.rename(old_file_task, new_file_task)
+    utils.rename(config.ids .. id, config.ids .. newid)
+    return true
 end
 
 --- Change task priority.
 -- @param id task ID
 -- @param newprio new task priority
 local function taskunit_amend_prio(id, newprio)
-    local key = "prio"
+    unit.init(config.ids .. id)
 
     if not check_unit_prios(newprio) then
         log:err("task priority '%s' does not exist", newprio)
         return false
     end
-    return taskunit_setunit(id, key, newprio)
+    unit.set("prio", newprio)
+    return unit.save()
 end
 
 -- Public functions: end --
@@ -402,5 +283,4 @@ return {
     amend_id = taskunit_amend_id,
     amend_desc = taskunt_amend_desc,
     amend_prio = taskunit_amend_prio,
-    amend_link = taskunit_amend_link,
 }

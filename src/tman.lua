@@ -57,6 +57,7 @@ local function tman_add(id, tasktype, prio)
         taskid.del(id)
         os.exit(1)
     end
+
     if not struct.create(id) then
         io.stderr:write("could not create new task structure\n")
         taskid.del(id)
@@ -200,20 +201,46 @@ local function tman_amend(id, opt)
     if not _checkid(id) then
         os.exit(1)
     end
+
     if opt == "-d" then
-        io.write("new desc: ")
+        local old_branch = taskunit.getunit(id, "branch")
+
+        io.write("New description: ")
         local newdesc = io.read("*l")
-        taskunit.amend_desc(id, newdesc)
+        if not taskunit.amend_desc(id, newdesc) then
+            return false
+        end
+
+        local new_branch = taskunit.getunit(id, "branch")
+        local git = gitmod.new(id, old_branch)
+        return git:branch_rename(new_branch)
     elseif opt == "-p" then
         io.write("new priority [highest|high|mid|low|lowest]: ")
         local newprio = io.read("*l")
         taskunit.amend_prio(id, newprio)
     elseif opt == "-i" then
+        local old_branch = taskunit.getunit(id, "branch")
+
         io.write("new task ID: ")
         local newid = io.read("*l")
-        taskunit.amend_id(id, newid)
+
+        if id == newid then
+            print("error: it's the same task ID")
+            return false
+        end
+
+        if not taskunit.amend_id(id, newid) then
+            return false
+        end
         taskid.del(id)
         taskid.add(newid)
+
+        local new_branch = taskunit.getunit(newid, "branch")
+        local git = gitmod.new(id, old_branch)
+        if not git:branch_switch(old_branch) then
+            return false
+        end
+        git:branch_rename(new_branch)
     elseif opt == "-l" then
         io.write("task link (under development): ")
         local newlink = io.read("*l")
@@ -279,6 +306,8 @@ local function tman_del(id)
     taskunit.del(id)
     taskid.del(id)
     struct.delete(id)
+
+    -- FIXME: switch to previous task branch if it exists
     return 0
 end
 
