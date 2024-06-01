@@ -10,6 +10,7 @@ In progress:
     13. install.sh: separate user and developer tool installation.
     14. Make all commands alike so they can be put in array and called in main().
     15. Refactor git module. Getting bigger and messier.
+    16. `getopt' vs `getops'. Which one to use?
 
 
 Gotta work on (still):
