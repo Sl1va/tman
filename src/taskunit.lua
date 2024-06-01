@@ -72,6 +72,8 @@ end
 -- roach: Move it pattern to file as it might be diff for other users.
 -- @param task task unit
 local function format_branch(task)
+    -- local branchpatt = "${TYPE}/${ID}_${DESC}_${TIME}"
+    -- local branchpatt = "TYPE/ID_DESC_TIME"
     local branch = task.type.value .. "/" .. task.id.value
     branch = branch .. "_" .. task.desc.value:gsub(" ", "_")
     branch = branch .. "_" .. task.date.value
