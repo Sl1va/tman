@@ -11,6 +11,7 @@ In progress:
     14. Make all commands alike so they can be put in array and called in main().
     15. Refactor git module. Getting bigger and messier.
     16. `getopt' vs `getops'. Which one to use?
+    17. Switch to previous task branch if it exists
 
 
 Gotta work on (still):
