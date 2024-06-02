@@ -57,7 +57,6 @@ local function tman_add(id, tasktype, prio)
         taskid.del(id)
         os.exit(1)
     end
-
     if not struct.create(id) then
         io.stderr:write("could not create new task structure\n")
         taskid.del(id)
