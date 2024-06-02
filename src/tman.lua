@@ -164,7 +164,7 @@ end
 --- Amend task unit.
 -- @param id task ID
 -- @param opt option
-local function tman_amend(id, opt)
+local function tman_amend(opt, id)
     id = id or taskid.getcurr()
 
     if not _checkid(id) then
@@ -177,7 +177,7 @@ local function tman_amend(id, opt)
         io.write("New description: ")
         local newdesc = io.read("*l")
         if not taskunit.amend_desc(id, newdesc) then
-            return false
+            return 1
         end
 
         local new_branch = taskunit.getunit(id, "branch")
@@ -195,11 +195,11 @@ local function tman_amend(id, opt)
 
         if id == newid then
             print("error: it's the same task ID")
-            return false
+            return 1
         end
 
         if not taskunit.amend_id(id, newid) then
-            return false
+            return 1
         end
         taskid.del(id)
         taskid.add(newid)
@@ -207,9 +207,9 @@ local function tman_amend(id, opt)
         local new_branch = taskunit.getunit(newid, "branch")
         local git = gitmod.new(id, old_branch)
         if not git:branch_switch(old_branch) then
-            return false
+            return 1
         end
-        git:branch_rename(new_branch)
+        return git:branch_rename(new_branch)
     elseif opt == "-l" then
         io.write("task link (under development): ")
         local newlink = io.read("*l")

@@ -154,13 +154,13 @@ end
 -- @return true on success, otherwise false
 function Git:branch_rename(newbranch)
     if not self:changes_check() then
-        return false
+        return 1
     end
     for _, repo in pairs(self.repos) do
         local repopath = config.codebase .. repo.name
         os.execute(self.gbranchm:format(repopath, newbranch))
     end
-    return true
+    return 0
 end
 
 --- Delete task branch.
