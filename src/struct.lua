@@ -62,4 +62,5 @@ end
 return {
     create = struct_create,
     delete = struct_delete,
+    --rename = struct_rename,
 }

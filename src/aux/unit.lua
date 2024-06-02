@@ -9,14 +9,21 @@ local unitkeys = {
     "prio",
     "type",
     "desc",
-    -- "link",
-    -- "linked",
+
+    -- under development
+    "link",
+    "linked",
+    -- under development
 
     "time",
     "date",
     "status",
     "branch",
 }
+
+--[[
+    roach: pro'ly don't need unitind cuz there's unitkeys. It's enough for taskunit.show()
+]]
 
 local unitprios = {
     highest = "highest",
@@ -71,7 +78,7 @@ local function unit_init(fname)
 end
 
 local function unit_get(key)
-    return units[key].val
+    return units[key] and units[key].val
 end
 
 --- Set new value to units.

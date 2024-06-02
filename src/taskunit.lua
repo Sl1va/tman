@@ -8,21 +8,6 @@ local utils = require("aux/utils")
 local unit = require("aux.unit")
 
 --[[
-1 - main ones
-2 - a bit more info about task
-3 - mantadory stuff
-
-1. ID
-2. Type
-2. Prio
-2. Status
-1. Desc
-
-3. Date
-3. Branch
-]]
-
---[[
 Public functions:
     add     - add new unit file
     del     - delete unit file
@@ -30,11 +15,6 @@ Public functions:
     amend   - amend unit file (under development)
     getunit - get unit value from unit file
 ]]
-
-local unit_ids = {
-    basic = 4, -- id, prio, type, desc
-    full = 8, -- basic + time, date, status, branch
-}
 
 -- Private functions: end --
 
@@ -181,20 +161,14 @@ end
 
 --- Show task unit metadata.
 -- @param id task ID
--- @param count how many items to show (default: 4)
-local function taskunit_show(id, count)
-    local i = 1
-    count = count or unit_ids.basic
-
+-- @return true on success
+local function taskunit_show(id)
     unit.init(config.ids .. id)
 
     for _, ukey in pairs(unit.keys) do
-        if i > count then
-            break
-        end
-        print(("%-8s: %s"):format(ukey, unit.get(ukey)))
-        i = i + 1
+        print(("%-8s: %s"):format(ukey, unit.get(ukey) or "N/A"))
     end
+    return true
 end
 
 --- Delete task unit.
@@ -254,6 +228,7 @@ local function taskunit_amend_id(id, newid)
     utils.rename(old_taskdir, new_taskdir)
 
     -- rename task ID file in .tman
+    -- roachme: struct.lua should've done that
     utils.rename(config.ids .. id, config.ids .. newid)
     return true
 end
