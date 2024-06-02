@@ -363,14 +363,15 @@ end
 --- Get special task ID's ID.
 -- @param idtype task id
 local function tman_get(idtype)
+    idtype = idtype or "curr"
+
     if idtype == "curr" then
         print(taskid.getcurr() or "")
     elseif idtype == "prev" then
         print(taskid.getprev() or "")
     else
-        io.stderr:write(
-            ("err: no such ID type '%s'"):format(idtype or "no idtype")
-        )
+        local errmsg = "err: no such ID type '%s'\n"
+        io.stderr:write(errmsg:format(idtype or "no idtype"))
     end
 end
 
