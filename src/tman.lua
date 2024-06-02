@@ -127,9 +127,9 @@ local function tman_list()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
-            return io.stderr:write(
-                ("unrecognized option '%s'\n"):format(arg[optind - 1])
-            )
+            local errmsg = "unrecognized option '%s'\n"
+            io.stderr:write(errmsg:format(arg[optind - 1]))
+            return 0
         end
         if optopt == "A" then
             print("All tasks:")
@@ -145,6 +145,7 @@ local function tman_list()
         end
     end
     taskid.list(active, completed)
+    return 0
 end
 
 --- Show task unit metadata.
@@ -344,6 +345,8 @@ local function tman_get(idtype)
     end
 end
 
+-- Public functions: end --
+
 --- Util interface.
 local function main()
     local cmd = arg[1] or "help"
@@ -354,46 +357,44 @@ local function main()
 
     if corecheck == 1 and cmd ~= "init" then
         io.stderr:write("tman: structure not inited\n")
-        os.exit(1)
+        return 1
     elseif corecheck == 2 and cmd ~= "init" then
         io.stderr:write("tman: structure corrupted\n")
-        os.exit(1)
+        return 1
     end
 
     if cmd == "init" then
         return core.init()
     elseif cmd == "add" then
-        tman_add(arg[1], arg[2], arg[3])
+        return tman_add(arg[1], arg[2], arg[3])
     elseif cmd == "amend" then
-        tman_amend(arg[1], arg[2])
+        return tman_amend(arg[1], arg[2])
     elseif cmd == "use" then
-        tman_use(arg[1])
+        return tman_use(arg[1])
     elseif cmd == "show" then
-        tman_show(arg[1])
+        return tman_show(arg[1])
     elseif cmd == "del" then
-        tman_del(arg[1])
+        return tman_del(arg[1])
     elseif cmd == "list" then
-        tman_list()
+        return tman_list()
     elseif cmd == "update" then
-        tman_update()
+        return tman_update()
     elseif cmd == "done" then
-        -- use exit so util shell command knows when switch task dir
-        os.exit(tman_done(arg[1]))
+        return tman_done(arg[1])
     elseif cmd == "get" then
-        tman_get(arg[1])
+        return tman_get(arg[1])
     elseif cmd == "prev" then
-        tman_prev()
+        return tman_prev()
     elseif cmd == "config" then
-        tman_config(arg[1])
+        return tman_config(arg[1])
     elseif cmd == "help" then
-        help.usage(arg[1])
+        return help.usage(arg[1])
     elseif cmd == "ver" then
         print(("%s version %s"):format(help.progname, help.version))
-    else
-        help.usage(cmd)
+        return 0
     end
+    -- error: command not found. Show usage.
+    return help.usage(cmd)
 end
 
--- Public functions: end --
-
-main()
+os.exit(main())

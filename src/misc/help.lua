@@ -149,21 +149,23 @@ Show tman version.
 
 --- Get general and detailed info about command.
 -- @param cmdname command name to get info about
+-- @return status code: 0 - ok, otherwise error code
 local function help_usage(cmdname)
     local errmsg = "%s: no such command '%s'. Use '%s help' for more info.\n"
 
     if not cmdname then
         show_usage()
-        return true
+        return 0
     end
 
     for _, cmd in ipairs(cmds) do
         if cmd.name == cmdname then
-            return io.stdout:write(cmd.desc)
+            io.stdout:write(cmd.desc)
+            return 0
         end
     end
     io.stderr:write(errmsg:format(progname, cmdname, progname))
-    return false
+    return 1
 end
 
 return {
