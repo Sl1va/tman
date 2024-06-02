@@ -7,15 +7,6 @@ local config = require("config")
 local utils = require("aux/utils")
 local unit = require("aux.unit")
 
---[[
-Public functions:
-    add     - add new unit file
-    del     - delete unit file
-    show    - show unit file
-    amend   - amend unit file (under development)
-    getunit - get unit value from unit file
-]]
-
 -- Private functions: end --
 
 local function get_input(prompt)
