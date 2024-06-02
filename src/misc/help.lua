@@ -45,6 +45,7 @@ local cmds = {
         desc = [[
 Usage: tman add TASKID [TASKTYPE] [PRIORITY]
 Add new task.
+TASKID - default is current task.
 
 Notes:
     TASKID      task ID
@@ -57,16 +58,15 @@ Notes:
         desc = [[
 Usage: tman del [TASKID]
 Delete task.
-
-Notes:
-    TASKID      task ID. Default current task ID
+TASKID - default is current task.
 ]],
     },
     {
         name = "amend",
         desc = [[
 Usage: tman amend OPTION [TASKID]
-Amend task. TASKID - default is current task.
+Amend task items.
+TASKID - default is current task.
 
 Options:
     -i      amend task ID
@@ -80,6 +80,7 @@ Options:
         desc = [[
 Usage: tman done [TASKID]
 Move task to completed status.
+TASKID - default is current task.
 ]],
     },
 
@@ -88,6 +89,7 @@ Move task to completed status.
         desc = [[
 Usage: tman use TASKID
 Switch to specified task. Use `tman list` to see existing tasks.
+TASKID - default is current task.
 ]],
     },
     {
@@ -129,6 +131,7 @@ Notes:
         desc = [[
 Usage: tman show [TASKID]
 Show task units (current task by default).
+TASKID - default is current task.
 ]],
     },
     {
