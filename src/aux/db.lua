@@ -27,6 +27,8 @@ local function _db_check()
 end
 
 --- Load task IDs from database.
+-- @return on success - true
+-- @return on failure - false
 local function _db_load()
     local f = io.open(meta, "r")
 
@@ -54,6 +56,8 @@ end
 
 --- Check that task ID exist in database.
 -- @param id task ID to check
+-- @return on success - true
+-- @return on failure - false
 local function db_exist(id)
     for _, unit in pairs(taskids) do
         if unit.id == id then
@@ -64,6 +68,8 @@ local function db_exist(id)
 end
 
 --- Save task IDs to file.
+-- @return on success - true
+-- @return on failure - false
 local function db_save()
     local f = io.open(meta, "w")
 
@@ -85,6 +91,8 @@ end
 --- Add new task ID into database.
 -- @param id taskid task ID
 -- @param status task status
+-- @return on success - true
+-- @return on failure - false
 local function db_add(id, status)
     if db_exist(id) then
         return false
@@ -95,6 +103,8 @@ end
 
 --- Delete task ID from database.
 -- @param id task id
+-- @return on success - true
+-- @return on failure - false
 local function db_del(id)
     for i, unit in pairs(taskids) do
         if unit.id == id then
@@ -146,7 +156,8 @@ end
 --- Set new status to task ID.
 -- @param id task ID
 -- @param status new task status
--- @return true on success, otherwise false
+-- @return on success - true
+-- @return on failure - false
 local function db_set(id, status)
     for _, unit in pairs(taskids) do
         if unit.id == id then

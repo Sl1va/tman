@@ -162,8 +162,8 @@ local function tman_show(id)
 end
 
 --- Amend task unit.
--- @param id task ID
 -- @param opt option
+-- @param id task ID
 local function tman_amend(opt, id)
     id = id or taskid.getcurr()
 
