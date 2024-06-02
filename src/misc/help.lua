@@ -17,6 +17,7 @@ Kickoffs:
 
 Basic:
   use     - mark a task as current
+  get     - get parameters like curr, prev tasks, etc
   list    - list tasks
   show    - show task info
   prev    - switch to previous task
@@ -87,6 +88,18 @@ Move task to completed status.
         desc = [[
 Usage: tman use TASKID
 Switch to specified task. Use `tman list` to see existing tasks.
+]],
+    },
+    {
+        name = "get",
+        desc = [[
+Usage: tman get PARAM
+Get parameters like curr, prev tasks, etc
+
+Notes:
+PARAM can have one of the next values
+    curr    - current task id
+    prev    - previous task id
 ]],
     },
     {

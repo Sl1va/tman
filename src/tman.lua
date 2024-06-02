@@ -117,37 +117,6 @@ local function tman_prev()
     return 0
 end
 
---- Get cucrent task ID and other info.
--- @return currentn task ID
-local function _tman_curr()
-    local optstring = "fi"
-    local id = taskid.getcurr()
-    local options = {
-        f = false,
-        i = true, -- default option
-    }
-
-    for optopt, _, optind in getopt(arg, optstring) do
-        if optopt == "f" then
-            options.f = true
-        elseif optopt == "i" then
-            options.i = true
-        elseif optopt == "?" then
-            io.stderr:write(
-                ("unrecognized option '%s'\n"):format(arg[optind - 1])
-            )
-            os.exit(1)
-        end
-    end
-
-    if options.f then
-        local desc = taskunit.getunit(id, "desc")
-        print(("* %-10s %s"):format(id, desc))
-    elseif options.i then
-        print(id or "")
-    end
-end
-
 --- List all task IDs.
 -- Default: show only active task IDs.
 -- @param opt list option
@@ -403,8 +372,6 @@ local function main()
         tman_show(arg[1])
     elseif cmd == "del" then
         tman_del(arg[1])
-    elseif cmd == "_curr" then
-        _tman_curr()
     elseif cmd == "list" then
         tman_list()
     elseif cmd == "update" then

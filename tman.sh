@@ -79,7 +79,7 @@ function _tman_handle_commands()
         wd task
 
     elif [ $retcode -eq 0 ] && [ "$command" = "prev" ]; then
-        TASKID=$(eval $TMANCMD _curr -i)
+        TASKID=$(eval $TMANCMD get curr)
         cd "$TASKS/$TASKID"
         wd -q rm task
         wd -q add task
@@ -97,14 +97,14 @@ function _tman_handle_commands()
         wd -q -f add task
 
     elif [ $retcode -eq 0 ] && [ "$command" = "amend" ] && [ "$4" = "-i" ]; then
-        TASKID=$(eval $TMANCMD _curr -i)
+        TASKID=$(eval $TMANCMD get curr)
         cd $TASKS/${TASKID}
         wd -q rm task
         wd -q add task
         wd task
 
     elif [ "$command" = "del" ]; then
-        TASKID="$(eval $TMANCMD _curr -i)"
+        TASKID="$(eval $TMANCMD get curr)"
         if [ -n "$TASKID" ]; then
             cd $TASKS/$TASKID
             wd -q -f add task
