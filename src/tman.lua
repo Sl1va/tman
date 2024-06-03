@@ -9,10 +9,9 @@ local taskid = require("taskid")
 local taskunit = require("taskunit")
 
 -- Tman misc components.
-local gitmod = require("misc/git")
+local git = require("misc/git")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
-
 
 local errcodes = {
     ok = 0,
@@ -21,7 +20,6 @@ local errcodes = {
     command_failed = 2,
     command_not_found = 3,
 }
-
 
 --[[
 Erorr codes:
@@ -82,11 +80,7 @@ local function tman_add(id, tasktype, prio)
         taskunit.del(id)
         os.exit(1)
     end
-
-    -- roachme: make its API pretty, idk.
-    local branch = taskunit.getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-    if not git:branch_create() then
+    if not git.branch_create(id) then
         io.stderr:write("could not create new branch for a task\n")
         taskid.del(id)
         taskunit.del(id)
@@ -106,10 +100,7 @@ local function tman_use(id)
         io.stderr:write(("'%s': already in use\n"):format(id))
         os.exit(1)
     end
-
-    local branch = taskunit.getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-    if not git:branch_switch(branch) then
+    if not git.branch_switch(id) then
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
@@ -125,9 +116,7 @@ local function tman_prev()
         io.stderr:write("no previous task\n")
         os.exit(1)
     end
-    local branch = taskunit.getunit(prev, "branch")
-    local git = gitmod.new(prev, branch)
-    if not git:branch_switch(branch) then
+    if not git.branch_switch(prev) then
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
@@ -191,23 +180,18 @@ local function tman_amend(opt, id)
     end
 
     if opt == "-d" then
-        local old_branch = taskunit.getunit(id, "branch")
-
         io.write("New description: ")
         local newdesc = io.read("*l")
         if not taskunit.amend_desc(id, newdesc) then
             return 1
         end
-
-        local new_branch = taskunit.getunit(id, "branch")
-        local git = gitmod.new(id, old_branch)
-        return git:branch_rename(new_branch)
+        return git.branch_rename(id)
     elseif opt == "-p" then
         io.write("new priority [highest|high|mid|low|lowest]: ")
         local newprio = io.read("*l")
         taskunit.amend_prio(id, newprio)
     elseif opt == "-i" then
-        local old_branch = taskunit.getunit(id, "branch")
+        local old_id = id
 
         io.write("new task ID: ")
         local newid = io.read("*l")
@@ -223,12 +207,10 @@ local function tman_amend(opt, id)
         taskid.del(id)
         taskid.add(newid)
 
-        local new_branch = taskunit.getunit(newid, "branch")
-        local git = gitmod.new(id, old_branch)
-        if not git:branch_switch(old_branch) then
+        if not git.branch_switch(old_id) then
             return 1
         end
-        return git:branch_rename(new_branch)
+        return git.branch_rename(id)
     elseif opt == "-l" then
         io.write("task link (under development): ")
         local newlink = io.read("*l")
@@ -241,7 +223,7 @@ local function tman_amend(opt, id)
 end
 
 --- Update git repos.
--- @param id task id.
+-- @param cmd command
 local function tman_update(cmd)
     local id = taskid.getcurr()
 
@@ -253,23 +235,20 @@ local function tman_update(cmd)
     -- create task structure if needed
     struct.create(id)
 
-    local branch = taskunit.getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-
     -- create git branch if needed
-    git:branch_create()
+    git.branch_create(id)
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then
-        git:branch_switch(branch)
+        git.branch_switch(id)
         return errcodes.ok
     elseif cmd == "repo" then
-        if not git:branch_switch_default() then
+        if not git.branch_switch_default() then
             return errcodes.command_failed
         end
-        git:branch_update(true)
-        git:branch_switch(branch)
-        git:branch_rebase()
+        git.branch_update(true)
+        git.branch_switch(id)
+        git.branch_rebase()
         return errcodes.ok
     end
     local errmsg = "%s: update: command not found '%s'\n"
@@ -288,9 +267,6 @@ local function tman_del(id)
     end
 
     local desc = taskunit.getunit(id, "desc")
-    local branch = taskunit.getunit(id, "branch")
-    local git = gitmod.new(id, branch)
-
     print(("> %-8s %s"):format(id, desc))
     io.write("Do you want to continue? [Yes/No] ")
     local confirm = io.read("*line")
@@ -299,7 +275,7 @@ local function tman_del(id)
         os.exit(1)
     end
 
-    git:branch_delete()
+    git.branch_delete(id)
     taskunit.del(id)
     taskid.del(id)
 
@@ -307,9 +283,7 @@ local function tman_del(id)
     -- switch back to current task (if exists)
     local curr = taskid.getcurr()
     if curr then
-        git.new(curr)
-        branch = taskunit.getunit(curr, "branch")
-        git:branch_switch(branch)
+        git.branch_switch(curr)
     end
 
     -- delete task dir at the end, cuz it causes error for tman.sh
@@ -344,8 +318,7 @@ local function tman_done(id)
         retcode = 2
     end
 
-    local git = gitmod.new(id)
-    if not git:branch_switch_default() then
+    if not git.branch_switch_default() then
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end

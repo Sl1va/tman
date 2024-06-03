@@ -3,43 +3,35 @@
 
 local config = require("config")
 local log = require("misc/log").init("git")
+local taskunit = require("taskunit")
 
---[[
-Private functions:
-    change_check  - check that repo has no unsaved changes
-
-
-Public functions:
-    branch_switch_default - switch to repo default branch
-    branch_create - create new branch for a task
-    branch_delete - delete task branch
-    branch_switch - switch branch (default: repo's default branch)
-    branch_update - pull changes from origin and tryna rebase against task branch
-    branch_rename - rename task branch
-    commit_check  - check commit message
-]]
-
-local Git = {}
-Git.__index = Git
-
---- Class Git
--- @type Git
+-- local git = "git -C %s " -- roachme: how to use it in here
+local gdiff_word = "git -C %s diff --quiet --exit-code"
+local gcheckout = "git -C %s checkout --quiet %s"
+local gcheckoutb = "git -C %s checkout --quiet -b %s 2>/dev/null"
+local gpull = "git -C %s pull --quiet origin %s"
+local gpull_generic = "git -C %s pull --quiet"
+local gbranchD = "git -C %s branch --quiet -D %s"
+local gbranchm = "git -C %s branch --quiet -m %s"
+local grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null"
+local grebaseabort = "git -C %s rebase --abort"
+local repos = config.repos
 
 -- Private functions: end --
 
 --- Check that repo has no uncommited changes.
 -- @param reponame repo name
 -- @return true on success, otherwise false
-function Git:change_check_repo(reponame)
+local function change_check_repo(reponame)
     local repopath = config.codebase .. reponame
-    local cmd = string.format(self.gdiff_word, repopath)
+    local cmd = string.format(gdiff_word, repopath)
     return os.execute(cmd) == 0
 end
 
 --- Check repos for uncommited chanegs.
-function Git:changes_check()
-    for _, repo in pairs(self.repos) do
-        if not self:change_check_repo(repo.name) then
+local function changes_check()
+    for _, repo in pairs(repos) do
+        if not change_check_repo(repo.name) then
             log:err("repo '%s' has uncommited changes", repo.name)
             return false
         end
@@ -51,135 +43,127 @@ end
 
 -- Public functions: start --
 
---- Init Git class.
--- @param taskid task ID
--- @param branch branch name
--- @return Git object
-function Git.new(taskid, branch)
-    local self = setmetatable({
-        taskid = taskid,
-        branch = branch,
-        git = "git -C %s ", -- roachme: how to use it in here?
-        gdiff_word = "git -C %s diff --quiet --exit-code",
-        gcheckout = "git -C %s checkout --quiet %s",
-        gcheckoutb = "git -C %s checkout --quiet -b %s 2>/dev/null",
-        gpull = "git -C %s pull --quiet origin %s",
-        gpull_generic = "git -C %s pull --quiet",
-        gbranchD = "git -C %s branch --quiet -D %s",
-        gbranchm = "git -C %s branch --quiet -m %s",
-        grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null",
-        grebaseabort = "git -C %s rebase --abort",
-    }, Git)
-    self.repos = config.repos
-    return self
-end
-
 --- Switch to repo default branch.
 -- @treturn bool true on success, otherwise false
-function Git:branch_switch_default()
-    if not self:changes_check() then
+local function git_branch_switch_default()
+    if not changes_check() then
         return false
     end
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(self.gcheckout:format(repopath, repo.branch))
+        os.execute(gcheckout:format(repopath, repo.branch))
     end
     return true
 end
 
 --- Switch branch.
--- @param branch task branch name
+-- @param id task ID
 -- @treturn bool true on success, otherwise false
-function Git:branch_switch(branch)
-    if not self:changes_check() then
+local function git_branch_switch(id)
+    local branch = taskunit.getunit(id, "branch")
+
+    if not changes_check() then
         return false
     end
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(self.gcheckout:format(repopath, branch))
+        os.execute(gcheckout:format(repopath, branch))
     end
     return true
 end
 
 --- Git pull command.
 -- @param all true pull all branches, otherwise only default branch
-function Git:branch_update(all)
-    -- roachme: gotta add branch rebase and conflic handler
-    if not self:changes_check() then
+local function git_branch_update(all)
+    if not changes_check() then
         return false
     end
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(self.gcheckout:format(repopath, repo.branch))
+        os.execute(gcheckout:format(repopath, repo.branch))
         if all then
-            os.execute(self.gpull_generic:format(repopath))
+            os.execute(gpull_generic:format(repopath))
         else
-            os.execute(self.gpull:format(repopath, repo.branch))
+            os.execute(gpull:format(repopath, repo.branch))
         end
     end
 end
 
 --- Rebase task branch against default.
-function Git:branch_rebase()
-    if not self:changes_check() then
+local function git_branch_rebase()
+    if not changes_check() then
         return false
     end
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        if os.execute(self.grebase:format(repopath, repo.branch)) ~= 0 then
+        if os.execute(grebase:format(repopath, repo.branch)) ~= 0 then
             local errmsg = "repo '%s': rebase conflic. Resolve it manually.\n"
             io.stderr:write((errmsg):format(repo.name))
-            os.execute(self.grebaseabort:format(repopath))
+            os.execute(grebaseabort:format(repopath))
         end
     end
 end
 
 --- Create a branch for task.
 -- Also symlinks repos for a task.
+-- @param id task ID
 -- @return true on success, otherwise false
-function Git:branch_create()
-    if not self:changes_check() then
-        return false
+local function git_branch_create(id)
+    local branch = taskunit.getunit(id, "branch")
+
+    if not changes_check() then
+        return 1
     end
 
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(self.gcheckout:format(repopath, repo.branch))
-        os.execute(self.gcheckoutb:format(repopath, self.branch))
+        os.execute(gcheckout:format(repopath, repo.branch))
+        os.execute(gcheckoutb:format(repopath, branch))
     end
-    return true
+    return 0
 end
 
 --- Rename task branch.
+-- @param id task ID
 -- @return true on success, otherwise false
-function Git:branch_rename(newbranch)
-    if not self:changes_check() then
+local function git_branch_rename(id)
+    local newbranch = taskunit.getunit(id, "branch")
+
+    if not changes_check() then
         return 1
     end
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(self.gbranchm:format(repopath, newbranch))
+        os.execute(gbranchm:format(repopath, newbranch))
     end
     return 0
 end
 
 --- Delete task branch.
+-- @param id task ID
 -- @return true on success, otherwise false
-function Git:branch_delete()
-    if not self:changes_check() then
+local function git_branch_delete(id)
+    local branch = taskunit.getunit(id, "branch")
+
+    if not changes_check() then
         return false
     end
-    for _, repo in pairs(self.repos) do
+    for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(self.gcheckout:format(repopath, repo.branch))
-        os.execute(self.gbranchD:format(repopath, self.branch))
+        os.execute(gcheckout:format(repopath, repo.branch))
+        os.execute(gbranchD:format(repopath, branch))
     end
     return true
 end
 
--- Check that commit fits messages rules.
---function Git:commit_check() end
-
 -- Public functions: end --
 
-return Git
+return {
+    branch_create = git_branch_create,
+    branch_delete = git_branch_delete,
+    branch_switch = git_branch_switch,
+    branch_update = git_branch_update,
+    branch_rename = git_branch_rename,
+    branch_rebase = git_branch_rebase,
+    branch_switch_default = git_branch_switch_default,
+}
