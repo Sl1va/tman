@@ -2,7 +2,6 @@
 -- @module unit
 
 local units = {}
-local unitind = 1
 local unitfile = ""
 local unitkeys = {
     "id",
@@ -21,10 +20,6 @@ local unitkeys = {
     "branch",
 }
 
---[[
-    roach: pro'ly don't need unitind cuz there's unitkeys. It's enough for taskunit.show()
-]]
-
 local unitprios = {
     highest = "highest",
     high = "high",
@@ -34,11 +29,8 @@ local unitprios = {
 }
 
 local function unit_load()
-    local f = io.open(unitfile)
-
-    -- reset
     units = {}
-    unitind = 1
+    local f = io.open(unitfile)
 
     if not f then
         return false
@@ -47,12 +39,8 @@ local function unit_load()
     for line in f:lines() do
         local key, val = string.match(line, "(.*): (.*)")
         key = string.lower(key)
-        units[key] = { val = val, ind = unitind }
-        unitind = unitind + 1
+        units[key] = val
     end
-
-    -- reset index
-    unitind = 1
     return f:close()
 end
 
@@ -63,8 +51,8 @@ local function unit_save()
         return false
     end
 
-    for key, value in pairs(units) do
-        f:write(key, ": ", value.val, "\n")
+    for key, val in pairs(units) do
+        f:write(key, ": ", val, "\n")
     end
     f:close()
     return true
@@ -78,15 +66,14 @@ local function unit_init(fname)
 end
 
 local function unit_get(key)
-    return units[key] and units[key].val
+    return units[key]
 end
 
 --- Set new value to units.
 -- @param key key
 -- @param val value
 local function unit_set(key, val)
-    units[key] = { val = val, ind = unitind }
-    unitind = unitind + 1
+    units[key] = val
 end
 
 local function unit_size()
