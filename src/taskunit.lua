@@ -151,9 +151,15 @@ end
 
 --- Show task unit metadata.
 -- @param id task ID
+-- @param key show only that key
 -- @return true on success
-local function taskunit_show(id)
+local function taskunit_show(id, key)
     unit.init(config.ids .. id)
+
+    if key then
+        print(("> %-8s: %s"):format(key, unit.get(key) or "N/A"))
+        return true
+    end
 
     for _, ukey in pairs(unit.keys) do
         print(("%-8s: %s"):format(ukey, unit.get(ukey) or "N/A"))

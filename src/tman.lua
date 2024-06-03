@@ -266,8 +266,7 @@ local function tman_del(id)
         os.exit(1)
     end
 
-    local desc = taskunit.getunit(id, "desc")
-    print(("> %-8s %s"):format(id, desc))
+    taskunit.show(id, "desc")
     io.write("Do you want to continue? [Yes/No] ")
     local confirm = io.read("*line")
     if confirm ~= "Yes" then
