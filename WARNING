@@ -1,0 +1,2 @@
+`tman amend -i' doesn't work. Git & taskunit break for some reasons.
+Use git bisect to find it out.
