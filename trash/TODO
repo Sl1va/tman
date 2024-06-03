@@ -1,5 +1,4 @@
 In progress:
-    1. Refactor taskunit.lua. It looks messy and disgusting
     3. Properly fix backup and restore commands
     6. Add file lock to task units.
     9. Add task and command suggestions.
@@ -17,6 +16,7 @@ Gotta work on (still):
 
 
 Done:
+    1. Refactor taskunit.lua. It looks messy and disgusting
     2. Refactor git.lua. Looks messy
     4. Find a good config syntax to fit options, install path, repos, etc.
     5. Move taks dir/file structure into the file. Leave system ones in the code.
