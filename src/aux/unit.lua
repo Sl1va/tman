@@ -28,6 +28,9 @@ local unitprios = {
     lowest = "lowest",
 }
 
+--- Load task units from the file.
+-- @return on success - true
+-- @return on failure - false
 local function unit_load()
     units = {}
     local f = io.open(unitfile)
@@ -44,6 +47,9 @@ local function unit_load()
     return f:close()
 end
 
+--- Save task units into the file.
+-- @return on success - true
+-- @return on failure - false
 local function unit_save()
     local f = io.open(unitfile, "w")
 
@@ -65,6 +71,9 @@ local function unit_init(fname)
     unit_load()
 end
 
+--- Get unit from unit file.
+-- @param key key to get
+-- @return value
 local function unit_get(key)
     return units[key]
 end
@@ -72,10 +81,13 @@ end
 --- Set new value to units.
 -- @param key key
 -- @param val value
+-- @return unit value
 local function unit_set(key, val)
     units[key] = val
 end
 
+--- Get size of unit file.
+-- @return size of unit file
 local function unit_size()
     local size = 0
 
