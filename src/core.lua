@@ -15,7 +15,6 @@ local function core_init()
     -- files
     utils.touch(config.taskids)
     utils.touch(config.initfile)
-    print("tman: core structure inited")
 end
 
 --- Check tman dir ain't corrupted and exists.
