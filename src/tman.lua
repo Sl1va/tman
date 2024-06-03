@@ -283,9 +283,18 @@ local function tman_del(id)
     git:branch_delete()
     taskunit.del(id)
     taskid.del(id)
-    struct.delete(id)
 
-    -- FIXME: switch to previous task branch if it exists
+    -- roachme: make it pretty and easire to read.
+    -- switch back to current task (if exists)
+    local curr = taskid.getcurr()
+    if curr then
+        git.new(curr)
+        branch = taskunit.getunit(curr, "branch")
+        git:branch_switch(branch)
+    end
+
+    -- delete task dir at the end, cuz it causes error for tman.sh
+    struct.delete(id)
     return 0
 end
 
