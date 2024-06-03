@@ -71,6 +71,17 @@ Options:
     -d      amend task description
 ]],
     },
+    {
+        name = "update",
+        desc = [[
+Usage: tman update COMMAND
+Update task repos, structure, etc. Operates on current task ID.
+
+COMMAND:
+    task    create task branch, symlink, etc.
+    repos   same as `task', also update branches from remote git repo.
+]],
+    },
 
     {
         name = "done",
