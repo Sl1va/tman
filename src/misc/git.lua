@@ -2,8 +2,9 @@
 -- @module Git
 
 local config = require("config")
-local log = require("misc/log").init("git")
 local taskunit = require("taskunit")
+local log = require("misc/log").init("git")
+local utils = require("aux.utils")
 
 -- local git = "git -C %s " -- roachme: how to use it in here
 local gdiff_word = "git -C %s diff --quiet --exit-code"
@@ -25,7 +26,7 @@ local repos = config.repos
 local function change_check_repo(reponame)
     local repopath = config.codebase .. reponame
     local cmd = string.format(gdiff_word, repopath)
-    return os.execute(cmd) == 0
+    return utils.exec(cmd) == 0
 end
 
 --- Check repos for uncommited chanegs.
@@ -51,7 +52,7 @@ local function git_branch_switch_default()
     end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(gcheckout:format(repopath, repo.branch))
+        utils.exec(gcheckout:format(repopath, repo.branch))
     end
     return true
 end
@@ -67,7 +68,7 @@ local function git_branch_switch(id)
     end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(gcheckout:format(repopath, branch))
+        utils.exec(gcheckout:format(repopath, branch))
     end
     return true
 end
@@ -80,11 +81,11 @@ local function git_branch_update(all)
     end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(gcheckout:format(repopath, repo.branch))
+        utils.exec(gcheckout:format(repopath, repo.branch))
         if all then
-            os.execute(gpull_generic:format(repopath))
+            utils.exec(gpull_generic:format(repopath))
         else
-            os.execute(gpull:format(repopath, repo.branch))
+            utils.exec(gpull:format(repopath, repo.branch))
         end
     end
 end
@@ -96,10 +97,10 @@ local function git_branch_rebase()
     end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        if os.execute(grebase:format(repopath, repo.branch)) ~= 0 then
+        if utils.exec(grebase:format(repopath, repo.branch)) ~= 0 then
             local errmsg = "repo '%s': rebase conflic. Resolve it manually.\n"
             io.stderr:write((errmsg):format(repo.name))
-            os.execute(grebaseabort:format(repopath))
+            utils.exec(grebaseabort:format(repopath))
         end
     end
 end
@@ -117,8 +118,8 @@ local function git_branch_create(id)
 
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(gcheckout:format(repopath, repo.branch))
-        os.execute(gcheckoutb:format(repopath, branch))
+        utils.exec(gcheckout:format(repopath, repo.branch))
+        utils.exec(gcheckoutb:format(repopath, branch))
     end
     return 0
 end
@@ -134,7 +135,7 @@ local function git_branch_rename(id)
     end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(gbranchm:format(repopath, newbranch))
+        utils.exec(gbranchm:format(repopath, newbranch))
     end
     return 0
 end
@@ -150,8 +151,8 @@ local function git_branch_delete(id)
     end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
-        os.execute(gcheckout:format(repopath, repo.branch))
-        os.execute(gbranchD:format(repopath, branch))
+        utils.exec(gcheckout:format(repopath, repo.branch))
+        utils.exec(gbranchD:format(repopath, branch))
     end
     return true
 end
