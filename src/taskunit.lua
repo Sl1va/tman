@@ -114,11 +114,10 @@ local function taskunit_add(id, tasktype, prio)
         })
     )
 
-    -- Check branch pattern and that branch isn't nil
     if not unit.get("branch") then
+        log:err("branch pattern isn't valid", config.branchpatt)
         return false
     end
-    -- Check user input
     if not check_tasktype(tasktype) then
         log:err("unknown task type: '%s'", tasktype)
         return false
