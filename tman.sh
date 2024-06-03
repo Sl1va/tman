@@ -6,6 +6,14 @@ TASKS=""
 TMANCMD=""
 CONFNAME="tman_conf.lua"
 
+# Error codes
+TMANERR_OK=0
+TMANERR_NOT_INITED=1
+TMANERR_CORRUPTED=2
+TMANERR_COMMAND_FAILED=3
+TMANERR_COMMAND_NOT_FOUND=4
+
+
 
 function _tman_find_config()
 {

@@ -13,6 +13,15 @@ local gitmod = require("misc/git")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
 
+--[[
+Erorr codes:
+    0 - OK
+    1 - structure not inited
+    2 - structure corrupted
+    3 - command failed to execute
+    4 - command not found
+]]
+
 -- Private functions: start --
 
 --- Check ID is passed and exists in database.
