@@ -3,6 +3,8 @@
 
 local units = {}
 local unitfile = ""
+local unitregex = "(.*): (.*)"
+local unitfmt = "%s: %s\n"
 local unitkeys = {
     "id",
     "prio",
@@ -40,7 +42,8 @@ local function unit_load()
     end
 
     for line in f:lines() do
-        local key, val = string.match(line, "(.*): (.*)")
+        local key, val = string.match(line, unitregex)
+        -- for backward compatibily: old task has capitalized keys
         key = string.lower(key)
         units[key] = val
     end
@@ -58,7 +61,7 @@ local function unit_save()
     end
 
     for key, val in pairs(units) do
-        f:write(key, ": ", val, "\n")
+        f:write(unitfmt:format(key, val))
     end
     f:close()
     return true
