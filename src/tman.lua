@@ -83,7 +83,7 @@ local function tman_add(id, tasktype, prio)
         struct.delete(id)
         os.exit(1)
     end
-    return true
+    return 0
 end
 
 --- Switch to another task.
