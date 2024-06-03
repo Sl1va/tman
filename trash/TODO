@@ -8,6 +8,7 @@ In progress:
     14. Make all commands alike so they can be put in array and called in main().
     16. `getopt' vs `getops'. Which one to use?
     18. Get rid of os.exit() in tman.lua. There's a better way.
+    19. Add module for default values so util doesn't break if no config is preesented.
 
 
 Gotta work on (still):
