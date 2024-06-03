@@ -13,6 +13,16 @@ local gitmod = require("misc/git")
 local help = require("misc/help")
 local getopt = require("posix.unistd").getopt
 
+
+local errcodes = {
+    ok = 0,
+    not_inited = 1,
+    corrupted = 2,
+    command_failed = 2,
+    command_not_found = 3,
+}
+
+
 --[[
 Erorr codes:
     0 - OK
@@ -232,8 +242,8 @@ end
 
 --- Update git repos.
 -- @param id task id.
-local function tman_update(id)
-    id = id or taskid.getcurr()
+local function tman_update(cmd)
+    local id = taskid.getcurr()
 
     if not id then
         io.stderr:write("no current task\n")
@@ -249,14 +259,23 @@ local function tman_update(id)
     -- create git branch if needed
     git:branch_create()
 
-    if not git:branch_switch_default() then
-        return 1
+    -- switch to task branch, that's it. Default option.
+    if not cmd or cmd == "task" then
+        git:branch_switch(branch)
+        return errcodes.ok
+    elseif cmd == "repo" then
+        if not git:branch_switch_default() then
+            return errcodes.command_failed
+        end
+        git:branch_update(true)
+        git:branch_switch(branch)
+        git:branch_rebase()
+        return errcodes.ok
     end
-
-    git:branch_update(true)
-    git:branch_switch(branch)
-    git:branch_rebase()
-    return 0
+    local errmsg = "%s: update: command not found '%s'\n"
+    io.stderr:write(errmsg:format(help.progname, cmd))
+    io.stderr:write("Commands: [task|repo]\n")
+    return errcodes.command_failed
 end
 
 --- Delete task.
@@ -395,7 +414,7 @@ local function main()
     elseif cmd == "list" then
         return tman_list()
     elseif cmd == "update" then
-        return tman_update()
+        return tman_update(arg[1])
     elseif cmd == "done" then
         return tman_done(arg[1])
     elseif cmd == "get" then
