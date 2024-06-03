@@ -33,9 +33,6 @@ Amend:
 Info:
   ver     - show version
   help    - show this help message
-
-For utils:
-  _curr   - show current task
 ]]):format(progname, progname))
 end
 
