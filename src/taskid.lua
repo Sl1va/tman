@@ -157,6 +157,12 @@ local function taskid_swap()
     return db.save()
 end
 
+--- Unset current task ID.
+-- @see unsetcurr
+local function taskid_unsetcurr(taskstatus)
+    return unsetcurr(taskstatus)
+end
+
 --- Set current task ID.
 -- Set previous task ID if needed.
 -- roachme: NO clue what's goin' on.
@@ -169,12 +175,6 @@ local function taskid_setcurr(id)
         return db.save()
     end
     return false
-end
-
---- Unset current task ID.
--- @see unsetcurr
-local function taskid_unsetcurr(taskstatus)
-    return unsetcurr(taskstatus)
 end
 
 --- Move task ID to new status.
