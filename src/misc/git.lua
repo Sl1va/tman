@@ -6,6 +6,8 @@ local taskunit = require("taskunit")
 local log = require("misc.log").init("git")
 local utils = require("aux.utils")
 
+local repos = config.repos
+
 -- local git = "git -C %s " -- roachme: how to use it in here
 local gdiff_word = "git -C %s diff --quiet --exit-code"
 local gcheckout = "git -C %s checkout --quiet %s"
@@ -14,9 +16,10 @@ local gpull = "git -C %s pull --quiet origin %s"
 local gpull_generic = "git -C %s pull --quiet"
 local gbranchD = "git -C %s branch --quiet -D %s"
 local gbranchm = "git -C %s branch --quiet -m %s"
+local gbranchmrg = "git -C %s branch --merged %s | grep -q %s"
+local gbranchprune = "git -C %s remote update origin --prune 1>/dev/null"
 local grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null"
 local grebaseabort = "git -C %s rebase --abort"
-local repos = config.repos
 
 -- Private functions: end --
 
@@ -157,6 +160,34 @@ local function git_branch_delete(id)
     return true
 end
 
+--- Check that all task's repo branches are merged into the default one.
+-- roachme: let a user know if no task commits presented.
+-- @return task branch's merged - true
+-- @return task branch's not merged - false
+local function git_branch_merged(id)
+    local retcode = true
+    local branch = taskunit.getunit(id, "branch")
+
+    --  roachme: doesn't work if merge conflic with default branch.
+    --  which happens quite often.
+
+    if not changes_check() then
+        return false
+    end
+    for _, repo in pairs(repos) do
+        local repopath = config.codebase .. repo.name
+        local cmd = gbranchmrg:format(repopath, repo.branch, branch)
+
+        -- update list of local branches with remote one
+        utils.exec(gbranchprune:format(repopath))
+        if utils.exec(cmd) ~= 0 then
+            print(" repo:", repo.name)
+            retcode = false
+        end
+    end
+    return retcode
+end
+
 -- Public functions: end --
 
 return {
@@ -166,5 +197,6 @@ return {
     branch_update = git_branch_update,
     branch_rename = git_branch_rename,
     branch_rebase = git_branch_rebase,
+    branch_merged = git_branch_merged,
     branch_switch_default = git_branch_switch_default,
 }

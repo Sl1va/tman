@@ -373,6 +373,20 @@ local function tman_get(idtype)
     end
 end
 
+local function tman_test(id)
+    id = id or taskid.getcurr()
+
+    if not _checkid() then
+        os.exit(1)
+    end
+
+    if git.branch_merged(id) then
+        print("ok: all repo branches are merged")
+    else
+        print("err: not all repo branches are merged")
+    end
+end
+
 -- Public functions: end --
 
 --- Util interface.
@@ -415,6 +429,8 @@ local function main()
         return tman_prev()
     elseif cmd == "config" then
         return tman_config(arg[1])
+    elseif cmd == "test" then
+        return tman_test(arg[1])
     elseif cmd == "help" then
         return help.usage(arg[1])
     elseif cmd == "ver" then
