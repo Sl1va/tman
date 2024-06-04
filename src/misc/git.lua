@@ -3,7 +3,7 @@
 
 local config = require("config")
 local taskunit = require("taskunit")
-local log = require("misc/log").init("git")
+local log = require("misc.log").init("git")
 local utils = require("aux.utils")
 
 -- local git = "git -C %s " -- roachme: how to use it in here

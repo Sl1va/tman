@@ -9,8 +9,8 @@ local taskid = require("taskid")
 local taskunit = require("taskunit")
 
 -- Tman misc components.
-local git = require("misc/git")
-local help = require("misc/help")
+local git = require("misc.git")
+local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
 local errcodes = {

@@ -2,9 +2,9 @@
 -- Metadata like branch name, date, description and so on.
 -- @module TaskUnit
 
-local log = require("misc/log").init("taskunit")
+local log = require("misc.log").init("taskunit")
 local config = require("config")
-local utils = require("aux/utils")
+local utils = require("aux.utils")
 local unit = require("aux.unit")
 
 -- Private functions: end --

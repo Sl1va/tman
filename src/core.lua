@@ -1,7 +1,7 @@
 --- Tman core module to to init, check and repair itself.
 -- @module core
 
-local utils = require("aux/utils")
+local utils = require("aux.utils")
 local config = require("config")
 
 --- Init system to use a util.

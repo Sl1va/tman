@@ -3,7 +3,7 @@
 -- @module TaskID
 
 local taskunit = require("taskunit")
-local db = require("aux/db")
+local db = require("aux.db")
 
 --- Types of task IDs.
 local status = {
