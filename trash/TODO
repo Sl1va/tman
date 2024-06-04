@@ -9,6 +9,8 @@ In progress:
     16. `getopt' vs `getops'. Which one to use?
     18. Get rid of os.exit() in tman.lua. There's a better way.
     19. Add module for default values so util doesn't break if no config is preesented.
+    20. `tman update' doesn't work if no current task. Fix it.
+    21. `tman del' doesn't show task ID. Fix it.
 
 
 Gotta work on (still):
