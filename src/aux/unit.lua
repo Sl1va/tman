@@ -2,6 +2,7 @@
 -- @module unit
 
 local units = {}
+local defval = "N/A"
 local unitfile = ""
 local unitregex = "(.*): (.*)"
 local unitfmt = "%s: %s\n"
@@ -64,7 +65,7 @@ local function unit_save()
     end
 
     for key, val in pairs(units) do
-        f:write(unitfmt:format(key, val))
+        f:write(unitfmt:format(key, val or defval))
     end
     f:close()
     return true
@@ -89,12 +90,13 @@ end
 -- @param val value
 -- @return unit value
 local function unit_set(key, val)
-    units[key] = val
+    units[key] = val or defval
 end
 
 return {
     keys = unitkeys,
     prios = unitprios,
+    defval = defval,
 
     get = unit_get,
     set = unit_set,

@@ -157,12 +157,14 @@ local function taskunit_show(id, key)
     unit.init(config.ids .. id)
 
     if key then
-        print(("> %-8s: %s"):format(key, unit.get(key) or "N/A"))
+        -- use defval for backward compatibility with old tasks
+        print(("> %-8s: %s"):format(key, unit.get(key) or unit.defval))
         return true
     end
 
     for _, ukey in pairs(unit.keys) do
-        print(("%-8s: %s"):format(ukey, unit.get(ukey) or "N/A"))
+        -- use defval for backward compatibility with old tasks
+        print(("%-8s: %s"):format(ukey, unit.get(ukey) or unit.defval))
     end
     return true
 end
