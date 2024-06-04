@@ -3,6 +3,7 @@
 -- @module TaskID
 
 local taskunit = require("taskunit")
+local config = require("misc.config")
 local db = require("aux.db")
 
 --- Types of task IDs.
@@ -224,7 +225,7 @@ end
 
 -- Public functions: end --
 
-db.init()
+db.init(config.taskids)
 
 return {
     -- roachme: should it be public?

@@ -1,10 +1,8 @@
 --- Simple database for task IDs.
 -- @module db
 
-local config = require("misc.config")
-
 local taskids = {}
-local meta = config.taskids
+local idfile = ""
 
 -- Private functions: start --
 
@@ -30,7 +28,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _db_load()
-    local f = io.open(meta, "r")
+    local f = io.open(idfile, "r")
 
     if not f then
         return false
@@ -48,9 +46,10 @@ end
 
 -- Public functions: start ---
 
---- Init database.
-local function db_init(ftaskids)
-    meta = ftaskids or meta
+--- Init database (load task IDs from the file).
+-- @param fname filename
+local function db_init(fname)
+    idfile = fname
     _db_load()
 end
 
@@ -71,7 +70,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function db_save()
-    local f = io.open(meta, "w")
+    local f = io.open(idfile, "w")
 
     if not f then
         return false
