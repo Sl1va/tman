@@ -14,6 +14,7 @@ local unitkeys = {
     -- under development
     "link",
     "linked",
+    "repos", -- show repos with commits related to task
     -- under development
 
     "time",
