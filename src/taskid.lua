@@ -163,7 +163,7 @@ local function taskid_unsetcurr(taskstatus)
     return unsetcurr(taskstatus)
 end
 
---- Set current task ID.
+--- Set task ID as current.
 -- Set previous task ID if needed.
 local function taskid_setcurr(id)
     local prev = taskid_getcurr()
@@ -238,6 +238,8 @@ return {
     getcurr = taskid_getcurr,
     getprev = taskid_getprev,
     setcurr = taskid_setcurr,
+
+    -- roachme: seems like no one uses this API command.
     unsetcurr = taskid_unsetcurr,
 
     -- roachme: under development & tests
