@@ -30,6 +30,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _db_load()
+    -- roachme: make `ids = {}' empty to not load duplicates (like in unit.lua).
     local f = io.open(idfile, "r")
 
     if not f then
