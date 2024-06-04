@@ -11,6 +11,8 @@ In progress:
     19. Add module for default values so util doesn't break if no config is preesented.
     20. `tman update' doesn't work if no current task. Fix it.
     21. `tman del' doesn't show task ID. Fix it.
+    22. taskunit status - fix it or get rid of it.
+    23. Add unit for actvite repos.
 
 
 Gotta work on (still):

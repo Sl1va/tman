@@ -13,14 +13,16 @@ local unitkeys = {
 
     -- under development
     "link",
-    "linked",
-    "repos", -- show repos with commits related to task
+    --"status", -- fix it or get rid of it
     -- under development
 
     "time",
     "date",
-    "status",
     "branch",
+
+    -- under development
+    "repos", -- show repos with commits related to task
+    -- under development
 }
 
 local unitprios = {
