@@ -92,24 +92,12 @@ local function unit_set(key, val)
     units[key] = val
 end
 
---- Get size of unit file.
--- @return size of unit file
-local function unit_size()
-    local size = 0
-
-    for _, _ in pairs(units) do
-        size = size + 1
-    end
-    return size
-end
-
 return {
     keys = unitkeys,
     prios = unitprios,
 
-    init = unit_init,
-    save = unit_save,
     get = unit_get,
     set = unit_set,
-    size = unit_size,
+    init = unit_init,
+    save = unit_save,
 }
