@@ -1,7 +1,7 @@
 --- Simple database for task IDs.
 -- @module db
 
-local taskids = {}
+local ids = {}
 local idfile = ""
 local idregex = "(.*) (.*)"
 local idfmt = "%s %s\n"
@@ -10,7 +10,7 @@ local idfmt = "%s %s\n"
 
 --- Sort task IDs in database.
 local function _db_sort()
-    table.sort(taskids, function(a, b)
+    table.sort(ids, function(a, b)
         return a.status < b.status
     end)
 end
@@ -18,8 +18,8 @@ end
 --- Check that variable `taskids` is safe to save.
 -- @return true `taskids` ok, otherwise false
 local function _db_check()
-    for _, unit in pairs(taskids) do
-        if unit.id == nil or unit.status == nil then
+    for _, item in pairs(ids) do
+        if item.id == nil or item.status == nil then
             return false
         end
     end
@@ -38,7 +38,7 @@ local function _db_load()
 
     for line in f:lines() do
         local id, idstatus = string.match(line, idregex)
-        table.insert(taskids, { id = id, status = tonumber(idstatus) })
+        table.insert(ids, { id = id, status = tonumber(idstatus) })
     end
     f:close()
     return true
@@ -60,8 +60,8 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function db_exist(id)
-    for _, unit in pairs(taskids) do
-        if unit.id == id then
+    for _, item in pairs(ids) do
+        if item.id == id then
             return true
         end
     end
@@ -82,8 +82,8 @@ local function db_save()
     end
 
     _db_sort() -- sort task IDs according to their statuses
-    for _, unit in pairs(taskids) do
-        f:write(idfmt:format(unit.id, unit.status))
+    for _, item in pairs(ids) do
+        f:write(idfmt:format(item.id, item.status))
     end
     f:close()
     return true
@@ -98,7 +98,7 @@ local function db_add(id, status)
     if db_exist(id) then
         return false
     end
-    table.insert(taskids, { id = id, status = status })
+    table.insert(ids, { id = id, status = status })
     return true
 end
 
@@ -107,9 +107,9 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function db_del(id)
-    for i, unit in pairs(taskids) do
-        if unit.id == id then
-            table.remove(taskids, i)
+    for i, item in pairs(ids) do
+        if item.id == id then
+            table.remove(ids, i)
             return true
         end
     end
@@ -121,35 +121,35 @@ end
 local function db_size()
     local size = 0
 
-    for _, _ in pairs(taskids) do
+    for _, _ in pairs(ids) do
         size = size + 1
     end
     return size
 end
 
---- Get unit from database by task ID.
+--- Get item from database by task ID.
 -- @param id task ID
--- @return task ID unit
+-- @return task ID
 -- @return table {id, status}
 -- @return empty table if task ID doesn't exist
 local function db_get(id)
-    for _, unit in pairs(taskids) do
-        if unit.id == id then
-            return { id = unit.id, status = unit.status }
+    for _, item in pairs(ids) do
+        if item.id == id then
+            return { id = item.id, status = item.status }
         end
     end
     return {}
 end
 
---- Get a unit from database by task ID index.
+--- Get an item from database by task ID index.
 -- @param idx task ID index
 -- @return table {id, status}
 -- @return empty table if task ID doesn't exist
 local function db_getidx(idx)
-    local unit = taskids[idx]
+    local item = ids[idx]
 
-    if unit ~= nil then
-        return { id = unit.id, status = unit.status }
+    if item ~= nil then
+        return { id = item.id, status = item.status }
     end
     return {}
 end
@@ -159,9 +159,9 @@ end
 -- @param status new task status
 -- @return true on success, otherwise false
 local function db_set(id, status)
-    for _, unit in pairs(taskids) do
-        if unit.id == id then
-            unit.status = status
+    for _, item in pairs(ids) do
+        if item.id == id then
+            item.status = status
             return true
         end
     end
