@@ -13,6 +13,7 @@ In progress:
     21. `tman del' doesn't show task ID. Fix it.
     22. taskunit status - fix it or get rid of it.
     23. Add unit for actvite repos.
+    24. git: Add support to download repos.
 
 
 Gotta work on (still):
