@@ -37,7 +37,7 @@ local unitprios = {
 --- Load task units from the file.
 -- @return on success - true
 -- @return on failure - false
-local function unit_load()
+local function _unit_load()
     units = {}
     local f = io.open(unitfile)
 
@@ -75,7 +75,7 @@ end
 -- @param fname task ID filename
 local function unit_init(fname)
     unitfile = fname
-    unit_load()
+    _unit_load()
 end
 
 --- Get unit from unit file.
