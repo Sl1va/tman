@@ -3,7 +3,7 @@
 -- @module TaskUnit
 
 local log = require("misc.log").init("taskunit")
-local config = require("config")
+local config = require("misc.config")
 local utils = require("aux.utils")
 local unit = require("aux.unit")
 

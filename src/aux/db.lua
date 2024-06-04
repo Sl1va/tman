@@ -1,7 +1,7 @@
 --- Simple database for task IDs.
 -- @module db
 
-local config = require("config")
+local config = require("misc.config")
 
 local taskids = {}
 local meta = config.taskids
@@ -156,8 +156,7 @@ end
 --- Set new status to task ID.
 -- @param id task ID
 -- @param status new task status
--- @return on success - true
--- @return on failure - false
+-- @return true on success, otherwise false
 local function db_set(id, status)
     for _, unit in pairs(taskids) do
         if unit.id == id then

@@ -1,7 +1,7 @@
 --- Git wrapper.
 -- @module Git
 
-local config = require("config")
+local config = require("misc.config")
 local taskunit = require("taskunit")
 local log = require("misc.log").init("git")
 local utils = require("aux.utils")

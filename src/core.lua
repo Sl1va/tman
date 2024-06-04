@@ -2,7 +2,7 @@
 -- @module core
 
 local utils = require("aux.utils")
-local config = require("config")
+local config = require("misc.config")
 
 --- Init system to use a util.
 local function core_init()
