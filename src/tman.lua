@@ -182,35 +182,55 @@ local function tman_amend(opt, id)
     if opt == "-d" then
         io.write("New description: ")
         local newdesc = io.read("*l")
+
+        if not git.branch_switch(id) then
+            return 1
+        end
         if not taskunit.amend_desc(id, newdesc) then
             return 1
         end
-        return git.branch_rename(id)
+        git.branch_rename(id)
+        return 0
     elseif opt == "-p" then
+        local prio = taskunit.getunit(id, "prio")
         io.write("new priority [highest|high|mid|low|lowest]: ")
         local newprio = io.read("*l")
-        taskunit.amend_prio(id, newprio)
-    elseif opt == "-i" then
-        local old_id = id
 
+        if newprio == prio then
+            io.stderr:write("error: it's the same priority\n")
+            return 1
+        end
+
+        taskunit.amend_prio(id, newprio)
+
+        -- in case prio is part of the branch name.
+        if not git.branch_switch(id) then
+            return 1
+        end
+        git.branch_rename(id)
+        return 0
+    elseif opt == "-i" then
         io.write("new task ID: ")
         local newid = io.read("*l")
 
         if id == newid then
-            print("error: it's the same task ID")
+            io.stderr:write("error: it's the same task ID\n")
+            return 1
+        elseif taskid.exist(newid) then
+            io.stderr:write("error: task ID already exists\n")
             return 1
         end
 
+        if not git.branch_switch(id) then
+            return 1
+        end
         if not taskunit.amend_id(id, newid) then
             return 1
         end
         taskid.del(id)
         taskid.add(newid)
-
-        if not git.branch_switch(old_id) then
-            return 1
-        end
-        return git.branch_rename(id)
+        git.branch_rename(newid)
+        return 0
     elseif opt == "-l" then
         io.write("task link (under development): ")
         local newlink = io.read("*l")
