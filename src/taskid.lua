@@ -241,6 +241,7 @@ return {
     setcurr = taskid_setcurr,
 
     -- roachme: seems like no one uses this API command.
+    -- but `tman done' command will use it.
     unsetcurr = taskid_unsetcurr,
 
     -- roachme: under development & tests
