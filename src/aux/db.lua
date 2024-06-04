@@ -3,6 +3,8 @@
 
 local taskids = {}
 local idfile = ""
+local idregex = "(.*) (.*)"
+local idfmt = "%s %s\n"
 
 -- Private functions: start --
 
@@ -35,7 +37,7 @@ local function _db_load()
     end
 
     for line in f:lines() do
-        local id, idstatus = string.match(line, "(.*) (.*)")
+        local id, idstatus = string.match(line, idregex)
         table.insert(taskids, { id = id, status = tonumber(idstatus) })
     end
     f:close()
@@ -81,7 +83,7 @@ local function db_save()
 
     _db_sort() -- sort task IDs according to their statuses
     for _, unit in pairs(taskids) do
-        f:write(unit.id, " ", unit.status, "\n")
+        f:write(idfmt:format(unit.id, unit.status))
     end
     f:close()
     return true
