@@ -165,16 +165,12 @@ end
 
 --- Set current task ID.
 -- Set previous task ID if needed.
--- roachme: NO clue what's goin' on.
 local function taskid_setcurr(id)
     local prev = taskid_getcurr()
 
-    -- roachme: a lil bit vague check...
-    if setcurr(id) == true then
-        setprev(prev)
-        return db.save()
-    end
-    return false
+    setcurr(id)
+    setprev(prev)
+    return db.save()
 end
 
 --- Move task ID to new status.
