@@ -266,6 +266,7 @@ local function tman_update(cmd)
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then
+        -- roachme: failes if repo's uncommited changes
         git.branch_switch(id)
         return errcodes.ok
     elseif cmd == "repo" then
