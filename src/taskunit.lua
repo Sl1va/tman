@@ -201,8 +201,6 @@ end
 -- @param id current task ID
 -- @param newid new ID
 local function taskunit_amend_id(id, newid)
-    -- roachme: TOO BUGGY
-    -- also gotta move git logic from here
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
 
