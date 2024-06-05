@@ -61,6 +61,9 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function db_exist(id)
+    if not id then
+        return false
+    end
     for _, item in pairs(ids) do
         if item.id == id then
             return true
