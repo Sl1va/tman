@@ -246,13 +246,13 @@ end
 
 --- Change list of repos with task commits.
 -- @param id task ID
--- @param _repos table of active repos
+-- @param taskrepos table of active repos
 -- @return on success - true
 -- @return on failure - false
-local function taskunit_amend_repos(id, _repos)
+local function taskunit_amend_repos(id, taskrepos)
     local res = "["
 
-    for _, repo in pairs(_repos) do
+    for _, repo in pairs(taskrepos) do
         res = res .. " " .. repo
     end
     res = res .. " ]"
