@@ -253,6 +253,24 @@ local function taskunit_amend_link(id, newlink)
     return unit.save()
 end
 
+--- Change list of repos with task commits.
+-- @param id task ID
+-- @param _repos table of active repos
+-- @return on success - true
+-- @return on failure - false
+local function taskunit_amend_repos(id, _repos)
+    local res = "["
+
+    for _, repo in pairs(_repos) do
+        res = res .. " " .. repo
+    end
+    res = res .. " ]"
+
+    unit.init(config.ids .. id)
+    unit.set("repos", res)
+    return unit.save()
+end
+
 -- Public functions: end --
 
 return {
@@ -265,4 +283,5 @@ return {
     amend_desc = taskunt_amend_desc,
     amend_prio = taskunit_amend_prio,
     amend_link = taskunit_amend_link,
+    amend_repos = taskunit_amend_repos,
 }

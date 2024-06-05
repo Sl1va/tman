@@ -12,7 +12,6 @@ In progress:
     20. `tman update' doesn't work if no current task. Fix it.
     21. `tman del' doesn't show task ID. Fix it.
     22. taskunit status - fix it or get rid of it.
-    23. Add unit for actvite repos.
     24. git: Add support to download repos.
     25. Find a good way to delete unused and that no longer on remote repo.
 
@@ -32,3 +31,4 @@ Done:
     10. Do git rebase if it's possible without merge conflics.
     15. Refactor git module. Getting bigger and messier.
     17. Command `del': switch to previous task branch if it exists
+    23. Add unit for actvite repos.

@@ -18,6 +18,7 @@ local gbranchD = "git -C %s branch --quiet -D %s"
 local gbranchm = "git -C %s branch --quiet -m %s"
 local gbranchmrg = "git -C %s branch --merged %s | grep -q %s"
 local gbranchprune = "git -C %s remote update origin --prune 1>/dev/null"
+local gdiff_commits = "git -C %s diff --quiet --exit-code %s %s"
 local grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null"
 local grebaseabort = "git -C %s rebase --abort"
 
@@ -188,6 +189,30 @@ local function git_branch_merged(id)
     return retcode
 end
 
+--- Get repos having taks commits.
+-- roachme: Refactor it.
+-- @return table of repos
+local function git_branch_ahead(id)
+    local res = {}
+    local branch = taskunit.getunit(id, "branch")
+
+    for _, repo in pairs(repos) do
+        local repopath = config.codebase .. repo.name
+        local cmd = gdiff_commits:format(repopath, repo.branch, branch)
+        if not change_check_repo(repo.name) then
+            --print("change_check_repo")
+            -- has uncommited changes
+            table.insert(res, repo.name)
+        elseif utils.exec(cmd) ~= 0 then
+            --print("exec", cmd)
+            -- has uncommited changes
+            -- has commits ahead
+            table.insert(res, repo.name)
+        end
+    end
+    return res
+end
+
 -- Public functions: end --
 
 return {
@@ -198,5 +223,8 @@ return {
     branch_rename = git_branch_rename,
     branch_rebase = git_branch_rebase,
     branch_merged = git_branch_merged,
+
+    -- under development
+    branch_ahead = git_branch_ahead,
     branch_switch_default = git_branch_switch_default,
 }

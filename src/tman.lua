@@ -247,6 +247,7 @@ end
 -- @param cmd command
 local function tman_update(cmd)
     local id = taskid.getcurr()
+    local active_repos = {}
 
     if not id then
         io.stderr:write("no current task\n")
@@ -258,6 +259,10 @@ local function tman_update(cmd)
 
     -- create git branch if needed
     git.branch_create(id)
+
+    -- update active repos
+    active_repos = git.branch_ahead(id)
+    taskunit.amend_repos(id, active_repos)
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then
