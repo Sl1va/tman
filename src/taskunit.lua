@@ -245,6 +245,14 @@ local function taskunit_amend_prio(id, newprio)
     return unit.save()
 end
 
+--- Change task link to work task manager.
+local function taskunit_amend_link(id, newlink)
+    unit.init(config.ids .. id)
+
+    unit.set("link", newlink)
+    return unit.save()
+end
+
 -- Public functions: end --
 
 return {
@@ -256,4 +264,5 @@ return {
     amend_id = taskunit_amend_id,
     amend_desc = taskunt_amend_desc,
     amend_prio = taskunit_amend_prio,
+    amend_link = taskunit_amend_link,
 }

@@ -232,9 +232,10 @@ local function tman_amend(opt, id)
         git.branch_rename(newid)
         return 0
     elseif opt == "-l" then
-        io.write("task link (under development): ")
+        io.write("task link: ")
         local newlink = io.read("*l")
         taskunit.amend_link(id, newlink)
+        return 0
     elseif not opt then
         io.stderr:write("option missing\n")
     else
