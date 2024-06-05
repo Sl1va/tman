@@ -227,8 +227,11 @@ local function tman_amend(opt, id)
         if not taskunit.amend_id(id, newid) then
             return 1
         end
+        -- roachme: FIXME: you can't change this order.
+        -- It's ok, but not obvious.
         taskid.del(id)
         taskid.add(newid)
+        struct.rename(id, newid)
         git.branch_rename(newid)
         return 0
     elseif opt == "-l" then

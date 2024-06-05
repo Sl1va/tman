@@ -220,14 +220,7 @@ local function taskunit_amend_id(id, newid)
         })
     )
     unit.save()
-
-    -- rename task dir
-    -- roachme: it's fregile: utils.rename() doesn't work.
     utils.rename(old_taskdir, new_taskdir)
-
-    -- rename task ID file in .tman
-    -- roachme: struct.lua should've done that
-    utils.rename(config.ids .. id, config.ids .. newid)
     return true
 end
 

@@ -40,6 +40,8 @@ end
 
 --- Create task filesystem structure.
 -- @param id task ID
+-- @return on success - true
+-- @return on failure - false
 local function struct_create(id)
     local taskdir = config.taskbase .. "/" .. id
 
@@ -52,9 +54,22 @@ end
 
 --- Delete task filesystem structure.
 -- @param id task ID
+-- @return on success - true
+-- @return on failure - false
 local function struct_delete(id)
     local taskdir = config.taskbase .. "/" .. id
     return utils.rm(taskdir)
+end
+
+--- Rename task dir.
+-- @param oldid old task ID
+-- @param newid new task ID
+-- @return on success - true
+-- @return on failure - false
+local function struct_rename(oldid, newid)
+    local old_dir = config.ids .. oldid
+    local new_dir = config.ids .. newid
+    return utils.rename(old_dir, new_dir) == 0
 end
 
 -- Public functions: end --
@@ -62,5 +77,5 @@ end
 return {
     create = struct_create,
     delete = struct_delete,
-    --rename = struct_rename,
+    rename = struct_rename,
 }
