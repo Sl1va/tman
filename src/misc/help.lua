@@ -67,8 +67,8 @@ TASKID - default is current task.
 
 Options:
     -i      amend task ID
-    -p      amend task priority
     -d      amend task description
+    -p      amend task priority. Values: [highest|high|mid|low|lowest]
 ]],
     },
     {

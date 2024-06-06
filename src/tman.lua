@@ -180,7 +180,7 @@ local function tman_amend(opt, id)
     end
 
     if opt == "-d" then
-        io.write("New description: ")
+        io.write(("New description (%s): "):format(id))
         local newdesc = io.read("*l")
 
         if not git.branch_switch(id) then
@@ -193,7 +193,7 @@ local function tman_amend(opt, id)
         return 0
     elseif opt == "-p" then
         local prio = taskunit.getunit(id, "prio")
-        io.write("new priority [highest|high|mid|low|lowest]: ")
+        io.write(("New priority (%s): "):format(id))
         local newprio = io.read("*l")
 
         if newprio == prio then
@@ -210,7 +210,7 @@ local function tman_amend(opt, id)
         git.branch_rename(id)
         return 0
     elseif opt == "-i" then
-        io.write("new task ID: ")
+        io.write(("New task ID (%s): "):format(id))
         local newid = io.read("*l")
 
         if id == newid then
@@ -235,7 +235,7 @@ local function tman_amend(opt, id)
         git.branch_rename(newid)
         return 0
     elseif opt == "-l" then
-        io.write("task link: ")
+        io.write(("New task link (%s): "):format(id))
         local newlink = io.read("*l")
         taskunit.amend_link(id, newlink)
         return 0
