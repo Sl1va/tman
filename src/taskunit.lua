@@ -153,7 +153,7 @@ end
 -- @param id task ID
 -- @param key show only that key
 -- @return true on success
-local function taskunit_show(id, key)
+local function taskunit_cat(id, key)
     unit.init(config.ids .. id)
 
     if key then
@@ -267,7 +267,7 @@ end
 return {
     add = taskunit_add,
     del = taskunit_del,
-    show = taskunit_show,
+    cat = taskunit_cat,
     getunit = taskunit_getunit,
     setunit = taskunit_setunit,
     amend_id = taskunit_amend_id,
