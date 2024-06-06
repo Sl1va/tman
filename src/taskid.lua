@@ -106,6 +106,16 @@ local function taskid_getprev()
     return nil
 end
 
+--- Swap current and previous task IDs.
+local function taskid_swap()
+    local prev = taskid_getprev()
+    local curr = taskid_getcurr()
+
+    setprev(curr)
+    setcurr(prev)
+    return db.save()
+end
+
 --- Add a new task ID.
 -- @param id task ID to add to database
 -- @treturn bool true on success, otherwise false
@@ -149,15 +159,6 @@ local function taskid_exist(id)
     return db.exist(id)
 end
 
---- Swap current and previous task IDs.
-local function taskid_swap()
-    local prev = taskid_getprev()
-    local curr = taskid_getcurr()
-
-    setprev(curr)
-    setcurr(prev)
-    return db.save()
-end
 
 --- Move task ID to new status.
 -- roachme: Under development.
