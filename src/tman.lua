@@ -53,13 +53,14 @@ end
 -- Public functions: start --
 
 --- Add a new task.
+-- Fill the rest with default values.
+-- @see tman_set on how to change 'em.
 -- @param id task ID
--- @param tasktype task type: bugfix, hotfix, feature. Default: bugfix
--- @param prio task priority: lowest, low, mid, high, highest. Default: mid
--- @treturn true if new task unit is created, otherwise false
-local function tman_add(id, tasktype, prio)
-    prio = prio or "mid"
-    tasktype = tasktype or "bugfix"
+-- @return on success - true
+-- @return on failrue - false
+local function tman_add(id)
+    local prio = "mid"
+    local tasktype = "bugfix"
 
     if not id then
         io.stderr:write("task ID required\n")
@@ -417,7 +418,7 @@ local function main()
     if cmd == "init" then
         return core.init()
     elseif cmd == "add" then
-        return tman_add(arg[1], arg[2], arg[3])
+        return tman_add(arg[1])
     elseif cmd == "set" then
         return tman_set(arg[1], arg[2])
     elseif cmd == "use" then
