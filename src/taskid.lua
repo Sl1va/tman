@@ -81,22 +81,6 @@ local function taskid_exist(id)
     return db.exist(id)
 end
 
---- Get current task ID from database.
--- @return current task ID
--- @return on success - current task ID
--- @return on failure - nil
-local function taskid_getcurr()
-    local size = db.size()
-
-    for i = 1, size do
-        local entry = db.getidx(i)
-        if entry.status == status.CURR then
-            return entry.id
-        end
-    end
-    return nil
-end
-
 --- Get previous task ID from database.
 -- @return previous task ID
 -- @return on success - previous task ID
@@ -107,6 +91,22 @@ local function taskid_getprev()
     for i = 1, size do
         local entry = db.getidx(i)
         if entry.status == status.PREV then
+            return entry.id
+        end
+    end
+    return nil
+end
+
+--- Get current task ID from database.
+-- @return current task ID
+-- @return on success - current task ID
+-- @return on failure - nil
+local function taskid_getcurr()
+    local size = db.size()
+
+    for i = 1, size do
+        local entry = db.getidx(i)
+        if entry.status == status.CURR then
             return entry.id
         end
     end
