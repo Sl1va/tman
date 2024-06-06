@@ -159,23 +159,6 @@ local function taskid_swap()
     return db.save()
 end
 
---- Unset current task ID.
--- roachme: pro'ly taskid_move() is better way. So delete it.
--- @see unsetcurr
-local function taskid_unsetcurr(taskstatus)
-    return unsetcurr(taskstatus)
-end
-
---- Set task ID as current.
--- Set previous task ID if needed.
-local function taskid_setcurr(id)
-    local prev = taskid_getcurr()
-
-    setcurr(id)
-    setprev(prev)
-    return db.save()
-end
-
 --- Move task ID to new status.
 -- roachme: Under development.
 -- @param taskid task ID
@@ -194,6 +177,23 @@ local function taskid_move(taskid, taskstatus)
     else
         db.set(taskid, taskstatus)
     end
+    return db.save()
+end
+
+--- Unset current task ID.
+-- roachme: pro'ly taskid_move() is better way. So delete it.
+-- @see unsetcurr
+local function taskid_unsetcurr(taskstatus)
+    return unsetcurr(taskstatus)
+end
+
+--- Set task ID as current.
+-- Set previous task ID if needed.
+local function taskid_setcurr(id)
+    local prev = taskid_getcurr()
+
+    setcurr(id)
+    setprev(prev)
     return db.save()
 end
 
