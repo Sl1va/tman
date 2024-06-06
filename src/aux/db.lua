@@ -6,17 +6,16 @@ local idfile = ""
 local idregex = "(.*) (.*)"
 local idfmt = "%s %s\n"
 
--- Private functions: start --
-
---- Sort task IDs in database.
+--- Sort task IDs in database (by status).
 local function _db_sort()
     table.sort(ids, function(a, b)
         return a.status < b.status
     end)
 end
 
---- Check that variable `taskids` is safe to save.
--- @return true `taskids` ok, otherwise false
+--- Check that variable entry's safe to save.
+-- @return on success - true
+-- @return on failure - false
 local function _db_check()
     for _, item in pairs(ids) do
         if item.id == nil or item.status == nil then
@@ -45,12 +44,8 @@ local function _db_load()
     return true
 end
 
--- Private functions: end --
-
--- Public functions: start ---
-
 --- Init database (load task IDs from the file).
--- @param fname filename
+-- @param fname database filename
 local function db_init(fname)
     idfile = fname
     _db_load()
@@ -120,8 +115,8 @@ local function db_del(id)
     return false
 end
 
---- Get size database units.
--- @return number of units in database
+--- Get size of database entries.
+-- @return size of database entries
 local function db_size()
     local size = 0
 
@@ -133,9 +128,8 @@ end
 
 --- Get item from database by task ID.
 -- @param id task ID
--- @return task ID
--- @return table {id, status}
--- @return empty table if task ID doesn't exist
+-- @return on success - {id, status}
+-- @return on failure - {}
 local function db_get(id)
     for _, item in pairs(ids) do
         if item.id == id then
@@ -145,10 +139,10 @@ local function db_get(id)
     return {}
 end
 
---- Get an item from database by task ID index.
+--- Get an item from database by index.
 -- @param idx task ID index
--- @return table {id, status}
--- @return empty table if task ID doesn't exist
+-- @return on success - {id, status}
+-- @return on failure - {}
 local function db_getidx(idx)
     local item = ids[idx]
 
@@ -172,21 +166,14 @@ local function db_set(id, status)
     return false
 end
 
--- Public functions: end --
-
 return {
-    init = db_init,
-    size = db_size,
-
-    -- roachme: others can use db.get(id) instead of db.exist
-    --          Maybe it's better to delete db.exist() from the API?
-    exist = db_exist,
-
     add = db_add,
     del = db_del,
-    save = db_save,
-
     set = db_set,
     get = db_get,
+    init = db_init,
+    size = db_size,
+    save = db_save,
+    exist = db_exist,
     getidx = db_getidx,
 }
