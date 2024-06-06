@@ -19,6 +19,22 @@ local status = {
 --- Class TaskID
 -- @type TaskID
 
+--- Get special task ID by status.
+-- @param taskstatus special task ID's status
+-- @return on success - task ID
+-- @return on failure - nil
+local function _getspec(taskstatus)
+    local size = db.size()
+
+    for i = 1, size do
+        local entry = db.getidx(i)
+        if entry.status == taskstatus then
+            return entry.id
+        end
+    end
+    return nil
+end
+
 --- Unset previous task ID.
 -- Assumes that ID exists in database.
 -- @param taskstatus task status to move a previous ID to
@@ -86,15 +102,7 @@ end
 -- @return on success - previous task ID
 -- @return on failure - nil
 local function taskid_getprev()
-    local size = db.size()
-
-    for i = 1, size do
-        local entry = db.getidx(i)
-        if entry.status == status.PREV then
-            return entry.id
-        end
-    end
-    return nil
+    return _getspec(status.PREV)
 end
 
 --- Get current task ID from database.
@@ -102,15 +110,7 @@ end
 -- @return on success - current task ID
 -- @return on failure - nil
 local function taskid_getcurr()
-    local size = db.size()
-
-    for i = 1, size do
-        local entry = db.getidx(i)
-        if entry.status == status.CURR then
-            return entry.id
-        end
-    end
-    return nil
+    return _getspec(status.CURR)
 end
 
 --- Swap current and previous task IDs.
