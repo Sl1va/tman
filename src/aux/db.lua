@@ -6,13 +6,6 @@ local idfile = ""
 local idregex = "(.*) (.*)"
 local idfmt = "%s %s\n"
 
---- Sort task IDs in database (by status).
-local function _db_sort()
-    table.sort(ids, function(a, b)
-        return a.status < b.status
-    end)
-end
-
 --- Check that variable entry's safe to save.
 -- @return on success - true
 -- @return on failure - false
@@ -79,7 +72,6 @@ local function db_save()
         return false
     end
 
-    _db_sort() -- sort task IDs according to their statuses
     for _, item in pairs(ids) do
         f:write(idfmt:format(item.id, item.status))
     end

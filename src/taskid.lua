@@ -201,22 +201,30 @@ end
 -- @param completed list only completed task IDs
 -- @return count of task IDs
 local function taskid_list(active, completed)
+    local desc
     local size = db.size()
+    local curr = taskid_getcurr()
+    local prev = taskid_getprev()
+
+    if active and curr then
+        desc = taskunit.getunit(curr, "desc")
+        print(("* %-10s %s"):format(curr, desc))
+    end
+    if active and prev then
+        desc = taskunit.getunit(prev, "desc")
+        print(("- %-10s %s"):format(prev, desc))
+    end
 
     for idx = 1, size do
         local entry = db.getidx(idx)
-        if entry.status == status.CURR and active then
-            local desc = taskunit.getunit(entry.id, "desc")
-            print(("* %-10s %s"):format(entry.id, desc))
-        elseif entry.status == status.PREV and active then
-            local desc = taskunit.getunit(entry.id, "desc")
-            print(("- %-10s %s"):format(entry.id, desc))
-        elseif entry.status == status.ACTV and active then
-            local desc = taskunit.getunit(entry.id, "desc")
-            print(("  %-10s %s"):format(entry.id, desc))
-        elseif entry.status == status.COMP and completed then
-            local desc = taskunit.getunit(entry.id, "desc")
-            print(("  %-10s %s"):format(entry.id, desc))
+        if entry.id ~= curr and entry.id ~= prev then
+            if entry.status == status.ACTV and active then
+                desc = taskunit.getunit(entry.id, "desc")
+                print(("  %-10s %s"):format(entry.id, desc))
+            elseif entry.status == status.COMP and completed then
+                desc = taskunit.getunit(entry.id, "desc")
+                print(("  %-10s %s"):format(entry.id, desc))
+            end
         end
     end
     return size
