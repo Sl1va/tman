@@ -135,19 +135,15 @@ end
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
 local function taskid_del(id)
-    local prev = taskid_getprev()
     local curr = taskid_getcurr()
 
-    if db.del(id) == false then
+    if not taskid_exist(id) then
         return false
     end
 
-    -- update curr and/or prev if needed.
+    db.del(id)
     if id == curr then
-        unsetprev()
-        setcurr(prev)
-    elseif id == prev then
-        unsetprev()
+        return taskid_swap()
     end
     return db.save()
 end
@@ -158,7 +154,6 @@ end
 local function taskid_exist(id)
     return db.exist(id)
 end
-
 
 --- Move task ID to new status.
 -- roachme: Under development.
