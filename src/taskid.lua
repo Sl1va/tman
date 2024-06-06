@@ -28,9 +28,9 @@ local function unsetprev(taskstatus)
     taskstatus = taskstatus or status.ACTV
 
     for i = 1, size do
-        local unit = db.getidx(i)
-        if unit.status == status.PREV then
-            return db.set(unit.id, taskstatus)
+        local entry = db.getidx(i)
+        if entry.status == status.PREV then
+            return db.set(entry.id, taskstatus)
         end
     end
     return false
@@ -54,9 +54,9 @@ local function unsetcurr(taskstatus)
     taskstatus = taskstatus or status.ACTV
 
     for i = 1, size do
-        local unit = db.getidx(i)
-        if unit.status == status.CURR then
-            return db.set(unit.id, taskstatus)
+        local entry = db.getidx(i)
+        if entry.status == status.CURR then
+            return db.set(entry.id, taskstatus)
         end
     end
     return false
@@ -206,19 +206,19 @@ local function taskid_list(active, completed)
     local size = db.size()
 
     for idx = 1, size do
-        local unit = db.getidx(idx)
-        if unit.status == status.CURR and active then
-            local desc = taskunit.getunit(unit.id, "desc")
-            print(("* %-10s %s"):format(unit.id, desc))
-        elseif unit.status == status.PREV and active then
-            local desc = taskunit.getunit(unit.id, "desc")
-            print(("- %-10s %s"):format(unit.id, desc))
-        elseif unit.status == status.ACTV and active then
-            local desc = taskunit.getunit(unit.id, "desc")
-            print(("  %-10s %s"):format(unit.id, desc))
-        elseif unit.status == status.COMP and completed then
-            local desc = taskunit.getunit(unit.id, "desc")
-            print(("  %-10s %s"):format(unit.id, desc))
+        local entry = db.getidx(idx)
+        if entry.status == status.CURR and active then
+            local desc = taskunit.getunit(entry.id, "desc")
+            print(("* %-10s %s"):format(entry.id, desc))
+        elseif entry.status == status.PREV and active then
+            local desc = taskunit.getunit(entry.id, "desc")
+            print(("- %-10s %s"):format(entry.id, desc))
+        elseif entry.status == status.ACTV and active then
+            local desc = taskunit.getunit(entry.id, "desc")
+            print(("  %-10s %s"):format(entry.id, desc))
+        elseif entry.status == status.COMP and completed then
+            local desc = taskunit.getunit(entry.id, "desc")
+            print(("  %-10s %s"):format(entry.id, desc))
         end
     end
     return size
