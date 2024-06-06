@@ -82,9 +82,9 @@ local function taskid_getcurr()
     local size = db.size()
 
     for i = 1, size do
-        local unit = db.getidx(i)
-        if unit.status == status.CURR then
-            return unit.id
+        local entry = db.getidx(i)
+        if entry.status == status.CURR then
+            return entry.id
         end
     end
     return nil
@@ -98,9 +98,9 @@ local function taskid_getprev()
     local size = db.size()
 
     for i = 1, size do
-        local unit = db.getidx(i)
-        if unit.status == status.PREV then
-            return unit.id
+        local entry = db.getidx(i)
+        if entry.status == status.PREV then
+            return entry.id
         end
     end
     return nil
@@ -110,13 +110,13 @@ end
 -- @param id task ID to add to database
 -- @treturn bool true on success, otherwise false
 local function taskid_add(id)
-    local prev = taskid_getcurr()
+    local curr = taskid_getcurr()
 
     if db.add(id, status.CURR) == false then
         return false
     end
 
-    setprev(prev)
+    setprev(curr)
     setcurr(id)
     return db.save()
 end
