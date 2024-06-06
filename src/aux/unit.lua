@@ -65,6 +65,8 @@ local function unit_save()
     end
 
     for key, val in pairs(units) do
+        -- roachme: unit_set() already sets default value.
+        -- so no need to check it again here.
         f:write(unitfmt:format(key, val or defval))
     end
     return f:close()

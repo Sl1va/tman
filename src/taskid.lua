@@ -159,6 +159,7 @@ local function taskid_swap()
 end
 
 --- Unset current task ID.
+-- roachme: pro'ly taskid_move() is better way. So delete it.
 -- @see unsetcurr
 local function taskid_unsetcurr(taskstatus)
     return unsetcurr(taskstatus)
