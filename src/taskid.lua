@@ -74,6 +74,13 @@ end
 
 -- Public functions: start --
 
+--- Check that task ID exist.
+-- @param id task ID to look up
+-- @treturn bool true if task ID exist, otherwise false
+local function taskid_exist(id)
+    return db.exist(id)
+end
+
 --- Get current task ID from database.
 -- @return current task ID
 -- @return on success - current task ID
@@ -146,13 +153,6 @@ local function taskid_del(id)
         return taskid_swap()
     end
     return db.save()
-end
-
---- Check that task ID exist.
--- @param id task ID to look up
--- @treturn bool true if task ID exist, otherwise false
-local function taskid_exist(id)
-    return db.exist(id)
 end
 
 --- Move task ID to new status.
