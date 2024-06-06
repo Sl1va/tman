@@ -14,6 +14,7 @@ In progress:
     22. taskunit status - fix it or get rid of it.
     24. git: Add support to download repos.
     25. Find a good way to delete unused and that no longer on remote repo.
+    26. Add support to work on different environments: work, personal, test.
 
 
 Gotta work on (still):
