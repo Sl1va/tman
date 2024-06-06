@@ -16,9 +16,6 @@ local status = {
 
 -- Private functions: start --
 
---- Class TaskID
--- @type TaskID
-
 --- Get special task ID by status.
 -- @param taskstatus special task ID's status
 -- @return on success - task ID
