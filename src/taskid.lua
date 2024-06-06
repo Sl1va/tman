@@ -190,10 +190,14 @@ end
 --- Set task ID as current.
 -- Set previous task ID if needed.
 local function taskid_setcurr(id)
-    local prev = taskid_getcurr()
+    local curr = taskid_getcurr()
 
+    -- don't do unnecessary work.
+    if not id or id == curr then
+        return false
+    end
     setcurr(id)
-    setprev(prev)
+    setprev(curr)
     return db.save()
 end
 
