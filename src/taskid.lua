@@ -76,7 +76,8 @@ end
 
 --- Get current task ID from database.
 -- @return current task ID
--- @return nil if there's no current task ID
+-- @return on success - current task ID
+-- @return on failure - nil
 local function taskid_getcurr()
     local size = db.size()
 
@@ -91,7 +92,8 @@ end
 
 --- Get previous task ID from database.
 -- @return previous task ID
--- @return nil if there's no previous task ID
+-- @return on success - previous task ID
+-- @return on failure - nil
 local function taskid_getprev()
     local size = db.size()
 
@@ -130,14 +132,13 @@ local function taskid_del(id)
         return false
     end
 
-    -- update special task IDs
+    -- update curr and/or prev if needed.
     if id == curr then
         unsetprev()
         setcurr(prev)
     elseif id == prev then
         unsetprev()
     end
-
     return db.save()
 end
 
@@ -193,7 +194,6 @@ local function taskid_move(taskid, taskstatus)
     else
         db.set(taskid, taskstatus)
     end
-
     return db.save()
 end
 
