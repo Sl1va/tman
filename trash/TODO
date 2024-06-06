@@ -15,6 +15,7 @@ In progress:
     24. git: Add support to download repos.
     25. Find a good way to delete unused and that no longer on remote repo.
     26. Add support to work on different environments: work, personal, test.
+    27. Optimize db.lua: use task ID as table index.
 
 
 Gotta work on (still):
