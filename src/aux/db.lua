@@ -40,8 +40,7 @@ local function _db_load()
         local id, idstatus = string.match(line, idregex)
         table.insert(ids, { id = id, status = tonumber(idstatus) })
     end
-    f:close()
-    return true
+    return f:close()
 end
 
 --- Init database (load task IDs from the file).
@@ -84,8 +83,7 @@ local function db_save()
     for _, item in pairs(ids) do
         f:write(idfmt:format(item.id, item.status))
     end
-    f:close()
-    return true
+    return f:close()
 end
 
 --- Add new task ID into database.

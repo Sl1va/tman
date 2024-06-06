@@ -67,8 +67,7 @@ local function unit_save()
     for key, val in pairs(units) do
         f:write(unitfmt:format(key, val or defval))
     end
-    f:close()
-    return true
+    return f:close()
 end
 
 --- Init task unit database.
