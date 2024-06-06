@@ -180,7 +180,8 @@ end
 -- roachme: pro'ly taskid_move() is better way. So delete it.
 -- @see unsetcurr
 local function taskid_unsetcurr(taskstatus)
-    return unsetcurr(taskstatus)
+    unsetcurr(taskstatus)
+    return taskid_swap()
 end
 
 --- Set task ID as current.
