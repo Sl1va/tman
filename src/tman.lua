@@ -247,6 +247,15 @@ local function tman_set(opt, id)
         struct.rename(id, newid)
         git.branch_rename(newid)
         return 0
+    elseif opt == "-t" then
+        io.write(("New task type (%s): "):format(id))
+        local newtype = io.read("*l")
+        if not taskunit.setunit(id, "type", newtype) then
+            help.usage("set")
+            return errcodes.command_failed
+        end
+        git.branch_rename(id)
+        return errcodes.ok
     elseif opt == "-l" then
         io.write(("New task link (%s): "):format(id))
         local newlink = io.read("*l")

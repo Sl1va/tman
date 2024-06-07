@@ -17,7 +17,6 @@ In progress:
     26. Add support to work on different environments: work, personal, test.
     27. Optimize db.lua: use task ID as table index.
     28. Delete sort() from db.lua, it shouldn't know about it.
-    29. taskunit.lua can't change task type.
     30. core.lua gotta check config file as well.
 
 
@@ -37,3 +36,4 @@ Done:
     15. Refactor git module. Getting bigger and messier.
     17. Command `del': switch to previous task branch if it exists
     23. Add unit for actvite repos.
+    29. taskunit.lua can't change task type.

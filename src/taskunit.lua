@@ -84,7 +84,8 @@ end
 --- Amend task description.
 -- @param id task ID
 -- @param newdesc new description
--- @return true on success, otherwise false
+-- @return on success - true
+-- @return on failure - false
 local function _set_desc(id, newdesc)
     unit.init(config.ids .. id)
     unit.set("desc", newdesc)
@@ -105,6 +106,8 @@ end
 --- Chaneg task ID.
 -- @param id current task ID
 -- @param newid new ID
+-- @return on success - true
+-- @return on failure - false
 local function _set_id(id, newid)
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
@@ -127,9 +130,35 @@ local function _set_id(id, newid)
     return true
 end
 
+--- Change task type.
+-- @return on success - true
+-- @return on failure - false
+local function _set_type(id, newtype)
+    if not check_tasktype(newtype) then
+        log:err("unknown task type: '%s'", newtype)
+        return false
+    end
+
+    unit.init(config.ids .. id)
+    unit.set("type", newtype)
+    -- roachme: looks a bit messy to me. Outta fix it.
+    unit.set(
+        "branch",
+        format_branch({
+            id = unit.get("id"),
+            type = unit.get("type"),
+            desc = unit.get("desc"),
+            date = unit.get("date"),
+        })
+    )
+    return unit.save()
+end
+
 --- Change task priority.
 -- @param id task ID
 -- @param newprio new task priority
+-- @return on success - true
+-- @return on failure - false
 local function _set_prio(id, newprio)
     unit.init(config.ids .. id)
 
@@ -142,6 +171,8 @@ local function _set_prio(id, newprio)
 end
 
 --- Change task link to work task manager.
+-- @return on success - true
+-- @return on failure - false
 local function _set_link(id, newlink)
     unit.init(config.ids .. id)
 
@@ -248,6 +279,8 @@ local function taskunit_setunit(id, key, value)
         return _set_desc(id, value)
     elseif key == string.lower("link") then
         return _set_link(id, value)
+    elseif key == string.lower("type") then
+        return _set_type(id, value)
     elseif key == string.lower("repos") then
         return _set_repos(id, value)
     end

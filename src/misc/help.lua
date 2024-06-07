@@ -63,6 +63,7 @@ Options:
     -i      set task ID
     -d      set task description
     -p      set task priority. Values: [highest|high|mid|low|lowest]
+    -t      set task type. Values: [bugfix|hotfix|feature]
 ]],
     },
     {
