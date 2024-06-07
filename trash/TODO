@@ -18,6 +18,7 @@ In progress:
     27. Optimize db.lua: use task ID as table index.
     28. Delete sort() from db.lua, it shouldn't know about it.
     30. core.lua gotta check config file as well.
+    31. Delete CUI from `tman set' command.
 
 
 Gotta work on (still):
