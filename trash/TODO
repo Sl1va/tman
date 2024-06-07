@@ -18,6 +18,7 @@ In progress:
     27. Optimize db.lua: use task ID as table index.
     28. Delete sort() from db.lua, it shouldn't know about it.
     29. taskunit.lua can't change task type.
+    30. core.lua gotta check config file as well.
 
 
 Gotta work on (still):
