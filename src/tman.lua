@@ -286,7 +286,7 @@ local function tman_update(cmd)
 
     -- update active repos
     local active_repos = git.branch_ahead(id)
-    taskunit.setunit(id, "repos", active_repos)
+    taskunit.setunit(id, "repo", active_repos)
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then

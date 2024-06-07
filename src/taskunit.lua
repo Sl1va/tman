@@ -185,7 +185,7 @@ end
 -- @param taskrepos table of active repos
 -- @return on success - true
 -- @return on failure - false
-local function _set_repos(id, taskrepos)
+local function _set_repo(id, taskrepos)
     local res = "["
 
     for _, repo in pairs(taskrepos) do
@@ -281,8 +281,8 @@ local function taskunit_setunit(id, key, value)
         return _set_link(id, value)
     elseif key == string.lower("type") then
         return _set_type(id, value)
-    elseif key == string.lower("repos") then
-        return _set_repos(id, value)
+    elseif key == string.lower("repo") then
+        return _set_repo(id, value)
     end
     -- set new value
     unit.init(config.ids .. id)
