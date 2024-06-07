@@ -213,9 +213,12 @@ local function git_branch_ahead(id)
     return res
 end
 
+local function git_check() end
+
 -- Public functions: end --
 
 return {
+    check = git_check,
     branch_create = git_branch_create,
     branch_delete = git_branch_delete,
     branch_switch = git_branch_switch,
