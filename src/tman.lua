@@ -227,10 +227,14 @@ local function tman_set(opt, id)
         local newid = io.read("*l")
 
         if id == newid then
-            io.stderr:write("error: it's the same task ID\n")
+            io.stderr:write(
+                ("err: '%s': it's the same task ID\n"):format(newid)
+            )
             return 1
         elseif taskid.exist(newid) then
-            io.stderr:write("error: task ID already exists\n")
+            io.stderr:write(
+                ("err: '%s': task ID already exists\n"):format(newid)
+            )
             return 1
         end
 
