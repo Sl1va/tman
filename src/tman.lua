@@ -54,7 +54,7 @@ end
 
 --- Add a new task.
 -- Fill the rest with default values.
--- @see tman_set on how to change 'em.
+-- @see tman_set
 -- @param id task ID
 -- @return on success - true
 -- @return on failrue - false
