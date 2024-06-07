@@ -193,6 +193,8 @@ end
 -- roachme: Refactor it.
 -- @return table of repos
 local function git_branch_ahead(id)
+    -- roachme:FIXME: it checks diff between task branch and defaul branch.
+    -- it should check uncommited changes instead.
     local res = {}
     local branch = taskunit.getunit(id, "branch")
 
