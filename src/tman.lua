@@ -13,6 +13,13 @@ local taskunit = require("taskunit")
 local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
+
+--[[
+    TODO: gotta refactor
+    1. update command
+    2. set command
+]]
+
 local errcodes = {
     ok = 0,
     not_inited = 1,
