@@ -175,6 +175,7 @@ end
 -- @param id task ID
 local function tman_set(opt, id)
     id = id or taskid.getcurr()
+    -- roachme:FIXME: switches task even when I change random task's unit.
 
     if not _checkid(id) then
         os.exit(1)
