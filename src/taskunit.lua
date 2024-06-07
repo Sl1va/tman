@@ -129,46 +129,6 @@ local function taskunit_add(id, tasktype, prio)
     return unit.save()
 end
 
---- Get unit from task metadata.
--- @param id task ID
--- @param key unit key
--- @return unit value
--- @return nil if key doesn't exist
-local function taskunit_getunit(id, key)
-    unit.init(config.ids .. id)
-    return unit.get(key)
-end
-
---- Set unit key value.
--- @param id task ID
--- @param key key to look up
--- @param value new value to set
--- @return true on success, otherwise false
-local function taskunit_setunit(id, key, value)
-    unit.init(config.ids .. id)
-    return unit.set(key, value)
-end
-
---- Show task unit metadata.
--- @param id task ID
--- @param key show only that key
--- @return true on success
-local function taskunit_cat(id, key)
-    unit.init(config.ids .. id)
-
-    if key then
-        -- use defval for backward compatibility with old tasks
-        print(("> %-8s: %s"):format(key, unit.get(key) or unit.defval))
-        return true
-    end
-
-    for _, ukey in pairs(unit.keys) do
-        -- use defval for backward compatibility with old tasks
-        print(("%-8s: %s"):format(ukey, unit.get(ukey) or unit.defval))
-    end
-    return true
-end
-
 --- Delete task unit.
 -- @param id task ID
 local function taskunit_del(id)
@@ -260,6 +220,46 @@ local function taskunit_amend_repos(id, taskrepos)
     unit.init(config.ids .. id)
     unit.set("repos", res)
     return unit.save()
+end
+
+--- Get unit from task metadata.
+-- @param id task ID
+-- @param key unit key
+-- @return unit value
+-- @return nil if key doesn't exist
+local function taskunit_getunit(id, key)
+    unit.init(config.ids .. id)
+    return unit.get(key)
+end
+
+--- Set unit key value.
+-- @param id task ID
+-- @param key key to look up
+-- @param value new value to set
+-- @return true on success, otherwise false
+local function taskunit_setunit(id, key, value)
+    unit.init(config.ids .. id)
+    return unit.set(key, value)
+end
+
+--- Show task unit metadata.
+-- @param id task ID
+-- @param key show only that key
+-- @return true on success
+local function taskunit_cat(id, key)
+    unit.init(config.ids .. id)
+
+    if key then
+        -- use defval for backward compatibility with old tasks
+        print(("> %-8s: %s"):format(key, unit.get(key) or unit.defval))
+        return true
+    end
+
+    for _, ukey in pairs(unit.keys) do
+        -- use defval for backward compatibility with old tasks
+        print(("%-8s: %s"):format(ukey, unit.get(ukey) or unit.defval))
+    end
+    return true
 end
 
 -- Public functions: end --

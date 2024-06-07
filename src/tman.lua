@@ -13,7 +13,6 @@ local taskunit = require("taskunit")
 local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
-
 --[[
     TODO: gotta refactor
     1. update command
