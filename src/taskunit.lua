@@ -233,13 +233,28 @@ local function taskunit_getunit(id, key)
 end
 
 --- Set unit key value.
+-- Update related units as well.
 -- @param id task ID
 -- @param key key to look up
 -- @param value new value to set
--- @return true on success, otherwise false
+-- @return on success - true
+-- @return on failure - false
 local function taskunit_setunit(id, key, value)
+    if key == string.lower("id") then
+        return taskunit_amend_id(id, value)
+    elseif key == string.lower("prio") then
+        return taskunit_amend_prio(id, value)
+    elseif key == string.lower("desc") then
+        return taskunt_amend_desc(id, value)
+    elseif key == string.lower("link") then
+        return taskunit_amend_link(id, value)
+    elseif key == string.lower("repos") then
+        return taskunit_amend_repos(id, value)
+    end
+    -- set new value
     unit.init(config.ids .. id)
-    return unit.set(key, value)
+    unit.set(key, value)
+    return unit.save()
 end
 
 --- Show task unit metadata.
