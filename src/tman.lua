@@ -10,6 +10,7 @@ local taskid = require("taskid")
 local taskunit = require("taskunit")
 
 -- Tman misc components.
+local die = require("misc.die")
 local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
@@ -37,6 +38,87 @@ Erorr codes:
 ]]
 
 -- Private functions: start --
+
+--- Set task description.
+-- @param id task ID
+-- @param newdesc new description
+-- @return on success - 0
+-- @return on failure - error code
+local function _set_desc(id, newdesc)
+    if not git.branch_switch(id) then
+        return 1
+    end
+    -- roachme: the only reasons why it might fail
+    -- 1. Dir doesn't exist.
+    -- 2. Has no permition.
+    -- 3. Hardware isssue.
+    -- core.lua gotta check that out, so we ain't gotta check, just do it.
+    if not taskunit.setunit(id, "desc", newdesc) then
+        return 1
+    end
+    git.branch_rename(id)
+    return 0
+end
+
+--- Set task ID.
+-- @param id task ID
+-- @param newid new task ID
+-- @return on success - 0
+-- @return on failure - error code
+local function _set_id(id, newid)
+    if id == newid then
+        die.die(1, "the same task ID", newid)
+    elseif taskid.exist(newid) then
+        die.die(1, "task ID already exists", newid)
+    end
+
+    if not git.branch_switch(id) then
+        return 1
+    end
+    if not taskunit.setunit(id, "id", newid) then
+        return 1
+    end
+    -- roachme: FIXME: you can't change this order.
+    -- It's ok, but not obvious.
+    taskid.del(id)
+    taskid.add(newid)
+    struct.rename(id, newid)
+    git.branch_rename(newid)
+    return 0
+end
+
+--- Set task link.
+-- @param id task ID
+-- @param newlink new task link
+local function _set_link(id, newlink)
+    taskunit.setunit(id, "link", newlink)
+    return 0
+end
+
+--- Set task priority.
+-- @param id task ID
+-- @param newprio new priority
+local function _set_prio(id, newprio)
+    local prio = taskunit.getunit(id, "prio")
+
+    if newprio == prio then
+        die.die(1, "the same priority\n", newprio)
+    end
+    taskunit.setunit(id, "prio", newprio)
+    return 0
+end
+
+--- Set task type.
+-- @param id task ID
+-- @param newtype new type
+local function _set_type(id, newtype)
+    if not taskunit.setunit(id, "type", newtype) then
+        help.usage("set")
+        return errcodes.command_failed
+    end
+    git.branch_rename(id)
+    return 0
+end
 
 --- Check ID is passed and exists in database.
 -- @param id task ID
@@ -133,7 +215,6 @@ end
 
 --- List all task IDs.
 -- Default: show only active task IDs.
--- @param opt list option
 local function tman_list()
     local active = true
     local completed = false
@@ -177,99 +258,67 @@ local function tman_cat(id)
 end
 
 --- Amend task unit.
--- @param opt option
--- @param id task ID
-local function tman_set(opt, id)
-    id = id or taskid.getcurr()
-    -- roachme:FIXME: switches task even when I change random task's unit.
+-- roachme:FIXME: switches task even when I change random task's unit.
+local function tman_set()
+    local id
+    local last_index = 1
+    local optstr = "di:l:p:t:"
+    local newdesc, newid, newlink, newprio, newtype
 
-    if not _checkid(id) then
-        os.exit(1)
+    -- roachme: It'd be better to show what task ID's changing. Maybe?
+
+    -- roachme:BUG: this series of options fail.
+    -- tman set -l https://gitlab.com/wimark/hello.com -t bugfix -p low -i test4
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die.die(1, "unrecognized option\n", arg[optind - 1])
+        end
+
+        last_index = optind
+        if optopt == "d" then
+            io.write(("New description (%s): "):format(""))
+            newdesc = io.read("*l")
+        elseif optopt == "i" then
+            newid = optarg
+            print("set new id", newid)
+        elseif optopt == "l" then
+            newlink = optarg
+        elseif optopt == "p" then
+            if not taskunit.check("prio", optarg) then
+                die.die(1, "invalid priority\n", optarg)
+            end
+            newprio = optarg
+        elseif optopt == "t" then
+            if not taskunit.check("type", optarg) then
+                die.die(1, "invalid task type\n", optarg)
+            end
+            newtype = optarg
+        end
     end
 
-    if opt == "-d" then
-        io.write(("New description (%s): "):format(id))
-        local newdesc = io.read("*l")
-
-        if not git.branch_switch(id) then
-            return 1
-        end
-        -- roachme: the only reasons why it might fail
-        -- 1. Dir doesn't exist.
-        -- 2. Has no permition.
-        -- 3. Hardware isssue.
-        -- core.lua gotta check that out, so we ain't gotta check, just do it.
-        if not taskunit.setunit(id, "desc", newdesc) then
-            return 1
-        end
-        git.branch_rename(id)
-        return 0
-    elseif opt == "-p" then
-        local prio = taskunit.getunit(id, "prio")
-        io.write(("New priority (%s): "):format(id))
-        local newprio = io.read("*l")
-
-        if newprio == prio then
-            io.stderr:write("error: it's the same priority\n")
-            return 1
-        end
-
-        taskunit.setunit(id, "prio", newprio)
-
-        -- in case prio is part of the branch name.
-        if not git.branch_switch(id) then
-            return 1
-        end
-        git.branch_rename(id)
-        return 0
-    elseif opt == "-i" then
-        io.write(("New task ID (%s): "):format(id))
-        local newid = io.read("*l")
-
-        if id == newid then
-            io.stderr:write(
-                ("err: '%s': it's the same task ID\n"):format(newid)
-            )
-            return 1
-        elseif taskid.exist(newid) then
-            io.stderr:write(
-                ("err: '%s': task ID already exists\n"):format(newid)
-            )
-            return 1
-        end
-
-        if not git.branch_switch(id) then
-            return 1
-        end
-        if not taskunit.setunit(id, "id", newid) then
-            return 1
-        end
-        -- roachme: FIXME: you can't change this order.
-        -- It's ok, but not obvious.
-        taskid.del(id)
-        taskid.add(newid)
-        struct.rename(id, newid)
-        git.branch_rename(newid)
-        return 0
-    elseif opt == "-t" then
-        io.write(("New task type (%s): "):format(id))
-        local newtype = io.read("*l")
-        if not taskunit.setunit(id, "type", newtype) then
-            help.usage("set")
-            return errcodes.command_failed
-        end
-        git.branch_rename(id)
-        return errcodes.ok
-    elseif opt == "-l" then
-        io.write(("New task link (%s): "):format(id))
-        local newlink = io.read("*l")
-        taskunit.setunit(id, "link", newlink)
-        return 0
-    elseif not opt then
-        io.stderr:write("option missing\n")
-    else
-        io.stderr:write(("'%s': no such option\n"):format(opt))
+    id = arg[last_index] or taskid.getcurr()
+    if not id then
+        die.die(1, "no current task ID\n", "")
+    elseif not taskid.exist(id) then
+        die.die(1, "no such task ID\n", id)
     end
+
+    if newdesc then
+        _set_desc(id, newdesc)
+    end
+    if newid then
+        _set_id(id, newid)
+    end
+    if newlink then
+        _set_link(id, newlink)
+    end
+    if newprio then
+        _set_prio(id, newprio)
+    end
+    if newtype then
+        _set_type(id, newtype)
+    end
+    return 0
 end
 
 --- Update git repos.
@@ -411,19 +460,8 @@ local function tman_get(unit)
     end
 end
 
-local function tman_test(id)
-    id = id or taskid.getcurr()
-
-    if not _checkid() then
-        os.exit(1)
-    end
-
-    if git.branch_merged(id) then
-        print("ok: all repo branches are merged")
-    else
-        print("err: not all repo branches are merged")
-    end
-end
+--- Emulate tman_set command.
+local function tman_test() end
 
 -- Public functions: end --
 
@@ -448,7 +486,7 @@ local function main()
     elseif cmd == "add" then
         return tman_add(arg[1])
     elseif cmd == "set" then
-        return tman_set(arg[1], arg[2])
+        return tman_set()
     elseif cmd == "use" then
         return tman_use(arg[1])
     elseif cmd == "cat" then
@@ -468,7 +506,7 @@ local function main()
     elseif cmd == "config" then
         return tman_config(arg[1])
     elseif cmd == "test" then
-        return tman_test(arg[1])
+        return tman_test()
     elseif cmd == "help" then
         return help.usage(arg[1])
     elseif cmd == "ver" then

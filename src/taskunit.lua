@@ -6,6 +6,7 @@ local log = require("misc.log").init("taskunit")
 local config = require("misc.config")
 local utils = require("aux.utils")
 local unit = require("aux.unit")
+local die = require("misc.die")
 
 -- Private functions: end --
 
@@ -61,6 +62,9 @@ end
 local function check_tasktype(type)
     local tasktypes = { "bugfix", "feature", "hotfix" }
 
+    if not type then
+        return false
+    end
     for _, dtype in pairs(tasktypes) do
         if type == dtype then
             return true
@@ -126,8 +130,7 @@ local function _set_id(id, newid)
         })
     )
     unit.save()
-    utils.rename(old_taskdir, new_taskdir)
-    return true
+    return utils.rename(old_taskdir, new_taskdir)
 end
 
 --- Change task type.
@@ -135,8 +138,7 @@ end
 -- @return on failure - false
 local function _set_type(id, newtype)
     if not check_tasktype(newtype) then
-        log:err("unknown task type: '%s'", newtype)
-        return false
+        die.die(1, "invalid task type\n", newtype)
     end
 
     unit.init(config.ids .. id)
@@ -163,8 +165,7 @@ local function _set_prio(id, newprio)
     unit.init(config.ids .. id)
 
     if not check_unit_prios(newprio) then
-        log:err("task priority '%s' does not exist", newprio)
-        return false
+        die.die(1, "invalid priority\n", newprio)
     end
     unit.set("prio", newprio)
     return unit.save()
@@ -253,11 +254,20 @@ local function taskunit_del(id)
     return utils.rm(unitfile)
 end
 
+local function taskunit_check(key, value)
+    if key == "prio" then
+        return check_unit_prios(value)
+    elseif key == "type" then
+        return check_tasktype(value)
+    end
+    return false
+end
+
 --- Get unit from task metadata.
 -- @param id task ID
 -- @param key unit key
--- @return unit value
--- @return nil if key doesn't exist
+-- @return on success - return actial value
+-- @return on failure - return default value ("N/A")
 local function taskunit_getunit(id, key)
     unit.init(config.ids .. id)
     return unit.get(key)
@@ -271,18 +281,18 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function taskunit_setunit(id, key, value)
-    if key == string.lower("id") then
-        return _set_id(id, value)
-    elseif key == string.lower("prio") then
-        return _set_prio(id, value)
-    elseif key == string.lower("desc") then
+    if key == string.lower("desc") then
         return _set_desc(id, value)
+    elseif key == string.lower("id") then
+        return _set_id(id, value)
     elseif key == string.lower("link") then
         return _set_link(id, value)
-    elseif key == string.lower("type") then
-        return _set_type(id, value)
+    elseif key == string.lower("prio") then
+        return _set_prio(id, value)
     elseif key == string.lower("repo") then
         return _set_repo(id, value)
+    elseif key == string.lower("type") then
+        return _set_type(id, value)
     end
     -- set new value
     unit.init(config.ids .. id)
@@ -316,6 +326,7 @@ return {
     add = taskunit_add,
     del = taskunit_del,
     cat = taskunit_cat,
+    check = taskunit_check,
     getunit = taskunit_getunit,
     setunit = taskunit_setunit,
 }

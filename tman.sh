@@ -122,6 +122,7 @@ function _tman_handle_commands()
             cd $TASKS
         fi
     fi
+    return $retcode
 }
 
 function tman()
@@ -141,4 +142,5 @@ function tman()
     eval $TMANCMD $@
 
     _tman_handle_commands $? $@
+    return $?
 }

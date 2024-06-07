@@ -62,6 +62,7 @@ TASKID - default is current task.
 Options:
     -i      set task ID
     -d      set task description
+    -l      set task link
     -p      set task priority. Values: [highest|high|mid|low|lowest]
     -t      set task type. Values: [bugfix|hotfix|feature]
 ]],

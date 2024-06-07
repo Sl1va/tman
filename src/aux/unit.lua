@@ -81,7 +81,8 @@ end
 
 --- Get unit from unit file.
 -- @param key key to get
--- @return value
+-- @return on success - return actial value
+-- @return on failure - return default value (N/A)
 local function unit_get(key)
     return units[key]
 end
