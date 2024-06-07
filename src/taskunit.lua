@@ -81,61 +81,6 @@ local function check_unit_prios(priority)
     return false
 end
 
--- Private functions: end --
-
--- Public functions: start --
-
---- Add a new unit for a task.
--- @param id task id
--- @param tasktype task type: bugfix, hotfix, feature
--- @param prio task priority
-local function taskunit_add(id, tasktype, prio)
-    local desc = get_input("Desc")
-    prio = prio or unit.prios.mid
-    unit.init(config.ids .. id)
-
-    unit.set("id", id)
-    unit.set("prio", prio)
-    unit.set("type", tasktype)
-    unit.set("desc", desc)
-
-    unit.set("time", "N/A")
-    unit.set("date", os.date("%Y%m%d"))
-    unit.set("status", "progress")
-
-    -- roachme: looks a bit messy to me. Outta fix it.
-    unit.set(
-        "branch",
-        format_branch({
-            type = tasktype,
-            id = id,
-            desc = desc,
-            date = unit.get("date"),
-        })
-    )
-
-    if not unit.get("branch") then
-        log:err("branch pattern isn't valid", config.branchpatt)
-        return false
-    end
-    if not check_tasktype(tasktype) then
-        log:err("unknown task type: '%s'", tasktype)
-        return false
-    end
-    if not check_unit_prios(prio) then
-        log:err("unknown task priority: '%s'", prio)
-        return false
-    end
-    return unit.save()
-end
-
---- Delete task unit.
--- @param id task ID
-local function taskunit_del(id)
-    local unitfile = config.ids .. id
-    return utils.rm(unitfile)
-end
-
 --- Amend task description.
 -- @param id task ID
 -- @param newdesc new description
@@ -220,6 +165,61 @@ local function _set_repos(id, taskrepos)
     unit.init(config.ids .. id)
     unit.set("repos", res)
     return unit.save()
+end
+
+-- Private functions: end --
+
+-- Public functions: start --
+
+--- Add a new unit for a task.
+-- @param id task id
+-- @param tasktype task type: bugfix, hotfix, feature
+-- @param prio task priority
+local function taskunit_add(id, tasktype, prio)
+    local desc = get_input("Desc")
+    prio = prio or unit.prios.mid
+    unit.init(config.ids .. id)
+
+    unit.set("id", id)
+    unit.set("prio", prio)
+    unit.set("type", tasktype)
+    unit.set("desc", desc)
+
+    unit.set("time", "N/A")
+    unit.set("date", os.date("%Y%m%d"))
+    unit.set("status", "progress")
+
+    -- roachme: looks a bit messy to me. Outta fix it.
+    unit.set(
+        "branch",
+        format_branch({
+            type = tasktype,
+            id = id,
+            desc = desc,
+            date = unit.get("date"),
+        })
+    )
+
+    if not unit.get("branch") then
+        log:err("branch pattern isn't valid", config.branchpatt)
+        return false
+    end
+    if not check_tasktype(tasktype) then
+        log:err("unknown task type: '%s'", tasktype)
+        return false
+    end
+    if not check_unit_prios(prio) then
+        log:err("unknown task priority: '%s'", prio)
+        return false
+    end
+    return unit.save()
+end
+
+--- Delete task unit.
+-- @param id task ID
+local function taskunit_del(id)
+    local unitfile = config.ids .. id
+    return utils.rm(unitfile)
 end
 
 --- Get unit from task metadata.
