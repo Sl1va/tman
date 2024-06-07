@@ -140,7 +140,7 @@ end
 -- @param id task ID
 -- @param newdesc new description
 -- @return true on success, otherwise false
-local function taskunt_amend_desc(id, newdesc)
+local function _set_desc(id, newdesc)
     unit.init(config.ids .. id)
     unit.set("desc", newdesc)
 
@@ -160,7 +160,7 @@ end
 --- Chaneg task ID.
 -- @param id current task ID
 -- @param newid new ID
-local function taskunit_amend_id(id, newid)
+local function _set_id(id, newid)
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
 
@@ -185,7 +185,7 @@ end
 --- Change task priority.
 -- @param id task ID
 -- @param newprio new task priority
-local function taskunit_amend_prio(id, newprio)
+local function _set_prio(id, newprio)
     unit.init(config.ids .. id)
 
     if not check_unit_prios(newprio) then
@@ -197,7 +197,7 @@ local function taskunit_amend_prio(id, newprio)
 end
 
 --- Change task link to work task manager.
-local function taskunit_amend_link(id, newlink)
+local function _set_link(id, newlink)
     unit.init(config.ids .. id)
 
     unit.set("link", newlink)
@@ -209,7 +209,7 @@ end
 -- @param taskrepos table of active repos
 -- @return on success - true
 -- @return on failure - false
-local function taskunit_amend_repos(id, taskrepos)
+local function _set_repos(id, taskrepos)
     local res = "["
 
     for _, repo in pairs(taskrepos) do
@@ -241,15 +241,15 @@ end
 -- @return on failure - false
 local function taskunit_setunit(id, key, value)
     if key == string.lower("id") then
-        return taskunit_amend_id(id, value)
+        return _set_id(id, value)
     elseif key == string.lower("prio") then
-        return taskunit_amend_prio(id, value)
+        return _set_prio(id, value)
     elseif key == string.lower("desc") then
-        return taskunt_amend_desc(id, value)
+        return _set_desc(id, value)
     elseif key == string.lower("link") then
-        return taskunit_amend_link(id, value)
+        return _set_link(id, value)
     elseif key == string.lower("repos") then
-        return taskunit_amend_repos(id, value)
+        return _set_repos(id, value)
     end
     -- set new value
     unit.init(config.ids .. id)
@@ -285,9 +285,4 @@ return {
     cat = taskunit_cat,
     getunit = taskunit_getunit,
     setunit = taskunit_setunit,
-    amend_id = taskunit_amend_id,
-    amend_desc = taskunt_amend_desc,
-    amend_prio = taskunit_amend_prio,
-    amend_link = taskunit_amend_link,
-    amend_repos = taskunit_amend_repos,
 }
