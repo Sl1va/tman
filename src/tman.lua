@@ -323,11 +323,11 @@ end
 --- Move current task to done status.
 -- @param id task id
 -- roachme: It moves to ACTV, COMP status.
-local function tman_done(id)
+local function tman_done()
     local retcode
     local curr = taskid.getcurr()
     local prev = taskid.getprev()
-    id = id or curr
+    local id = curr
 
     if id ~= "under development" then
         print("under development. Gotta check that task branch is merged")
@@ -335,8 +335,10 @@ local function tman_done(id)
     end
 
     if not _checkid() then
-        os.exit(1)
+        return errcodes.command_failed
     end
+
+    taskid.unsetcurr()
 
     -- provide retcode for shell command
     if id == curr then
@@ -352,11 +354,12 @@ local function tman_done(id)
         os.exit(1)
     end
 
+    -- roachme:FIXME: switch to previous task branch
+
     -- roachme: if task's done delete git branch,
     --          MAYBE task dir as well (nah, leave it)
     --          BUT make sure task branch's merged into default branch
 
-    taskid.move(id, taskid.status.COMP)
     return retcode
 end
 
@@ -432,7 +435,7 @@ local function main()
     elseif cmd == "update" then
         return tman_update(arg[1])
     elseif cmd == "done" then
-        return tman_done(arg[1])
+        return tman_done()
     elseif cmd == "get" then
         return tman_get(arg[1])
     elseif cmd == "prev" then

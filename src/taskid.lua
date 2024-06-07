@@ -173,11 +173,9 @@ local function taskid_move(taskid, taskstatus)
     return db.save()
 end
 
---- Unset current task ID.
--- roachme: pro'ly taskid_move() is better way. So delete it.
--- @see unsetcurr
-local function taskid_unsetcurr(taskstatus)
-    unsetcurr(taskstatus)
+--- Move current task to completed status.
+local function taskid_unsetcurr()
+    unsetcurr(status.COMP)
     return taskid_swap()
 end
 
