@@ -194,7 +194,7 @@ local function tman_set(opt, id)
         if not git.branch_switch(id) then
             return 1
         end
-        if not taskunit.amend_desc(id, newdesc) then
+        if not taskunit.setunit(id, "desc", newdesc) then
             return 1
         end
         git.branch_rename(id)
@@ -209,7 +209,7 @@ local function tman_set(opt, id)
             return 1
         end
 
-        taskunit.amend_prio(id, newprio)
+        taskunit.setunit(id, "prio", newprio)
 
         -- in case prio is part of the branch name.
         if not git.branch_switch(id) then
@@ -232,7 +232,7 @@ local function tman_set(opt, id)
         if not git.branch_switch(id) then
             return 1
         end
-        if not taskunit.amend_id(id, newid) then
+        if not taskunit.setunit(id, "id", newid) then
             return 1
         end
         -- roachme: FIXME: you can't change this order.
@@ -245,7 +245,7 @@ local function tman_set(opt, id)
     elseif opt == "-l" then
         io.write(("New task link (%s): "):format(id))
         local newlink = io.read("*l")
-        taskunit.amend_link(id, newlink)
+        taskunit.setunit(id, "link", newlink)
         return 0
     elseif not opt then
         io.stderr:write("option missing\n")
@@ -272,7 +272,7 @@ local function tman_update(cmd)
 
     -- update active repos
     local active_repos = git.branch_ahead(id)
-    taskunit.amend_repos(id, active_repos)
+    taskunit.setunit(id, "repos", active_repos)
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then
