@@ -194,6 +194,11 @@ local function tman_set(opt, id)
         if not git.branch_switch(id) then
             return 1
         end
+        -- roachme: the only reasons why it might fail
+        -- 1. Dir doesn't exist.
+        -- 2. Has no permition.
+        -- 3. Hardware isssue.
+        -- core.lua gotta check that out, so we ain't gotta check, just do it.
         if not taskunit.setunit(id, "desc", newdesc) then
             return 1
         end
