@@ -50,7 +50,7 @@ end
 
 --- Switch to repo default branch.
 -- @treturn bool true on success, otherwise false
-local function git_branch_switch_default()
+local function git_branch_default()
     if not changes_check() then
         return false
     end
@@ -263,6 +263,7 @@ end
 
 return {
     check = git_check,
+    --branch_prune = git_branch_prune,
     branch_create = git_branch_create,
     branch_delete = git_branch_delete,
     branch_switch = git_branch_switch,
@@ -270,8 +271,8 @@ return {
     branch_rename = git_branch_rename,
     branch_rebase = git_branch_rebase,
     branch_merged = git_branch_merged,
+    branch_default = git_branch_default,
 
     -- under development
     branch_ahead = git_branch_ahead,
-    branch_switch_default = git_branch_switch_default,
 }

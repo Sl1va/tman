@@ -274,7 +274,7 @@ local function tman_update(cmd)
         git.branch_switch(id)
         return errcodes.ok
     elseif cmd == "repo" then
-        if not git.branch_switch_default() then
+        if not git.branch_default() then
             return errcodes.command_failed
         end
         git.branch_update(true)
@@ -350,7 +350,7 @@ local function tman_done()
         retcode = 2
     end
 
-    if not git.branch_switch_default() then
+    if not git.branch_default() then
         io.stderr:write("repo has uncommited changes\n")
         os.exit(1)
     end
