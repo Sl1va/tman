@@ -372,18 +372,18 @@ local function tman_config(subcmd)
     end
 end
 
---- Get special task ID's ID.
--- @param idtype task id
-local function tman_get(idtype)
-    idtype = idtype or "curr"
+--- Get special task ID unit.
+-- @param unit task unit
+local function tman_get(unit)
+    unit = unit or "curr"
 
-    if idtype == "curr" then
+    if unit == "curr" then
         print(taskid.getcurr() or "")
-    elseif idtype == "prev" then
+    elseif unit == "prev" then
         print(taskid.getprev() or "")
     else
         local errmsg = "err: no such ID type '%s'\n"
-        io.stderr:write(errmsg:format(idtype or "no idtype"))
+        io.stderr:write(errmsg:format(unit or "no idtype"))
     end
 end
 
