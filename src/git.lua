@@ -215,7 +215,49 @@ local function git_branch_ahead(id)
     return res
 end
 
-local function git_check() end
+local function git_check(id)
+    -- mini-map: check that
+    -- 1. task branch exists
+    -- 2. task branch has no uncommited changes.
+    -- 3. task branch can be rebased against default branch (pro'ly)
+
+    local branch = taskunit.getunit(id, "branch")
+    local gitcmd = "git -C %s "
+
+    -- 1. task branch exists
+    for _, repo in pairs(repos) do
+        local cmd_branch_exists = gitcmd .. "show-ref --quiet refs/heads/%s"
+        local repopath = config.codebase .. repo.name
+        local cmd = cmd_branch_exists:format(repopath, branch)
+        if utils.exec(cmd) ~= 0 then
+            io.stderr:write(("branch '%s' doesn't exist\n"):format(branch))
+            return false
+        end
+    end
+
+    -- 2. task branch has no uncommited changes.
+    for _, repo in pairs(repos) do
+        local cmd_uncommited_changes = "git -C %s status --porcelain %s"
+        local repopath = config.codebase .. repo.name
+        local cmd = cmd_uncommited_changes:format(repopath, branch)
+        local file = assert(io.popen(cmd))
+        local res = file:read()
+        file:close()
+        if res ~= nil then
+            io.stderr:write(
+                ("repo '%s' uncommited changes\n"):format(repo.name)
+            )
+            return false
+        end
+    end
+
+    -- 3. task branch can be rebased against default branch (pro'ly)
+    --[[
+    for _, repo in pairs(repos) do
+    end
+    ]]
+    return true
+end
 
 -- Public functions: end --
 
