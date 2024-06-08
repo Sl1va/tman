@@ -10,7 +10,6 @@ In progress:
     18. Get rid of os.exit() in tman.lua. There's a better way.
     19. Add module for default values so util doesn't break if no config is preesented.
     20. `tman update' doesn't work if no current task. Fix it.
-    21. `tman del' doesn't show task ID. Fix it.
     22. taskunit status - fix it or get rid of it.
     24. git: Add support to download repos.
     25. Find a good way to delete unused and that no longer on remote repo.
@@ -21,6 +20,7 @@ In progress:
     31. Delete CUI from `tman set' command.
     31. function die() should be used only in tman.lua.
     32. Diet repos over time.
+    33. `tman del' add test ID with description.
 
 
 Gotta work on (still):
@@ -38,5 +38,6 @@ Done:
     10. Do git rebase if it's possible without merge conflics.
     15. Refactor git module. Getting bigger and messier.
     17. Command `del': switch to previous task branch if it exists
+    21. `tman del' doesn't show task ID. Fix it.
     23. Add unit for actvite repos.
     29. taskunit.lua can't change task type.
