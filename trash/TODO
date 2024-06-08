@@ -15,7 +15,6 @@ In progress:
     25. Find a good way to delete unused and that no longer on remote repo.
     26. Add support to work on different environments: work, personal, test.
     27. Optimize db.lua: use task ID as table index.
-    28. Delete sort() from db.lua, it shouldn't know about it.
     30. core.lua gotta check config file as well.
     31. Delete CUI from `tman set' command.
     31. function die() should be used only in tman.lua.
@@ -40,4 +39,5 @@ Done:
     17. Command `del': switch to previous task branch if it exists
     21. `tman del' doesn't show task ID. Fix it.
     23. Add unit for actvite repos.
+    28. Delete sort() from db.lua, it shouldn't know about it.
     29. taskunit.lua can't change task type.
