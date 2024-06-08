@@ -4,7 +4,9 @@
 usage()
 {
     cat << EOF
-Usade: ./install.sh [OPTION]
+Usage: ./install.sh [USERTYPE] [OPTION]
+
+USERTYPE - install for user or developer
 
 Options:
     -c      check system utils and luarocks (default).
