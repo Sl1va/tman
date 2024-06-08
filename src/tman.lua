@@ -305,7 +305,6 @@ local function tman_set()
             newdesc = io.read("*l")
         elseif optopt == "i" then
             newid = optarg
-            print("set new id", newid)
         elseif optopt == "l" then
             newlink = optarg
         elseif optopt == "p" then
