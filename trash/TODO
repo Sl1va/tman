@@ -20,6 +20,7 @@ In progress:
     30. core.lua gotta check config file as well.
     31. Delete CUI from `tman set' command.
     31. function die() should be used only in tman.lua.
+    32. Diet repos over time.
 
 
 Gotta work on (still):
