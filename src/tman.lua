@@ -279,10 +279,9 @@ local function tman_cat()
 
     id = arg[last_index] or taskid.getcurr()
     if not id then
-        os.exit(1)
+        die.die(1, "no current task ID\n", "")
     elseif not taskid.exist(id) then
-        io.stderr:write(("'%s': no such task ID\n"):format(id))
-        os.exit(1)
+        die.die(1, "no such task ID\n", id)
     end
     taskunit.cat(id, key)
     return 0
