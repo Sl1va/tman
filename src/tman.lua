@@ -126,12 +126,10 @@ end
 local function _checkid(id)
     id = id or taskid.getcurr()
     if not id then
-        io.stderr:write("no current task\n")
-        return false
+        die.die(1, "no current task\n", "")
     end
     if not taskid.exist(id) then
-        io.stderr:write(("'%s': no such task ID\n"):format(id))
-        return false
+        die.die(1, "no such task ID\n", id)
     end
     return true
 end
@@ -195,9 +193,12 @@ local function tman_use()
         end
     end
 
-    id = arg[last_index] or taskid.getcurr()
-    if not _checkid(id) then
-        os.exit(1)
+    id = arg[last_index]
+    if not id then
+        die.die(1, "task ID required\n", "")
+    end
+    if not taskid.exist(id) then
+        die.die(1, "task ID doesn't exist\n", id)
     end
     if taskid.getcurr() == id then
         die.die(1, "already in use\n", id)
