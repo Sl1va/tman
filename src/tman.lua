@@ -305,6 +305,9 @@ local function tman_set()
         if optopt == "d" then
             io.write(("New description (%s): "):format(""))
             newdesc = io.read("*l")
+            if not taskunit.check("desc", newdesc) then
+                die.die(1, "description has illegal symbols\n", "")
+            end
         elseif optopt == "i" then
             newid = optarg
         elseif optopt == "l" then

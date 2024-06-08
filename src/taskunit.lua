@@ -56,6 +56,18 @@ local function format_branch(items)
     return branch
 end
 
+--- Check that description has no illegal symbols.
+-- @param desc description
+-- @return on success - true
+-- @return on failure - false
+local function check_desc(desc)
+    local descregex = "[a-zA-Z0-9_%s-]*"
+    if string.match(desc, descregex) == desc then
+        return true
+    end
+    return false
+end
+
 --- Check that user specified task type exists.
 -- @tparam string type user specified type
 -- @treturn bool true if exists, otherwise false
@@ -232,6 +244,10 @@ local function taskunit_add(id, tasktype, prio)
         })
     )
 
+    if not check_desc(desc) then
+        log:err("description isn't valid", config.branchpatt)
+        return false
+    end
     if not unit.get("branch") then
         log:err("branch pattern isn't valid", config.branchpatt)
         return false
@@ -255,7 +271,9 @@ local function taskunit_del(id)
 end
 
 local function taskunit_check(key, value)
-    if key == "prio" then
+    if key == "desc" then
+        return check_desc(value)
+    elseif key == "prio" then
         return check_unit_prios(value)
     elseif key == "type" then
         return check_tasktype(value)
