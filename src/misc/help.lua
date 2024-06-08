@@ -12,8 +12,7 @@ Use '%s help COMMAND' to get command's detailed info.
 COMMANDS:
 Kickoffs:
   init    - init util structure.
-  backup  - backup configs and metadata
-  restore - restore configs and metadata
+  archive - backup and restore metadata
 
 Basic:
   use     - mark a task as current
@@ -37,6 +36,25 @@ Info:
 end
 
 local cmds = {
+    {
+        name = "init",
+        desc = [[
+Usage: tman init
+Initialize util.
+]],
+    },
+    {
+        name = "archive",
+        desc = [[
+Usage: tman archive OPTION
+Make backup and restore util data.
+
+Options:
+    -b FILE     create backup (default extension: .tar)
+    -r FILE     restore from archive
+    -R          include repos into archive (default: false)
+]],
+    },
     {
         name = "add",
         desc = [[

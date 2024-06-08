@@ -4,6 +4,21 @@
 local utils = require("aux.utils")
 local config = require("misc.config")
 
+local progname = "tman"
+local version = "0.1.6"
+
+-- die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
+-- input
+--       die (EXIT_TROUBLE, 0, "%s: %s", str,
+-- _("invalid context length argument"));
+-- output
+-- grep: oeu: invalid context length argument
+local function core_die(exit_code, errfmt, ...)
+    local errmsg = ("%s: %s: " .. errfmt):format(progname, ...)
+    io.stderr:write(errmsg)
+    os.exit(exit_code)
+end
+
 --- Init system to use a util.
 local function core_init()
     -- dirs
@@ -72,9 +87,49 @@ local function core_show_config()
     print("}")
 end
 
+--- Backup data.
+-- @param fname archive filename (default extention is .tar)
+-- @param repo_included whether or not include repos in archive
+-- @return on success - true
+-- @return on failure - false
+local function core_backup(fname, repo_included)
+    -- roachme: run git gc before including repos in archive so it takes less place.
+    -- roachme: Replace codebase with value from config
+    local cmd
+
+    if repo_included then
+        cmd = ("tar -C %s -czf %s.tar ."):format(config.base, fname)
+    else
+        cmd = ("tar -C %s --exclude=codebase -czf %s.tar ."):format(config.base, fname)
+    end
+    return utils.exec(cmd)
+end
+
+--- Restore archive.
+-- @param fname archive fname
+-- @return on success - true
+-- @return on failure - false
+local function core_restore(fname)
+    local cmd = ("tar -xf %s -C %s"):format(fname, config.base)
+
+    if not utils.access(fname) then
+        core_die(1, "no such file\n", fname)
+    end
+    if not utils.exec(cmd) then
+        core_die(1, "failed to execute archive command", "")
+    end
+    return 0
+end
+
 return {
+    die = core_die,
     init = core_init,
     check = core_check,
     repair = core_repair,
     showconf = core_show_config,
+    backup = core_backup,
+    restore = core_restore,
+
+    version = version,
+    progname = progname,
 }
