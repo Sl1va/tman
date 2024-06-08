@@ -160,6 +160,7 @@ local function tman_add(id)
     end
     if not taskunit.add(id, tasktype, prio) then
         io.stderr:write("could not create new task unit\n")
+        -- roachme: in case of error deletes previous task ID
         taskid.del(id)
         os.exit(1)
     end
