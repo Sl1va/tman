@@ -180,18 +180,29 @@ local function tman_add(id)
 end
 
 --- Switch to another task.
--- @param id task ID
-local function tman_use(id)
+local function tman_use()
+    local id
+    local last_index = 1
+    local optstr = ""
+
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die.die(1, "unrecognized option\n", arg[optind - 1])
+        end
+        if optopt == "h" then
+            print("WARNING: fake option", optarg or "NIL")
+        end
+    end
+
+    id = arg[last_index] or taskid.getcurr()
     if not _checkid(id) then
         os.exit(1)
     end
     if taskid.getcurr() == id then
-        io.stderr:write(("'%s': already in use\n"):format(id))
-        os.exit(1)
+        die.die(1, "already in use\n", id)
     end
     if not git.branch_switch(id) then
-        io.stderr:write("repo has uncommited changes\n")
-        os.exit(1)
+        die.die(1, "has uncommited changes\n", "repo")
     end
     taskid.setcurr(id)
     return 0
@@ -488,7 +499,7 @@ local function main()
     elseif cmd == "set" then
         return tman_set()
     elseif cmd == "use" then
-        return tman_use(arg[1])
+        return tman_use()
     elseif cmd == "cat" then
         return tman_cat(arg[1])
     elseif cmd == "del" then
