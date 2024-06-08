@@ -309,7 +309,7 @@ local function taskunit_cat(id, key)
 
     if key then
         -- use defval for backward compatibility with old tasks
-        print(("> %-8s: %s"):format(key, unit.get(key) or unit.defval))
+        print(("  %-8s: %s"):format(key, unit.get(key) or unit.defval))
         return true
     end
 

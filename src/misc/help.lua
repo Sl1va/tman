@@ -136,6 +136,9 @@ Notes:
 Usage: tman cat [TASKID]
 Show task units (current task by default).
 TASKID - default is current task.
+
+Options:
+    -k   cat specific unit key
 ]],
     },
     {

@@ -255,17 +255,31 @@ local function tman_list()
 end
 
 --- Show task unit metadata.
--- @param id task ID
-local function tman_cat(id)
-    id = id or taskid.getcurr()
+local function tman_cat()
+    local id
+    local last_index = 1
+    local optstr = "k:"
+    local key
 
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die.die(1, "unrecognized option\n", arg[optind - 1])
+        end
+        last_index = optind
+        if optopt == "k" then
+            key = optarg
+        end
+    end
+
+    id = arg[last_index] or taskid.getcurr()
     if not id then
         os.exit(1)
     elseif not taskid.exist(id) then
         io.stderr:write(("'%s': no such task ID\n"):format(id))
         os.exit(1)
     end
-    taskunit.cat(id)
+    taskunit.cat(id, key)
+    return 0
 end
 
 --- Amend task unit.
@@ -501,7 +515,7 @@ local function main()
     elseif cmd == "use" then
         return tman_use()
     elseif cmd == "cat" then
-        return tman_cat(arg[1])
+        return tman_cat()
     elseif cmd == "del" then
         return tman_del(arg[1])
     elseif cmd == "list" then
