@@ -215,12 +215,10 @@ local function tman_prev()
     local prev = taskid.getprev()
 
     if not prev then
-        io.stderr:write("no previous task\n")
-        os.exit(1)
+        die.die(1, "no previous task\n", "")
     end
     if not git.branch_switch(prev) then
-        io.stderr:write("repo has uncommited changes\n")
-        os.exit(1)
+        die.die(1, "repo has uncommited changes\n", "REPONAME")
     end
     taskid.swap()
     return 0
