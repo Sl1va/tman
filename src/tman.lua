@@ -241,14 +241,18 @@ local function tman_list()
             print("All tasks:")
             active = true
             completed = true
+        --[[
         elseif optopt == "a" then
-            print("Active tasks:")
             -- use default flags
+        ]]
         elseif optopt == "c" then
             print("Completed tasks:")
             active = false
             completed = true
         end
+    end
+    if active == true and completed == false then
+        print("Active tasks:")
     end
     taskid.list(active, completed)
     return 0
