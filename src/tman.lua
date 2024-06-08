@@ -53,7 +53,7 @@ local function _set_desc(id, newdesc)
     -- 2. Has no permition.
     -- 3. Hardware isssue.
     -- core.lua gotta check that out, so we ain't gotta check, just do it.
-    if not taskunit.setunit(id, "desc", newdesc) then
+    if not taskunit.set(id, "desc", newdesc) then
         return 1
     end
     git.branch_rename(id)
@@ -75,7 +75,7 @@ local function _set_id(id, newid)
     if not git.branch_switch(id) then
         return 1
     end
-    if not taskunit.setunit(id, "id", newid) then
+    if not taskunit.set(id, "id", newid) then
         return 1
     end
     -- roachme: FIXME: you can't change this order.
@@ -91,7 +91,7 @@ end
 -- @param id task ID
 -- @param newlink new task link
 local function _set_link(id, newlink)
-    taskunit.setunit(id, "link", newlink)
+    taskunit.set(id, "link", newlink)
     return 0
 end
 
@@ -99,12 +99,12 @@ end
 -- @param id task ID
 -- @param newprio new priority
 local function _set_prio(id, newprio)
-    local prio = taskunit.getunit(id, "prio")
+    local prio = taskunit.get(id, "prio")
 
     if newprio == prio then
         die.die(1, "the same priority\n", newprio)
     end
-    taskunit.setunit(id, "prio", newprio)
+    taskunit.set(id, "prio", newprio)
     return 0
 end
 
@@ -112,7 +112,7 @@ end
 -- @param id task ID
 -- @param newtype new type
 local function _set_type(id, newtype)
-    if not taskunit.setunit(id, "type", newtype) then
+    if not taskunit.set(id, "type", newtype) then
         help.usage("set")
         return errcodes.command_failed
     end
@@ -375,7 +375,7 @@ local function tman_update(cmd)
 
     -- update active repos
     local active_repos = git.branch_ahead(id)
-    taskunit.setunit(id, "repo", active_repos)
+    taskunit.set(id, "repo", active_repos)
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then

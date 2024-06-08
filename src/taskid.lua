@@ -205,11 +205,11 @@ local function taskid_list(active, completed)
     local prev = taskid_getprev()
 
     if active and curr then
-        desc = taskunit.getunit(curr, "desc")
+        desc = taskunit.get(curr, "desc")
         print(("* %-10s %s"):format(curr, desc))
     end
     if active and prev then
-        desc = taskunit.getunit(prev, "desc")
+        desc = taskunit.get(prev, "desc")
         print(("- %-10s %s"):format(prev, desc))
     end
 
@@ -217,10 +217,10 @@ local function taskid_list(active, completed)
         local entry = db.getidx(idx)
         if entry.id ~= curr and entry.id ~= prev then
             if entry.status == status.ACTV and active then
-                desc = taskunit.getunit(entry.id, "desc")
+                desc = taskunit.get(entry.id, "desc")
                 print(("  %-10s %s"):format(entry.id, desc))
             elseif entry.status == status.COMP and completed then
-                desc = taskunit.getunit(entry.id, "desc")
+                desc = taskunit.get(entry.id, "desc")
                 print(("  %-10s %s"):format(entry.id, desc))
             end
         end

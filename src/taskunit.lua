@@ -286,7 +286,7 @@ end
 -- @param key unit key
 -- @return on success - return actial value
 -- @return on failure - return default value ("N/A")
-local function taskunit_getunit(id, key)
+local function taskunit_get(id, key)
     unit.init(config.ids .. id)
     return unit.get(key)
 end
@@ -298,7 +298,7 @@ end
 -- @param value new value to set
 -- @return on success - true
 -- @return on failure - false
-local function taskunit_setunit(id, key, value)
+local function taskunit_set(id, key, value)
     if key == string.lower("desc") then
         return _set_desc(id, value)
     elseif key == string.lower("id") then
@@ -344,7 +344,7 @@ return {
     add = taskunit_add,
     del = taskunit_del,
     cat = taskunit_cat,
+    get = taskunit_get,
+    set = taskunit_set,
     check = taskunit_check,
-    getunit = taskunit_getunit,
-    setunit = taskunit_setunit,
 }

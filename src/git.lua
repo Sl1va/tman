@@ -65,7 +65,7 @@ end
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
 local function git_branch_switch(id)
-    local branch = taskunit.getunit(id, "branch")
+    local branch = taskunit.get(id, "branch")
 
     if not changes_check() then
         return false
@@ -114,7 +114,7 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 local function git_branch_create(id)
-    local branch = taskunit.getunit(id, "branch")
+    local branch = taskunit.get(id, "branch")
 
     if not changes_check() then
         return 1
@@ -132,7 +132,7 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 local function git_branch_rename(id)
-    local newbranch = taskunit.getunit(id, "branch")
+    local newbranch = taskunit.get(id, "branch")
 
     if not changes_check() then
         return 1
@@ -148,7 +148,7 @@ end
 -- @param id task ID
 -- @return true on success, otherwise false
 local function git_branch_delete(id)
-    local branch = taskunit.getunit(id, "branch")
+    local branch = taskunit.get(id, "branch")
 
     if not changes_check() then
         return false
@@ -167,7 +167,7 @@ end
 -- @return task branch's not merged - false
 local function git_branch_merged(id)
     local retcode = true
-    local branch = taskunit.getunit(id, "branch")
+    local branch = taskunit.get(id, "branch")
 
     --  roachme: doesn't work if merge conflic with default branch.
     --  which happens quite often.
@@ -196,7 +196,7 @@ local function git_branch_ahead(id)
     -- roachme:FIXME: it checks diff between task branch and defaul branch.
     -- it should check uncommited changes instead.
     local res = {}
-    local branch = taskunit.getunit(id, "branch")
+    local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
@@ -221,7 +221,7 @@ local function git_check(id)
     -- 2. task branch has no uncommited changes.
     -- 3. task branch can be rebased against default branch (pro'ly)
 
-    local branch = taskunit.getunit(id, "branch")
+    local branch = taskunit.get(id, "branch")
     local gitcmd = "git -C %s "
 
     -- 1. task branch exists
