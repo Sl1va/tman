@@ -292,8 +292,6 @@ local function tman_set()
 
     -- roachme: It'd be better to show what task ID's changing. Maybe?
 
-    -- roachme:BUG: this series of options fail.
-    -- tman set -l https://gitlab.com/wimark/hello.com -t bugfix -p low -i test4
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die.die(1, "unrecognized option\n", arg[optind - 1])
@@ -325,6 +323,11 @@ local function tman_set()
         die.die(1, "no current task ID\n", "")
     elseif not taskid.exist(id) then
         die.die(1, "no such task ID\n", id)
+    end
+
+    if newid and newtype then
+        io.stderr:write("BUG: options '-i' and '-t' can't be used togother\n")
+        return 1
     end
 
     if newdesc then
@@ -484,7 +487,6 @@ local function tman_get(unit)
     end
 end
 
---- Emulate tman_set command.
 local function tman_test() end
 
 -- Public functions: end --
