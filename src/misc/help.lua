@@ -32,10 +32,20 @@ Amend:
 Info:
   ver     - show version
   help    - show this help message
-]]):format(progname, progname))
+
+'%s help COMMAND' to get detailed info about command.
+'%s help %s' to get info about util itself.
+]]):format(progname, progname, progname, progname, progname))
 end
 
 local cmds = {
+    {
+        name = progname,
+        desc = [[
+tman stands for task manager. Used to switch between tasks, git branches and
+make the workflow and nice and painless.
+]],
+    },
     {
         name = "init",
         desc = [[
@@ -151,7 +161,7 @@ Notes:
     {
         name = "cat",
         desc = [[
-Usage: tman cat [TASKID]
+Usage: tman cat [OPTION] [TASKID]
 Show task units (current task by default).
 TASKID - default is current task.
 
