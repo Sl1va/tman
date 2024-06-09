@@ -25,7 +25,7 @@ local tmandb = tmanconfig.base
 tmanconfig.tmanbase = tmandb .. "/.tman/"
 tmanconfig.initfile = tmanconfig.tmanbase .. ".tmaninit" -- mark tman dir
 tmanconfig.taskids = tmanconfig.tmanbase .. "taskids"
-tmanconfig.ids = tmanconfig.tmanbase .. "ids/"
+tmanconfig.units = tmanconfig.tmanbase .. "units/"
 
 tmanconfig.codebase = tmandb .. "/codebase/"
 tmanconfig.taskbase = tmandb .. "/tasks/"

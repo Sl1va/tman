@@ -22,7 +22,7 @@ end
 --- Init system to use a util.
 local function core_init()
     -- dirs
-    utils.mkdir(config.ids)
+    utils.mkdir(config.units)
     utils.mkdir(config.tmanbase)
     utils.mkdir(config.taskbase)
     utils.mkdir(config.codebase)
@@ -40,7 +40,7 @@ local function core_check()
         config.initfile,
     }
     local dirs = {
-        config.ids,
+        config.units,
         config.tmanbase,
         config.taskbase,
         config.codebase,
