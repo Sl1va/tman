@@ -20,6 +20,7 @@ In progress:
     32. Diet repos over time.
     33. `tman del' add test ID with description.
     34. Find a place to store progname and version. There're in core.lua and help.lua now.
+    35. tman.sh can't handle args with quotes `tman set -d "test task 2"'.
 
 
 Gotta work on (still):
