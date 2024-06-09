@@ -118,6 +118,13 @@ local function core_restore(fname)
     if not utils.access(fname) then
         core_die(1, "no such file\n", fname)
     end
+
+    print("delete current structure")
+    utils.rm(config.taskbase)
+    utils.rm(config.codebase)
+    utils.rm(config.tmanbase)
+
+    print("copy backup structure")
     if not utils.exec(cmd) then
         core_die(1, "failed to execute archive command", "")
     end
