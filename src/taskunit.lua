@@ -32,26 +32,28 @@ local function pattsplit(inputstr, sep)
 end
 
 --- Form branch according to pattern.
--- @param items task unit
 -- @return branch name if branch pattern is valid
 -- @return nil if branch pattern isn't valid
-local function format_branch(items)
+local function format_branch()
     local separators = "/_-"
     local sepcomponents = pattsplit(config.branchpatt, separators)
     local branch = config.branchpatt
 
-    -- roachme: it should be somewhere else:
-    -- HOTFIX: corrently transform description
-    items.desc = string.gsub(items.desc, " ", "_")
-
-    -- roachme: use unit.get() to retrieve keys and values
     for _, item in pairs(sepcomponents) do
-        if not items[string.lower(item)] then
-            local errmsg = "error: branch formatiton: unknown pattern '%s'\n"
+        local uitem = unit.get(string.lower(item))
+
+        -- roachme: gotta figure out whether or not defval is necessary.
+        if not uitem or uitem == unit.defval then
+            local errmsg = "error: branch formatiton: '%s': unit not found\n"
             io.stderr:write(errmsg:format(item))
             return nil
         end
-        branch = string.gsub(branch, item, items[string.lower(item)])
+
+        -- roachme: HOTFIX: desc: replace whitespace with undrescore
+        if item == "DESC" then
+            uitem = string.gsub(uitem, " ", "_")
+        end
+        branch = string.gsub(branch, item, uitem)
     end
     return branch
 end
@@ -105,17 +107,7 @@ end
 local function _set_desc(id, newdesc)
     unit.init(config.ids .. id)
     unit.set("desc", newdesc)
-
-    -- roachme: looks a bit messy to me. Outta fix it.
-    unit.set(
-        "branch",
-        format_branch({
-            id = unit.get("id"),
-            type = unit.get("type"),
-            desc = unit.get("desc"),
-            date = unit.get("date"),
-        })
-    )
+    unit.set("branch", format_branch())
     return unit.save()
 end
 
@@ -129,18 +121,8 @@ local function _set_id(id, newid)
     local new_taskdir = config.taskbase .. newid
 
     unit.init(config.ids .. id)
-
     unit.set("id", newid)
-    -- roachme: looks a bit messy to me. Outta fix it.
-    unit.set(
-        "branch",
-        format_branch({
-            id = unit.get("id"),
-            type = unit.get("type"),
-            desc = unit.get("desc"),
-            date = unit.get("date"),
-        })
-    )
+    unit.set("branch", format_branch())
     unit.save()
     return utils.rename(old_taskdir, new_taskdir)
 end
@@ -155,16 +137,7 @@ local function _set_type(id, newtype)
 
     unit.init(config.ids .. id)
     unit.set("type", newtype)
-    -- roachme: looks a bit messy to me. Outta fix it.
-    unit.set(
-        "branch",
-        format_branch({
-            id = unit.get("id"),
-            type = unit.get("type"),
-            desc = unit.get("desc"),
-            date = unit.get("date"),
-        })
-    )
+    unit.set("branch", format_branch())
     return unit.save()
 end
 
@@ -232,17 +205,7 @@ local function taskunit_add(id, tasktype, prio)
     unit.set("time", "N/A")
     unit.set("date", os.date("%Y%m%d"))
     unit.set("status", "progress")
-
-    -- roachme: looks a bit messy to me. Outta fix it.
-    unit.set(
-        "branch",
-        format_branch({
-            type = tasktype,
-            id = id,
-            desc = desc,
-            date = unit.get("date"),
-        })
-    )
+    unit.set("branch", format_branch())
 
     if not check_desc(desc) then
         log:err("description isn't valid", config.branchpatt)
