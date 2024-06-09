@@ -6,7 +6,6 @@ local log = require("misc.log").init("taskunit")
 local config = require("misc.config")
 local utils = require("aux.utils")
 local unit = require("aux.unit")
-local die = require("misc.die")
 
 -- Private functions: end --
 
@@ -132,6 +131,10 @@ local function _set_id(id, newid)
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
 
+    if not _check_id(newid) then
+        return false
+    end
+
     unit.init(config.ids .. id)
     unit.set("id", newid)
     unit.set("branch", format_branch())
@@ -144,7 +147,7 @@ end
 -- @return on failure - false
 local function _set_type(id, newtype)
     if not _check_type(newtype) then
-        die.die(1, "invalid task type\n", newtype)
+        return false
     end
 
     unit.init(config.ids .. id)
@@ -162,7 +165,7 @@ local function _set_prio(id, newprio)
     unit.init(config.ids .. id)
 
     if not _check_prio(newprio) then
-        die.die(1, "invalid priority\n", newprio)
+        return false
     end
     unit.set("prio", newprio)
     return unit.save()

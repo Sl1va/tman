@@ -91,7 +91,9 @@ end
 -- @param id task ID
 -- @param newlink new task link
 local function _set_link(id, newlink)
-    taskunit.set(id, "link", newlink)
+    if not taskunit.set(id, "link", newlink) then
+        return 1
+    end
     return 0
 end
 
@@ -104,7 +106,9 @@ local function _set_prio(id, newprio)
     if newprio == prio then
         die.die(1, "the same priority\n", newprio)
     end
-    taskunit.set(id, "prio", newprio)
+    if not taskunit.set(id, "prio", newprio) then
+        return 1
+    end
     return 0
 end
 
@@ -113,8 +117,7 @@ end
 -- @param newtype new type
 local function _set_type(id, newtype)
     if not taskunit.set(id, "type", newtype) then
-        help.usage("set")
-        return errcodes.command_failed
+        return 1
     end
     git.branch_rename(id)
     return 0
@@ -372,7 +375,9 @@ local function tman_update(cmd)
 
     -- update active repos
     local active_repos = git.branch_ahead(id)
-    taskunit.set(id, "repo", active_repos)
+    if not taskunit.set(id, "repo", active_repos) then
+        return 1
+    end
 
     -- switch to task branch, that's it. Default option.
     if not cmd or cmd == "task" then
