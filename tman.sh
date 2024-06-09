@@ -70,46 +70,47 @@ function _tman_form_command()
 
 function _tman_handle_commands()
 {
-    local retcode="$1"
-    local command="$2"
-    local taskdir="$3"
+    local command="$1"
+    local taskdir="$2"
 
-    if [ $retcode -eq 0 ] && [ "$command" = "add" ]; then
+    # roachme: maybe it's better to use cases?
+    if [ "$command" = "add" ]; then
         cd "$TASKS/$taskdir"
         wd -q rm task
         wd -q add task
         wd task
 
-    elif [ $retcode -eq 0 ] && [ "$command" = "use" ]; then
+    elif [ "$command" = "use" ]; then
         cd "$TASKS/$taskdir"
         wd -q rm task
         wd -q add task
         wd task
 
-    elif [ $retcode -eq 0 ] && [ "$command" = "prev" ]; then
+    elif [ "$command" = "prev" ]; then
         TASKID=$(eval $TMANCMD get curr)
         cd "$TASKS/$TASKID"
         wd -q rm task
         wd -q add task
         wd task
 
-    elif [ $retcode -eq 0 ] && [ "$command" = "move" ]; then
+    elif [ "$command" = "move" ]; then
         if [ ! -z "$4" ] && [ "$3" = "progress" ]; then
             cd "$TASKS/$taskdir"
             wd -q -f add task
             wd task
         fi
 
-    elif [ $retcode -eq 0 ] && [ "$command" = "done" ]; then
+    elif [ "$command" = "done" ]; then
         cd "$TASKS"
         wd -q -f add task
 
-    elif [ $retcode -eq 0 ] && [ "$command" = "set" ] && [ "$3" = "-i" ]; then
+    elif [ "$command" = "set" ]; then
+        # FIXME: switch only when changing task ID, not always.
+        # Fix a good way to parse option '-i' for renaming task ID.
         TASKID=$(eval $TMANCMD get curr)
         cd $TASKS/${TASKID}
         wd -q rm task
         wd -q add task
-        wd task
 
     elif [ "$command" = "del" ]; then
         TASKID="$(eval $TMANCMD get curr)"
@@ -122,7 +123,6 @@ function _tman_handle_commands()
             cd $TASKS
         fi
     fi
-    return $retcode
 }
 
 function tman()
@@ -140,7 +140,9 @@ function tman()
 
     _tman_form_command
     eval $TMANCMD $@
-
-    _tman_handle_commands $? $@
+    if [ "$?" -ne 0 ]; then
+        return 1
+    fi
+    _tman_handle_commands $@
     return $?
 }
