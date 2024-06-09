@@ -4,21 +4,6 @@
 local utils = require("aux.utils")
 local config = require("misc.config")
 
-local progname = "tman"
-local version = "0.1.6"
-
--- die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
--- input
---       die (EXIT_TROUBLE, 0, "%s: %s", str,
--- _("invalid context length argument"));
--- output
--- grep: oeu: invalid context length argument
-local function core_die(exit_code, errfmt, ...)
-    local errmsg = ("%s: %s: " .. errfmt):format(progname, ...)
-    io.stderr:write(errmsg)
-    os.exit(exit_code)
-end
-
 --- Init system to use a util.
 local function core_init()
     -- dirs
@@ -116,7 +101,8 @@ local function core_restore(fname)
     local cmd = ("tar -xf %s -C %s"):format(fname, config.base)
 
     if not utils.access(fname) then
-        core_die(1, "no such file\n", fname)
+        io.stderr:write(("'%s': no such tar file\n"):format(fname))
+        return false
     end
 
     print("delete current structure")
@@ -126,20 +112,17 @@ local function core_restore(fname)
 
     print("copy backup structure")
     if not utils.exec(cmd) then
-        core_die(1, "failed to execute archive command", "")
+        io.stderr:write("failed to execute archive command\n")
+        return false
     end
-    return 0
+    return true
 end
 
 return {
-    die = core_die,
     init = core_init,
     check = core_check,
     repair = core_repair,
     showconf = core_show_config,
     backup = core_backup,
     restore = core_restore,
-
-    version = version,
-    progname = progname,
 }

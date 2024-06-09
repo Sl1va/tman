@@ -10,7 +10,6 @@ local taskid = require("taskid")
 local taskunit = require("taskunit")
 
 -- Tman misc components.
-local die = require("misc.die")
 local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
@@ -38,6 +37,18 @@ Erorr codes:
 ]]
 
 -- Private functions: start --
+
+-- die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
+-- input
+--       die (EXIT_TROUBLE, 0, "%s: %s", str,
+-- _("invalid context length argument"));
+-- output
+-- grep: oeu: invalid context length argument
+local function die(exit_code, errfmt, ...)
+    local errmsg = ("%s: %s: " .. errfmt):format(help.progname, ...)
+    io.stderr:write(errmsg)
+    os.exit(exit_code)
+end
 
 --- Set task description.
 -- @param id task ID
@@ -67,9 +78,9 @@ end
 -- @return on failure - error code
 local function _set_id(id, newid)
     if id == newid then
-        die.die(1, "the same task ID\n", newid)
+        die(1, "the same task ID\n", newid)
     elseif taskid.exist(newid) then
-        die.die(1, "task ID already exists\n", newid)
+        die(1, "task ID already exists\n", newid)
     end
 
     if not git.branch_switch(id) then
@@ -104,7 +115,7 @@ local function _set_prio(id, newprio)
     local prio = taskunit.get(id, "prio")
 
     if newprio == prio then
-        die.die(1, "the same priority\n", newprio)
+        die(1, "the same priority\n", newprio)
     end
     if not taskunit.set(id, "prio", newprio) then
         return 1
@@ -129,10 +140,10 @@ end
 local function _checkid(id)
     id = id or taskid.getcurr()
     if not id then
-        die.die(1, "no current task\n", "")
+        die(1, "no current task\n", "")
     end
     if not taskid.exist(id) then
-        die.die(1, "no such task ID\n", id)
+        die(1, "no such task ID\n", id)
     end
     return true
 end
@@ -189,7 +200,7 @@ local function tman_use()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            die.die(1, "unrecognized option\n", arg[optind - 1])
+            die(1, "unrecognized option\n", arg[optind - 1])
         end
         if optopt == "h" then
             print("WARNING: fake option", optarg or "NIL")
@@ -198,16 +209,16 @@ local function tman_use()
 
     id = arg[last_index]
     if not id then
-        die.die(1, "task ID required\n", "")
+        die(1, "task ID required\n", "")
     end
     if not taskid.exist(id) then
-        die.die(1, "task ID doesn't exist\n", id)
+        die(1, "task ID doesn't exist\n", id)
     end
     if taskid.getcurr() == id then
-        die.die(1, "already in use\n", id)
+        die(1, "already in use\n", id)
     end
     if not git.branch_switch(id) then
-        die.die(1, "has uncommited changes\n", "repo")
+        die(1, "has uncommited changes\n", "repo")
     end
     taskid.setcurr(id)
     return 0
@@ -218,10 +229,10 @@ local function tman_prev()
     local prev = taskid.getprev()
 
     if not prev then
-        die.die(1, "no previous task\n", "")
+        die(1, "no previous task\n", "")
     end
     if not git.branch_switch(prev) then
-        die.die(1, "repo has uncommited changes\n", "REPONAME")
+        die(1, "repo has uncommited changes\n", "REPONAME")
     end
     taskid.swap()
     return 0
@@ -270,7 +281,7 @@ local function tman_cat()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            die.die(1, "unrecognized option\n", arg[optind - 1])
+            die(1, "unrecognized option\n", arg[optind - 1])
         end
         last_index = optind
         if optopt == "k" then
@@ -280,9 +291,9 @@ local function tman_cat()
 
     id = arg[last_index] or taskid.getcurr()
     if not id then
-        die.die(1, "no current task ID\n", "")
+        die(1, "no current task ID\n", "")
     elseif not taskid.exist(id) then
-        die.die(1, "no such task ID\n", id)
+        die(1, "no such task ID\n", id)
     end
     taskunit.cat(id, key)
     return 0
@@ -300,7 +311,7 @@ local function tman_set()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            die.die(1, "unrecognized option\n", arg[optind - 1])
+            die(1, "unrecognized option\n", arg[optind - 1])
         end
 
         last_index = optind
@@ -308,7 +319,7 @@ local function tman_set()
             io.write(("New description (%s): "):format(""))
             newdesc = io.read("*l")
             if not taskunit.check("desc", newdesc) then
-                die.die(1, "description has illegal symbols\n", "")
+                die(1, "description has illegal symbols\n", "")
             end
         elseif optopt == "i" then
             newid = optarg
@@ -316,12 +327,12 @@ local function tman_set()
             newlink = optarg
         elseif optopt == "p" then
             if not taskunit.check("prio", optarg) then
-                die.die(1, "invalid priority\n", optarg)
+                die(1, "invalid priority\n", optarg)
             end
             newprio = optarg
         elseif optopt == "t" then
             if not taskunit.check("type", optarg) then
-                die.die(1, "invalid task type\n", optarg)
+                die(1, "invalid task type\n", optarg)
             end
             newtype = optarg
         end
@@ -329,9 +340,9 @@ local function tman_set()
 
     id = arg[last_index] or taskid.getcurr()
     if not id then
-        die.die(1, "no current task ID\n", "")
+        die(1, "no current task ID\n", "")
     elseif not taskid.exist(id) then
-        die.die(1, "no such task ID\n", id)
+        die(1, "no such task ID\n", id)
     end
 
     if newid and newtype then
@@ -507,7 +518,7 @@ local function tman_archive()
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
-            die.die(1, "unrecognized option\n", arg[optind - 1])
+            die(1, "unrecognized option\n", arg[optind - 1])
         end
         if optopt == "b" then
             print("backup")
@@ -522,7 +533,7 @@ local function tman_archive()
     end
 
     if backup_file and restore_file then
-        die.die(1, "backup and restore options can't be used together\n", "")
+        die(1, "backup and restore options can't be used together\n", "")
     end
 
     if backup_file then

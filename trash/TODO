@@ -16,7 +16,6 @@ In progress:
     27. Optimize db.lua: use task ID as table index.
     30. core.lua gotta check config file as well.
     31. Delete CUI from `tman set' command.
-    31. function die() should be used only in tman.lua.
     32. Diet repos over time.
     33. `tman del' add test ID with description.
     34. Find a place to store progname and version. There're in core.lua and help.lua now.
@@ -44,3 +43,4 @@ Done:
     23. Add unit for actvite repos.
     28. Delete sort() from db.lua, it shouldn't know about it.
     29. taskunit.lua can't change task type.
+    31. Function die() should be used only in tman.lua.
