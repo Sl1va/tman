@@ -100,7 +100,10 @@ local function core_backup(fname, repo_included)
     if repo_included then
         cmd = ("tar -C %s -czf %s.tar ."):format(config.base, fname)
     else
-        cmd = ("tar -C %s --exclude=codebase -czf %s.tar ."):format(config.base, fname)
+        cmd = ("tar -C %s --exclude=codebase -czf %s.tar ."):format(
+            config.base,
+            fname
+        )
     end
     return utils.exec(cmd)
 end

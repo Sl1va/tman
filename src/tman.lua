@@ -495,14 +495,6 @@ end
 
 local function tman_test() end
 
-local function _backup(file, include_repo)
-    print("_backup", file, include_repo)
-end
-
-local function _restore(file)
-    print("_restore", file)
-end
-
 local function tman_archive()
     local optstr = "Rb:r:"
     local include_repo = false
