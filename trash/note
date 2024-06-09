@@ -1,3 +1,6 @@
+Phylosophy:
+    1. Changes should be atomic. Check all things before changing anything.
+
 
 # Local functions.
 _setprev - mark a task ID as previous
