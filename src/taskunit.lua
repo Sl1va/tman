@@ -58,11 +58,23 @@ local function format_branch()
     return branch
 end
 
+--- Check that task ID has no illegal symbols.
+-- @param id task ID
+-- @return on success - true
+-- @return on failure - false
+local function _check_id(id)
+    local descregex = "[a-zA-Z0-9_%s-]*"
+    if string.match(id, descregex) == id then
+        return true
+    end
+    return false
+end
+
 --- Check that description has no illegal symbols.
 -- @param desc description
 -- @return on success - true
 -- @return on failure - false
-local function check_desc(desc)
+local function _check_desc(desc)
     local descregex = "[a-zA-Z0-9_%s-]*"
     if string.match(desc, descregex) == desc then
         return true
@@ -70,10 +82,22 @@ local function check_desc(desc)
     return false
 end
 
+--- Check that priority exists.
+-- @param priority priority to check
+-- @return true on success, otherwise false
+local function _check_prio(priority)
+    for _, prio in pairs(unit.prios) do
+        if prio == priority then
+            return true
+        end
+    end
+    return false
+end
+
 --- Check that user specified task type exists.
 -- @tparam string type user specified type
 -- @treturn bool true if exists, otherwise false
-local function check_tasktype(type)
+local function _check_type(type)
     local tasktypes = { "bugfix", "feature", "hotfix" }
 
     if not type then
@@ -81,18 +105,6 @@ local function check_tasktype(type)
     end
     for _, dtype in pairs(tasktypes) do
         if type == dtype then
-            return true
-        end
-    end
-    return false
-end
-
---- Check that priority exists.
--- @param priority priority to check
--- @return true on success, otherwise false
-local function check_unit_prios(priority)
-    for _, prio in pairs(unit.prios) do
-        if prio == priority then
             return true
         end
     end
@@ -131,7 +143,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_type(id, newtype)
-    if not check_tasktype(newtype) then
+    if not _check_type(newtype) then
         die.die(1, "invalid task type\n", newtype)
     end
 
@@ -149,7 +161,7 @@ end
 local function _set_prio(id, newprio)
     unit.init(config.ids .. id)
 
-    if not check_unit_prios(newprio) then
+    if not _check_prio(newprio) then
         die.die(1, "invalid priority\n", newprio)
     end
     unit.set("prio", newprio)
@@ -207,7 +219,11 @@ local function taskunit_add(id, tasktype, prio)
     unit.set("status", "progress")
     unit.set("branch", format_branch())
 
-    if not check_desc(desc) then
+    if not _check_id(id) then
+        log:err("task ID isn't valid", config.branchpatt)
+        return false
+    end
+    if not _check_desc(desc) then
         log:err("description isn't valid", config.branchpatt)
         return false
     end
@@ -215,11 +231,11 @@ local function taskunit_add(id, tasktype, prio)
         log:err("branch pattern isn't valid", config.branchpatt)
         return false
     end
-    if not check_tasktype(tasktype) then
+    if not _check_type(tasktype) then
         log:err("unknown task type: '%s'", tasktype)
         return false
     end
-    if not check_unit_prios(prio) then
+    if not _check_prio(prio) then
         log:err("unknown task priority: '%s'", prio)
         return false
     end
@@ -233,15 +249,24 @@ local function taskunit_del(id)
     return utils.rm(unitfile)
 end
 
-local function taskunit_check(key, value)
-    if key == "desc" then
-        return check_desc(value)
-    elseif key == "prio" then
-        return check_unit_prios(value)
-    elseif key == "type" then
-        return check_tasktype(value)
+--- Show task unit metadata.
+-- @param id task ID
+-- @param key show only that key
+-- @return true on success
+local function taskunit_cat(id, key)
+    unit.init(config.ids .. id)
+
+    if key then
+        -- use defval for backward compatibility with old tasks
+        print(("%-8s: %s"):format(key, unit.get(key) or unit.defval))
+        return true
     end
-    return false
+
+    for _, ukey in pairs(unit.keys) do
+        -- use defval for backward compatibility with old tasks
+        print(("%-8s: %s"):format(ukey, unit.get(ukey) or unit.defval))
+    end
+    return true
 end
 
 --- Get unit from task metadata.
@@ -281,24 +306,22 @@ local function taskunit_set(id, key, value)
     return unit.save()
 end
 
---- Show task unit metadata.
--- @param id task ID
--- @param key show only that key
--- @return true on success
-local function taskunit_cat(id, key)
-    unit.init(config.ids .. id)
-
-    if key then
-        -- use defval for backward compatibility with old tasks
-        print(("%-8s: %s"):format(key, unit.get(key) or unit.defval))
-        return true
+--- Check task units.
+-- @param key unit key
+-- @param value unit value to check
+-- @return on success - true
+-- @return on failure - false
+local function taskunit_check(key, value)
+    if key == "id" then
+        return _check_id(value)
+    elseif key == "desc" then
+        return _check_desc(value)
+    elseif key == "prio" then
+        return _check_prio(value)
+    elseif key == "type" then
+        return _check_type(value)
     end
-
-    for _, ukey in pairs(unit.keys) do
-        -- use defval for backward compatibility with old tasks
-        print(("%-8s: %s"):format(ukey, unit.get(ukey) or unit.defval))
-    end
-    return true
+    return false
 end
 
 -- Public functions: end --
