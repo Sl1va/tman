@@ -67,9 +67,9 @@ end
 -- @return on failure - error code
 local function _set_id(id, newid)
     if id == newid then
-        die.die(1, "the same task ID", newid)
+        die.die(1, "the same task ID\n", newid)
     elseif taskid.exist(newid) then
-        die.die(1, "task ID already exists", newid)
+        die.die(1, "task ID already exists\n", newid)
     end
 
     if not git.branch_switch(id) then
