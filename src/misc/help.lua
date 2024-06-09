@@ -10,7 +10,7 @@ Usage: %s COMMAND [OPTION] [ID]
 Use '%s help COMMAND' to get command's detailed info.
 
 COMMANDS:
-Kickoffs:
+System:
   init    - init util structure.
   archive - backup and restore metadata
 
