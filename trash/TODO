@@ -21,6 +21,7 @@ In progress:
     34. Find a place to store progname and version. There're in core.lua and help.lua now.
     35. tman.sh can't handle args with quotes `tman set -d "test task 2"'.
     36. `tman set' always switch to task dir.
+    37. Move repos into directory cuz their number's getting bigger.
 
 
 Gotta work on (still):
