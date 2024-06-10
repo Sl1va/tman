@@ -33,6 +33,19 @@ local function change_check_repo(reponame)
     return utils.exec(cmd) == 0
 end
 
+--- Check whether repo has uncommited changes.
+-- @param reponame repo name
+-- @return has uncommited changes - true
+-- @return no uncommited changes -  false
+local function has_changes(reponame)
+    local repopath = config.codebase .. reponame
+    local cmd = "git -C %s diff --quiet --exit-code"
+    cmd = string.format(cmd, repopath)
+    local ret = utils.exec(cmd)
+    --print("cmd", ret, cmd)
+    return ret ~= 0
+end
+
 --- Check repos for uncommited chanegs.
 local function changes_check()
     for _, repo in pairs(repos) do
@@ -260,6 +273,53 @@ local function git_check(id)
     return true
 end
 
+--- Check commit message according to patterns.
+-- Under development.
+-- @param msg commit message
+local function git_commit_check(msg)
+    if msg then
+        return true
+    end
+    return true
+end
+
+--- Create commit according to pattern for repos.
+-- @param id task ID
+-- @return on success - true
+-- @return on success - false
+local function git_commit_create(id)
+    local cmd
+    local desc = taskunit.get(id, "desc")
+
+    -- roach: check that repo's branch is task branch.
+    -- if not tryna switch to task branch.
+
+    for _, repo in pairs(repos) do
+        if has_changes(repo.name) then
+            --print("repo", repo.name)
+            local repopath = config.codebase .. repo.name
+            cmd = ("git -C %s add . 1>/dev/null"):format(repopath)
+            utils.exec(cmd)
+
+            -- roach: find a good way to determine part
+            local part = "part"
+
+            local msg = ("[%s] %s: %s"):format(id, part, desc)
+
+            -- check commit length and all
+            if not git_commit_check(msg) then
+                print("commit message checker failed")
+                return false
+            end
+
+            -- create a commit
+            cmd = ("git -C %s commit -m '%s' 1>/dev/null"):format(repopath, msg)
+            utils.exec(cmd)
+        end
+    end
+    return true
+end
+
 -- Public functions: end --
 
 return {
@@ -273,6 +333,8 @@ return {
     branch_rebase = git_branch_rebase,
     branch_merged = git_branch_merged,
     branch_default = git_branch_default,
+
+    commit_create = git_commit_create,
 
     -- under development
     branch_ahead = git_branch_ahead,

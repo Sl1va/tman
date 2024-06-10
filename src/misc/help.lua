@@ -20,6 +20,7 @@ Basic:
   list    - list tasks
   cat     - cat task info
   prev    - switch to previous task
+  pack    - pack commits in repos for review.
   done    - move task to completed status
 
 Amend:
@@ -141,6 +142,13 @@ PARAM can have one of the next values
         desc = [[
 Usage: tman prev
 Switch to previous task. If no previous task exist informs about it.
+]],
+    },
+    {
+        name = "pack",
+        desc = [[
+Usage: tman pack [TASKID]
+Pack commits in repos for review.
 ]],
     },
     {

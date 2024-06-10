@@ -548,6 +548,17 @@ local function tman_archive()
     return 0
 end
 
+--- Pack commits in repos for review.
+local function tman_pack(id)
+    id = id or taskid.getcurr()
+
+    if not taskid.exist(id) then
+        die(1, "task ID doesn't exist\n", id)
+    end
+
+    git.commit_create(id)
+end
+
 -- Public functions: end --
 
 --- Util interface.
@@ -594,6 +605,8 @@ local function main()
         return tman_test()
     elseif cmd == "archive" then
         return tman_archive()
+    elseif cmd == "pack" then
+        return tman_pack(arg[1])
     elseif cmd == "help" then
         return help.usage(arg[1])
     elseif cmd == "ver" then
