@@ -33,28 +33,36 @@ function _tman_find_config()
 
 function _tman_get_config()
 {
-    TMAN_BASE="$(cat "$TMAN_CONFIG_FILE" | grep "^\bTMANBase\b" | awk '{print $3}' | tr -d '"')"
-    TMAN_INSTALL="$(cat "$TMAN_CONFIG_FILE" | grep -E "^\bTMANInstall\b" | awk '{print $3}' | tr -d '"')"
+    myopts="-e package.path = \"$TMAN_CONFIG_FILE;\" .. package.path; local conf = require('tman_conf')"
+    base="$(lua "$myopts; print(conf.base)")"
+    inst="$(lua "$myopts; print(conf.install)")"
 
-    # Expand tilde to $HOME
-    TMAN_INSTALL="${TMAN_INSTALL/#\~/$HOME}"
-    TMAN_BASE="${TMAN_BASE/#\~/$HOME}"
+    base="${base/\~/$HOME}"
+    inst="${inst/\~/$HOME}"
 
-    if [ -z "$TMAN_BASE" ]; then
-        echo "err: no TMANBase path in the config"
+    # make sure base is valid and exists
+    if [ "$base" = "nil" ]; then
+        echo "error: no base varibale in config"
         return 1
-    elif [ ! -d $TMAN_BASE ]; then
-        echo "err:TMANBase: no such directory $TMAN_BASE"
+    fi
+    if [ ! -d "$base" ]; then
+        echo "error:${base}: base directory doesn't exist"
         return 1
     fi
 
-    if [ -z "$TMAN_INSTALL" ]; then
-        echo "err: no TMANInstall path in config"
-        return 1
-    elif [ ! -d $TMAN_INSTALL ]; then
-        echo "err:TMANInstall: no such directory $TMAN_INSTALL"
+    # make sure inst is valid and exists
+    if [ "$inst" = "nil" ]; then
+        echo "error: no inst varibale in config"
         return 1
     fi
+    if [ ! -d "$inst" ]; then
+        echo "error:${inst}: inst directory doesn't exist"
+        return 1
+    fi
+
+    TMAN_BASE="$base"
+    TMAN_INSTALL="$inst"
+    return 0
 }
 
 function _tman_form_command()
