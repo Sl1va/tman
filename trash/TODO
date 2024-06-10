@@ -1,47 +1,47 @@
 In progress:
-    6. Add file lock to task units.
-    9. Add task and command suggestions.
-    11. Add git commit checker and pattern.
-    12. Keep an eye on the Cargo's stylua. It's good but heavy.
-    13. install.sh: separate user and developer tool installation.
-    14. Make all commands alike so they can be put in array and called in main().
-    16. `getopt' vs `getops'. Which one to use?
-    18. Get rid of os.exit() in tman.lua. There's a better way.
-    19. Add module for default values so util doesn't break if no config is preesented.
-    20. `tman update' doesn't work if no current task. Fix it.
-    22. taskunit status - fix it or get rid of it.
-    24. git: Add support to download repos.
-    25. Find a good way to delete unused and that no longer on remote repo.
-    26. Add support to work on different environments: work, personal, test.
-    27. Optimize db.lua: use task ID as table index.
-    30. core.lua gotta check config file as well.
-    31. Delete CUI from `tman set' command.
-    32. Diet repos over time.
-    33. `tman del' add test ID with description.
-    34. Find a place to store progname and version. There're in core.lua and help.lua now.
-    35. tman.sh can't handle args with quotes `tman set -d "test task 2"'.
-    36. `tman set' always switch to task dir.
-    37. Move repos into directory cuz their number's getting bigger.
+    6.   Add file lock to task units.
+    9.   Add task and command suggestions.
+    11.  Add git commit checker and pattern.
+    12.  Keep an eye on the Cargo's stylua. It's good but heavy.
+    13.  install.sh: separate user and developer tool installation.
+    14.  Make all commands alike so they can be put in array and called in main().
+    16.  `getopt' vs `getops'. Which one to use?
+    18.  Get rid of os.exit() in tman.lua. There's a better way.
+    19.  Add module for default values so util doesn't break if no config is preesented.
+    20.  `tman update' doesn't work if no current task. Fix it.
+    22.  taskunit status - fix it or get rid of it.
+    24.  git: Add support to download repos.
+    25.  Find a good way to delete unused and that no longer on remote repo.
+    26.  Add support to work on different environments: work, personal, test.
+    27.  Optimize db.lua: use task ID as table index.
+    30.  core.lua gotta check config file as well.
+    31.  Delete CUI from `tman set' command.
+    32.  Diet repos over time.
+    33.  `tman del' add test ID with description.
+    34.  Find a place to store progname and version. There're in core.lua and help.lua now.
+    35.  tman.sh can't handle args with quotes `tman set -d "test task 2"'.
+    36.  `tman set' always switch to task dir.
+    37.  Move repos into directory cuz their number's getting bigger.
 
 
 Gotta work on (still):
-    4. Maybe there's a better config file than Lua module.
-    7. Gotta think about some stuff like additition elements, diff date, etc.
+    4.   Maybe there's a better config file than Lua module.
+    7.   Gotta think about some stuff like additition elements, diff date, etc.
 
 
 Done:
-    1. Refactor taskunit.lua. It looks messy and disgusting
-    2. Refactor git.lua. Looks messy
-    3. Properly fix backup and restore commands
-    4. Find a good config syntax to fit options, install path, repos, etc.
-    5. Move taks dir/file structure into the file. Leave system ones in the code.
-    7. Move branch formation pattern to config file cuz it can be diff for other.
-    8. Make git.lua module more rubost and bring some order into it.
-    10. Do git rebase if it's possible without merge conflics.
-    15. Refactor git module. Getting bigger and messier.
-    17. Command `del': switch to previous task branch if it exists
-    21. `tman del' doesn't show task ID. Fix it.
-    23. Add unit for actvite repos.
-    28. Delete sort() from db.lua, it shouldn't know about it.
-    29. taskunit.lua can't change task type.
-    31. Function die() should be used only in tman.lua.
+    1.   Refactor taskunit.lua. It looks messy and disgusting
+    2.   Refactor git.lua. Looks messy
+    3.   Properly fix backup and restore commands
+    4.   Find a good config syntax to fit options, install path, repos, etc.
+    5.   Move taks dir/file structure into the file. Leave system ones in the code.
+    7.   Move branch formation pattern to config file cuz it can be diff for other.
+    8.   Make git.lua module more rubost and bring some order into it.
+    10.  Do git rebase if it's possible without merge conflics.
+    15.  Refactor git module. Getting bigger and messier.
+    17.  Command `del': switch to previous task branch if it exists
+    21.  `tman del' doesn't show task ID. Fix it.
+    23.  Add unit for actvite repos.
+    28.  Delete sort() from db.lua, it shouldn't know about it.
+    29.  taskunit.lua can't change task type.
+    31.  Function die() should be used only in tman.lua.
