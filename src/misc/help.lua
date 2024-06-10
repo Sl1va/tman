@@ -172,8 +172,8 @@ Options:
     {
         name = "help",
         desc = [[
-Usage: tman help
-Show list of commands with description.
+Usage: tman help [COMMAND]
+Show help message. If `COMMAND' applied then show info about command.
 ]],
     },
     {
