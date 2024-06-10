@@ -427,7 +427,11 @@ local function tman_del(id)
         os.exit(1)
     end
 
-    git.branch_delete(id)
+    -- roachme: when it deletes task branch what branch is it on?
+    -- anyway, find a nice logic.
+    if not git.branch_delete(id) then
+        die(1, "repo has uncommited changes", "")
+    end
     taskunit.del(id)
     taskid.del(id)
 

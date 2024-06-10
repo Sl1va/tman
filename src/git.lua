@@ -112,12 +112,13 @@ end
 --- Create a branch for task.
 -- Also symlinks repos for a task.
 -- @param id task ID
--- @return true on success, otherwise false
+-- @return on success - true
+-- @return on failure - false
 local function git_branch_create(id)
     local branch = taskunit.get(id, "branch")
 
     if not changes_check() then
-        return 1
+        return false
     end
 
     for _, repo in pairs(repos) do
@@ -125,7 +126,7 @@ local function git_branch_create(id)
         utils.exec(gcheckout:format(repopath, repo.branch))
         utils.exec(gcheckoutb:format(repopath, branch))
     end
-    return 0
+    return true
 end
 
 --- Rename task branch.
