@@ -20,6 +20,10 @@ end
 --- Check tman dir ain't corrupted and exists.
 -- @return true on success, otherwise false
 local function core_check()
+    -- roachme:
+    -- return 1: tman core stuff are corrupted
+    -- retrun 2: tman base stuff are corrupted
+    -- NOT dirs / files
     local files = {
         config.taskids,
         config.initfile,

@@ -23,6 +23,7 @@ In progress:
     36.  `tman set' always switch to task dir.
     37.  Move repos into directory cuz their number's getting bigger.
     38.  System and user config variable names might collide with each othre. Fix config.lua. Use diff namespaces.
+    39.  Change checker in core.lua to check tman core, not tman base.
 
 
 Gotta work on (still):
