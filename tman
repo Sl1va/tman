@@ -1,0 +1,72 @@
+#!/bin/bash
+
+TMAN=""
+TMAN_WD=
+
+function _tman_find_config_file()
+{
+}
+
+# tman -b basepath -c configpath CMD OPTIONS arg
+
+
+function _tman_handle_command()
+{
+    local cmd="$2"
+    local base="$(eval $TMAN shell base)"
+    local envcurr="$(eval $TMAN shell envcurr)"
+
+    if [ "$cmd" = "add" ]; then
+        local taskid="$3"
+        local taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir"
+        wd add -q -f task
+
+    elif [ "$cmd" = "del" ]; then
+        local taskid="$(eval $TMAN get curr)"
+        local taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir"
+        if [ -n "$taskid" ]; then
+            wd add -q -f task
+        else
+            wd rm -q task
+        fi
+
+    elif [ "$cmd" = "prev" ]; then
+        local taskid="$(eval $TMAN get curr)"
+        local taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir"
+        wd add -q -f task
+
+    elif [ "$cmd" = "set" ]; then
+        echo "WARNING:shell: set: under development"
+
+    elif [ "$cmd" = "use" ]; then
+        local taskid="$3"
+        local taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir"
+        wd add -q -f task
+    fi
+}
+
+function tman()
+{
+    local retcode=
+    local script="/home/roach/personal/prjs/toolkit/tman/src/tman.lua"
+    local tman_conf="/home/roach/.config/tman/tman_conf.lua"
+
+    local stat="package.path = package.path"
+    stat="$stat .. ';/home/roach/personal/prjs/toolkit/tman/src/?.lua;'"
+    stat="$stat .. '/home/roach/.config/tman/?.lua'"
+
+    TMAN="lua -e \"$stat\" $script"
+    eval $TMAN $@
+    retcode="$?"
+
+    if [ $retcode -ne 0 ]; then
+        #echo "tman:shell: command failed"
+        return $retcode
+    fi
+
+    _tman_handle_command $@
+}
