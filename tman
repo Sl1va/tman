@@ -4,6 +4,7 @@ TMAN=""
 TMAN_WD=
 TMAN_BASE=
 TMAN_INSTALL=
+TMAN_TMANCONF=
 
 
 # tman -b basepath -c configpath CMD OPTIONS arg
@@ -48,14 +49,16 @@ function _tman_handle_command()
     fi
 }
 
+function _tman_get_tmanconf()
+{
+    TMAN_TMANCONF="${HOME}/.tman/sys.conf"
+}
+
 function _tman_get_sys_config_vars()
 {
-    local sysconfig="/home/roach/.config/tman/sys.conf"
-    TMAN_BASE="$(grep base "$sysconfig" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-    TMAN_INSTALL="$(grep install "$sysconfig" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-
-    echo "TMAN_BASE: $TMAN_BASE"
-    echo "TMAN_INSTALL: $TMAN_INSTALL"
+    _tman_get_tmanconf
+    TMAN_BASE="$(grep base "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+    TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
 }
 
 function _tman_form_full_command()
