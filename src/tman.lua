@@ -572,9 +572,6 @@ local function main()
     if corecheck == 1 and cmd ~= "init" then
         io.stderr:write("tman: structure not inited\n")
         return 1
-    elseif corecheck == 2 and cmd ~= "init" then
-        io.stderr:write("tman: structure corrupted\n")
-        return 1
     end
 
     if cmd == "init" then

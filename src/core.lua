@@ -35,18 +35,14 @@ local function core_check()
         config.codebase,
     }
 
-    if not utils.access(config.initfile) then
-        return 1
-    end
-
     for _, dir in pairs(dirs) do
         if not utils.access(dir) then
-            return 2
+            return 1
         end
     end
     for _, file in pairs(files) do
         if not utils.access(file) then
-            return 2
+            return 1
         end
     end
     return 0
