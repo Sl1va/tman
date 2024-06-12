@@ -1,9 +1,5 @@
 #!/bin/bash
 
-TMAN_CONFPATH="${HOME}/.config/tman"
-TMAN_SYSCONF="${TMAN_CONFPATH}/sys.conf"
-
-
 usage()
 {
     cat << EOF
@@ -21,14 +17,34 @@ EOF
 
 generate_system_config()
 {
-    mkdir -p "$TMAN_CONFPATH"
-    touch "$TMAN_SYSCONF"
+    local tmanbase="$HOME/tman"
+    local tmancore="$HOME/.tman"
+    local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
+    local tmanconf="$tmancore/sys.conf"
 
-    cat << EOF > "$TMAN_SYSCONF"
-# recommended not to change this file manually.
-base = "${HOME}/tman"
-install = "$(pwd)"
-EOF
+    # create tman core directory
+    mkdir -p "$tmancore"
+
+    # create tman base directory
+    mkdir -p "$tmanbase"
+
+    # create tman system config
+    touch "$tmanconf"
+
+    # fill tman system config
+    echo "# NOT recommended to change this file manually." > "$tmanconf"
+    echo "base = $tmanbase" >> "$tmanconf"
+    echo "core = $tmancore" >> "$tmanconf"
+    echo "install = $tmaninst" >> "$tmanconf"
+
+    # create task ID database file
+    touch "$tmancore/taskids"
+
+    # create task units database directory
+    mkdir -p "$tmancore/units"
+
+    # and finally, create user config file
+    touch "$tmancore/user.conf"
 }
 
 check_system_utils()
