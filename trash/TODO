@@ -22,6 +22,7 @@ In progress:
     35.  tman.sh can't handle args with quotes `tman set -d "test task 2"'.
     36.  `tman set' always switch to task dir.
     37.  Move repos into directory cuz their number's getting bigger.
+    38.  System and user config variable names might collide with each othre. Fix config.lua. Use diff namespaces.
 
 
 Gotta work on (still):
