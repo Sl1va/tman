@@ -2,10 +2,9 @@
 
 TMAN=""
 TMAN_WD=
+TMAN_BASE=
+TMAN_INSTALL=
 
-function _tman_find_config_file()
-{
-}
 
 # tman -b basepath -c configpath CMD OPTIONS arg
 
@@ -13,8 +12,8 @@ function _tman_find_config_file()
 function _tman_handle_command()
 {
     local cmd="$2"
-    local base="$(eval $TMAN shell base)"
-    local envcurr="$(eval $TMAN shell envcurr)"
+    local base="$TMAN_BASE"
+    local envcurr=""
 
     if [ "$cmd" = "add" ]; then
         local taskid="$3"
@@ -49,24 +48,44 @@ function _tman_handle_command()
     fi
 }
 
-function tman()
+function _tman_get_sys_config_vars()
 {
-    local retcode=
-    local script="/home/roach/personal/prjs/toolkit/tman/src/tman.lua"
+    local sysconfig="/home/roach/.config/tman/sys.conf"
+    TMAN_BASE="$(grep base "$sysconfig" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+    TMAN_INSTALL="$(grep install "$sysconfig" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+
+    echo "TMAN_BASE: $TMAN_BASE"
+    echo "TMAN_INSTALL: $TMAN_INSTALL"
+}
+
+function _tman_form_full_command()
+{
+    local script="${TMAN_INSTALL}/src/tman.lua"
     local tman_conf="/home/roach/.config/tman/tman_conf.lua"
 
     local stat="package.path = package.path"
-    stat="$stat .. ';/home/roach/personal/prjs/toolkit/tman/src/?.lua;'"
+    stat="$stat .. ';${TMAN_INSTALL}/src/?.lua;'"
     stat="$stat .. '/home/roach/.config/tman/?.lua'"
 
     TMAN="lua -e \"$stat\" $script"
+}
+
+function tman()
+{
+    local retcode=
+
     eval $TMAN $@
     retcode="$?"
 
     if [ $retcode -ne 0 ]; then
-        #echo "tman:shell: command failed"
         return $retcode
     fi
 
     _tman_handle_command $@
 }
+
+
+# Run command
+_tman_get_sys_config_vars
+_tman_form_full_command
+tman $@
