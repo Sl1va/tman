@@ -1,5 +1,8 @@
 #!/bin/bash
 
+TMAN_CONFPATH="${HOME}/.config/tman"
+TMAN_SYSCONF="${TMAN_CONFPATH}/sys.conf"
+
 
 usage()
 {
@@ -11,7 +14,20 @@ USERTYPE - install for user or developer
 Options:
     -c      check system utils and luarocks (default).
     -i      install system utils and luarocks
+    -g      generate and install system config
     -h      show this help message
+EOF
+}
+
+generate_system_config()
+{
+    mkdir -p "$TMAN_CONFPATH"
+    touch "$TMAN_SYSCONF"
+
+    cat << EOF > "$TMAN_SYSCONF"
+# recommended not to change this file manually.
+base = "${HOME}/tman"
+install = "$(pwd)"
 EOF
 }
 
@@ -73,6 +89,7 @@ install_shell()
     echo "'source ~/$USERSHELL' - to restart shell"
 }
 
+
 if [ "$1" = "-i" ]; then
     install_system_utils
     install_lua_rocks
@@ -81,6 +98,8 @@ if [ "$1" = "-i" ]; then
 elif [ -z "$1" -o "$1" = "-c" ]; then
     check_system_utils
     check_lua_rocks
+elif [ "$1" = "-g" ]; then
+    generate_system_config
 elif [ "$1" = "-h" ]; then
     usage
 else
