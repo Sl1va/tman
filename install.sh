@@ -9,7 +9,8 @@ USERTYPE - install for user or developer
 
 Options:
     -c      check system utils and luarocks (default).
-    -i      install system utils and luarocks
+    -i      user env: install only necessary dependencies for util to work
+    -I      developer env: install system utils and luarocks
     -g      generate and install system config
     -h      show this help message
 EOF
@@ -114,6 +115,11 @@ install_shell()
 
 
 if [ "$1" = "-i" ]; then
+    install_system_utils
+    install_lua_rocks
+    install_shell
+    generate_system_config
+elif [ "$1" = "-I" ]; then
     install_system_utils
     install_lua_rocks
     install_shell
