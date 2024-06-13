@@ -64,11 +64,11 @@ function _tman_get_sys_config_vars()
 function _tman_form_full_command()
 {
     local script="${TMAN_INSTALL}/src/tman.lua"
-    local tman_conf="/home/roach/.config/tman/tman_conf.lua"
+    local tman_conf="${HOME}/.config/tman/tman_conf.lua"
 
     local stat="package.path = package.path"
     stat="$stat .. ';${TMAN_INSTALL}/src/?.lua;'"
-    stat="$stat .. '/home/roach/.config/tman/?.lua'"
+    stat="$stat .. '${HOME}/.config/tman/?.lua'"
 
     TMAN="lua -e \"$stat\" $script"
 }

@@ -25,7 +25,7 @@ generate_system_config()
     local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
     local tmancore="${tmanbase}/.tman"
     local tmanconf="$confdir/sys.conf"
-    local userconf="$confdir/user.conf"
+    local userconf="$confdir/tman_conf.lua" # FIXME: should be user.conf
 
     # create tman base directory
     mkdir -p "$tmanbase"
@@ -43,6 +43,9 @@ generate_system_config()
     echo "base = $tmanbase" >> "$tmanconf"
     echo "core = $tmancore" >> "$tmanconf"
     echo "install = $tmaninst" >> "$tmanconf"
+
+    # fill tman user config
+    echo "return {}" > "$userconf"
 
     # create task ID database file
     touch "$tmancore/taskids"
