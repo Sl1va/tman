@@ -18,9 +18,10 @@ EOF
 generate_system_config()
 {
     local tmanbase="$HOME/tman"
-    local tmancore="$HOME/.tman"
+    local tmancore="${tmanbase}/.tman"
     local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
-    local tmanconf="$tmancore/sys.conf"
+    local tmanconf="${HOME}/.tman/sys.conf"
+    local userconf="${HOME}/.tman/user.conf"
 
     # create tman core directory
     mkdir -p "$tmancore"
@@ -28,8 +29,10 @@ generate_system_config()
     # create tman base directory
     mkdir -p "$tmanbase"
 
-    # create tman system config
+    # create system and user configs
+    mkdir -p $HOME/.tman
     touch "$tmanconf"
+    touch "$userconf"
 
     # fill tman system config
     echo "# NOT recommended to change this file manually." > "$tmanconf"
@@ -42,9 +45,6 @@ generate_system_config()
 
     # create task units database directory
     mkdir -p "$tmancore/units"
-
-    # and finally, create user config file
-    touch "$tmancore/user.conf"
 }
 
 check_system_utils()
