@@ -63,7 +63,7 @@ end
 
 local tmanconf = find_tmanconf()
 if not tmanconf then
-    io.stderr:write("err: no tmanconf file\n")
+    io.stderr:write("tman: sys.conf: system tmanconf missing\n")
     os.exit(1)
 end
 
@@ -89,10 +89,10 @@ tmanconfig.repos = tmanconfig.repos or {}
 tmanconfig.branchpatt = tmanconfig.branchpatt or default_branch
 
 -- Tman dir structure
+tmanconfig.tmanconf = tmanconf
 tmanconfig.units = tmanconfig.core .. "/units/"
 tmanconfig.taskids = tmanconfig.core .. "/taskids"
 -- roachme: do we really need it?
-tmanconfig.initfile = tmanconfig.core .. "/tmaninit" -- mark tman dir
 tmanconfig.tmanbase = tmanconfig.base -- roachme: should be 'base', not 'tmanbase'
 
 tmanconfig.codebase = tmanconfig.base .. "/codebase/"

@@ -14,7 +14,7 @@ local function core_init()
 
     -- files
     utils.touch(config.taskids)
-    utils.touch(config.initfile)
+    utils.touch(config.tmanconf)
 end
 
 --- Check tman dir ain't corrupted and exists.
@@ -26,7 +26,7 @@ local function core_check()
     -- NOT dirs / files
     local files = {
         config.taskids,
-        config.initfile,
+        config.tmanconf,
     }
     local dirs = {
         config.units,
