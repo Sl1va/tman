@@ -92,6 +92,7 @@ install_lua_rocks()
 install_system_utils()
 {
     local system_utils="tar luarocks"
+    sudo apt update
     sudo apt install -y ${system_utils}
 }
 
