@@ -17,11 +17,13 @@ EOF
 
 generate_system_config()
 {
-    local tmanbase="$HOME/tman"
-    local tmancore="${tmanbase}/.tman"
+    local confdir="${HOME}/.config/tman"
     local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
-    local tmanconf="${HOME}/.tman/sys.conf"
-    local userconf="${HOME}/.tman/user.conf"
+
+    local tmanbase="${HOME}/tman"
+    local tmancore="${tmanbase}/.tman"
+    local tmanconf="$confdir/sys.conf"
+    local userconf="$confdir/user.conf"
 
     # create tman core directory
     mkdir -p "$tmancore"
@@ -30,7 +32,7 @@ generate_system_config()
     mkdir -p "$tmanbase"
 
     # create system and user configs
-    mkdir -p $HOME/.tman
+    mkdir -p "$confdir"
     touch "$tmanconf"
     touch "$userconf"
 
