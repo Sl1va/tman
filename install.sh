@@ -17,19 +17,21 @@ EOF
 
 generate_system_config()
 {
+    # roachme: User defined pathes.
+    # Add flags to change 'em from script interface.
     local confdir="${HOME}/.config/tman"
-    local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
+    local tmanbase="${HOME}/work/tman"
 
-    local tmanbase="${HOME}/tman"
+    local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
     local tmancore="${tmanbase}/.tman"
     local tmanconf="$confdir/sys.conf"
     local userconf="$confdir/user.conf"
 
-    # create tman core directory
-    mkdir -p "$tmancore"
-
     # create tman base directory
     mkdir -p "$tmanbase"
+
+    # create tman core directory (core migth be inside base)
+    mkdir -p "$tmancore"
 
     # create system and user configs
     mkdir -p "$confdir"

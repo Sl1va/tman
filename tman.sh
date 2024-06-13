@@ -12,12 +12,12 @@ TMAN_TMANCONF=
 
 function _tman_handle_command()
 {
-    local cmd="$2"
+    local cmd="$1"
     local base="$TMAN_BASE"
     local envcurr=""
 
     if [ "$cmd" = "add" ]; then
-        local taskid="$3"
+        local taskid="$2"
         local taskdir="${base}/${envcurr}/tasks/${taskid}"
         cd "$taskdir"
         wd add -q -f task
@@ -42,7 +42,7 @@ function _tman_handle_command()
         echo "WARNING:shell: set: under development"
 
     elif [ "$cmd" = "use" ]; then
-        local taskid="$3"
+        local taskid="$2"
         local taskdir="${base}/${envcurr}/tasks/${taskid}"
         cd "$taskdir"
         wd add -q -f task
@@ -51,7 +51,7 @@ function _tman_handle_command()
 
 function _tman_get_tmanconf()
 {
-    TMAN_TMANCONF="${HOME}/.tman/sys.conf"
+    TMAN_TMANCONF="${HOME}/.config/tman/sys.conf"
 }
 
 function _tman_get_sys_config_vars()
@@ -91,4 +91,3 @@ function tman()
 # Run command
 _tman_get_sys_config_vars
 _tman_form_full_command
-tman $@

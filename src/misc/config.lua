@@ -17,6 +17,7 @@ local default_struct = {
 local function find_tmanconf()
     local confpathes = {
         userhome .. "/" .. ".tman/sys.conf",
+        userhome .. "/" .. ".config/tman/sys.conf",
     }
     for _, conf in pairs(confpathes) do
         if utils.access(conf) then
