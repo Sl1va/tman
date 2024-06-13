@@ -10,7 +10,7 @@ local userhome = os.getenv("HOME")
 
 local function find_tmanconf()
     local confpathes = {
-        userhome .. "/" .. ".tman/sys.conf"
+        userhome .. "/" .. ".tman/sys.conf",
     }
     for _, conf in pairs(confpathes) do
         if utils.access(conf) then
@@ -61,8 +61,6 @@ local function tmanconf_getvals(fname)
     return core, base, install
 end
 
-
-
 local tmanconf = find_tmanconf()
 if not tmanconf then
     io.stderr:write("err: no tmanconf file\n")
@@ -76,7 +74,6 @@ local default_struct = {
     files = {},
 }
 local default_branch = "TYPE/ID_DESC_DATE"
-
 
 local function tilde_to_home()
     tmanconfig.base = string.gsub(base, "~", userhome or "")
