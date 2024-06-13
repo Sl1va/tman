@@ -115,13 +115,15 @@ if [ "$1" = "-i" ]; then
     install_lua_rocks
     install_shell
     cargo install stylua # roachme: find a better way
-elif [ -z "$1" -o "$1" = "-c" ]; then
+elif [ "$1" = "-c" ]; then
     check_system_utils
     check_lua_rocks
 elif [ "$1" = "-g" ]; then
     generate_system_config
 elif [ "$1" = "-h" ]; then
     usage
+elif [ -n "$1" ]; then
+    echo "unknown option '${1}'. Use option '$0 -h' to get some help."
 else
-    echo "unknown option '${1}'. Use option '-h' to get some help."
+    echo "missing option. Use option '$0 -h' to get some help."
 fi
