@@ -7,6 +7,12 @@ local utils = require("aux.utils")
 -- get tmanconf: base and install
 
 local userhome = os.getenv("HOME")
+local default_repos = {}
+local default_branch = "TYPE/ID_DESC_DATE"
+local default_struct = {
+    dirs = {},
+    files = {},
+}
 
 local function find_tmanconf()
     local confpathes = {
@@ -69,12 +75,6 @@ end
 
 local core, base, install = tmanconf_getvals(tmanconf)
 
-local default_struct = {
-    dirs = {},
-    files = {},
-}
-local default_branch = "TYPE/ID_DESC_DATE"
-
 local function tilde_to_home()
     tmanconfig.base = string.gsub(base, "~", userhome or "")
     tmanconfig.core = string.gsub(core, "~", userhome or "")
@@ -83,19 +83,20 @@ end
 
 tilde_to_home()
 
--- Add default value if they're not defined in the config file
-tmanconfig.struct = tmanconfig.struct or default_struct
-tmanconfig.repos = tmanconfig.repos or {}
-tmanconfig.branchpatt = tmanconfig.branchpatt or default_branch
-
--- Tman dir structure
+-- Tman core structure
 tmanconfig.tmanconf = tmanconf
 tmanconfig.units = tmanconfig.core .. "/units/"
 tmanconfig.taskids = tmanconfig.core .. "/taskids"
--- roachme: do we really need it?
-tmanconfig.tmanbase = tmanconfig.base -- roachme: should be 'base', not 'tmanbase'
 
+-- Tman base structure
+tmanconfig.tmanbase = tmanconfig.base
 tmanconfig.codebase = tmanconfig.base .. "/codebase/"
 tmanconfig.taskbase = tmanconfig.base .. "/tasks/"
+
+-- User config.
+-- Add default value if they're not defined in the config file
+tmanconfig.repos = tmanconfig.repos or default_repos
+tmanconfig.struct = tmanconfig.struct or default_struct
+tmanconfig.branchpatt = tmanconfig.branchpatt or default_branch
 
 return tmanconfig
