@@ -283,6 +283,63 @@ local function git_commit_check(msg)
     return true
 end
 
+
+--- Get changed part of the code.
+local function changed_files(reponame)
+    local files = {}
+    local repopath = config.codebase .. reponame
+    local cmd = ("git -C %s diff --name-only"):format(repopath)
+    local fprog = io.popen(cmd)
+
+    if not fprog then
+        print("git: could not run the shell program")
+        os.exit(1)
+    end
+
+    for file in fprog:lines() do
+        table.insert(files, file)
+    end
+    return files
+end
+
+--[[
+
+commit message pattern
+ [<ticket ID>] <изменяемая часть>: <краткое описание>
+]]
+
+local function get_dirname(ftab)
+    local dirname = ""
+    local dirnames = {}
+
+    for _, fname in pairs(ftab) do
+        local tmp = string.match(fname, "(.*)/")
+        if tmp then
+            table.insert(dirnames, tmp)
+        else
+            -- if file in the root of repo
+            table.insert(dirnames, fname)
+        end
+    end
+
+    -- traverse dirname of all files.
+    -- if they're the same, return dirname
+    -- else return nil, and reponame with will be dirname
+    dirname = dirnames[1]
+    for _, dname in pairs(dirnames) do
+        if dirname ~= dname then
+            return nil
+        end
+    end
+    return dirname
+end
+
+local function changed_part(reponame)
+    local files = changed_files(reponame)
+    local dirname = get_dirname(files) or reponame
+    return dirname
+end
+
 --- Create commit according to pattern for repos.
 -- @param id task ID
 -- @return on success - true
@@ -298,12 +355,8 @@ local function git_commit_create(id)
         if has_changes(repo.name) then
             --print("repo", repo.name)
             local repopath = config.codebase .. repo.name
-            cmd = ("git -C %s add . 1>/dev/null"):format(repopath)
-            utils.exec(cmd)
 
-            -- roach: find a good way to determine part
-            local part = "part"
-
+            local part = changed_part(repo.name)
             local msg = ("[%s] %s: %s"):format(id, part, desc)
 
             -- check commit length and all
@@ -311,6 +364,9 @@ local function git_commit_create(id)
                 print("commit message checker failed")
                 return false
             end
+
+            cmd = ("git -C %s add . 1>/dev/null"):format(repopath)
+            utils.exec(cmd)
 
             -- create a commit
             cmd = ("git -C %s commit -m '%s' 1>/dev/null"):format(repopath, msg)
