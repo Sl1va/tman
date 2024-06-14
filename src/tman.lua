@@ -576,52 +576,52 @@ end
 
 -- Public functions: end --
 
+local funcs = {
+    add = tman_add,
+    archive = tman_archive,
+    cat = tman_cat,
+    config = tman_config,
+    del = tman_del,
+    get = tman_get,
+    help = function()
+        return help.usage(arg[1])
+    end,
+    init = function()
+        return core.init()
+    end,
+    list = tman_list,
+    pack = tman_pack,
+    prev = tman_prev,
+    set = tman_set,
+    sync = tman_sync,
+    use = tman_use,
+    ver = function()
+        print(("%s version %s"):format(help.progname, help.version))
+    end,
+}
+
 --- Util interface.
 local function main()
     local cmd = arg[1] or "help"
     local corecheck = core.check()
 
-    -- posix getopt does not let permutations as GNU version
+    -- POSIX getopt() does not let permutations as GNU version.
     table.remove(arg, 1)
 
+    -- Check that util's ok to run.
     if corecheck == 1 and cmd ~= "init" then
         io.stderr:write("tman: structure not inited\n")
         return 1
     end
 
-    if cmd == "init" then
-        return core.init()
-    elseif cmd == "add" then
-        return tman_add()
-    elseif cmd == "set" then
-        return tman_set()
-    elseif cmd == "use" then
-        return tman_use()
-    elseif cmd == "cat" then
-        return tman_cat()
-    elseif cmd == "del" then
-        return tman_del()
-    elseif cmd == "list" then
-        return tman_list()
-    elseif cmd == "sync" then
-        return tman_sync()
-    elseif cmd == "get" then
-        return tman_get()
-    elseif cmd == "prev" then
-        return tman_prev()
-    elseif cmd == "config" then
-        return tman_config()
-    elseif cmd == "archive" then
-        return tman_archive()
-    elseif cmd == "pack" then
-        return tman_pack()
-    elseif cmd == "help" then
-        return help.usage(arg[1])
-    elseif cmd == "ver" then
-        print(("%s version %s"):format(help.progname, help.version))
-        return 0
+    -- Find a call command.
+    for name, func in pairs(funcs) do
+        if cmd == name then
+            return func()
+        end
     end
-    -- error: command not found. Show usage.
+
+    -- Command not found. Show some help.
     return help.usage(cmd)
 end
 
