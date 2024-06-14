@@ -11,27 +11,27 @@ Use '%s help COMMAND' to get command's detailed info.
 
 COMMANDS:
 System:
-  init    - init util structure.
   archive - backup and restore metadata
+  config  - config for your workflow
+  init    - init util structure.
 
 Basic:
-  use     - mark a task as current
+  cat     - cat task info
   get     - get parameters like curr, prev tasks, etc
   list    - list tasks
-  cat     - cat task info
   prev    - switch to previous task
-  pack    - pack commits in repos for review.
+  use     - mark a task as current
 
-Amend:
+Change:
   add     - add new task
   del     - delete task
+  pack    - pack commits in repos for review.
   set     - set task units
   sync    - synchronize task struct, git branch, repos, etc
-  config  - config for your workflow
 
 Info:
-  ver     - show version
   help    - show this help message
+  ver     - show version
 
 '%s help COMMAND' to get detailed info about command.
 '%s help %s' to get info about util itself.
