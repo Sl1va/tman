@@ -192,50 +192,151 @@ local function tman_add()
     return 0
 end
 
---- Switch to another task.
-local function tman_use()
-    local id
-    local last_index = 1
-    local optstr = ""
+--- Backup and restore.
+local function tman_archive()
+    local optstr = "Rb:r:"
+    local include_repo = false
+    local backup_file, restore_file
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die(1, "unrecognized option\n", arg[optind - 1])
         end
-        if optopt == "h" then
-            print("WARNING: fake option", optarg or "NIL")
+        if optopt == "b" then
+            print("backup")
+            backup_file = optarg
+        elseif optopt == "r" then
+            print("restore")
+            restore_file = optarg
+        elseif optopt == "R" then
+            print("repo included")
+            include_repo = true
         end
     end
 
-    id = arg[last_index]
-    if not id then
-        die(1, "task ID required\n", "")
+    if backup_file and restore_file then
+        die(1, "backup and restore options can't be used together\n", "")
     end
-    if not taskid.exist(id) then
-        die(1, "task ID doesn't exist\n", id)
+
+    if backup_file then
+        core.backup(backup_file, include_repo)
+    elseif restore_file then
+        core.restore(restore_file)
     end
-    if taskid.getcurr() == id then
-        die(1, "already in use\n", id)
-    end
-    if not git.branch_switch(id) then
-        die(1, "has uncommited changes\n", "repo")
-    end
-    taskid.setcurr(id)
     return 0
 end
 
---- Switch to previous task.
-local function tman_prev()
-    local prev = taskid.getprev()
+--- Show task unit metadata.
+local function tman_cat()
+    local id
+    local last_index = 1
+    local optstr = "k:"
+    local key
 
-    if not prev then
-        die(1, "no previous task\n", "")
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+        last_index = optind
+        if optopt == "k" then
+            key = optarg
+        end
     end
-    if not git.branch_switch(prev) then
-        die(1, "repo has uncommited changes\n", "REPONAME")
+
+    id = arg[last_index] or taskid.getcurr()
+    if not id then
+        die(1, "no current task ID\n", "")
+    elseif not taskid.exist(id) then
+        die(1, "no such task ID\n", id)
     end
-    taskid.swap()
+    taskunit.cat(id, key)
     return 0
+end
+
+--- Config util for your workflow
+local function tman_config()
+    local optstr = "b:i:s"
+    local fshow = true -- default option
+    local fbase, finstall
+    local vbase, vinstall
+
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+        if optopt == "b" then
+            fbase = true
+            vbase = optarg
+        elseif optopt == "i" then
+            finstall = true
+            vinstall = optarg
+        elseif optopt == "s" then
+            fshow = true
+        end
+    end
+
+    if fbase then
+        print("set base value", vbase)
+    elseif finstall then
+        print("set install value", vinstall)
+    elseif fshow then
+        print("show config")
+        core.showconf()
+    end
+    return 0
+end
+
+--- Delete task.
+local function tman_del()
+    local id = arg[1] or taskid.getcurr()
+
+    if not _checkid(id) then
+        os.exit(1)
+    end
+
+    taskunit.cat(id, "desc")
+    io.write("Do you want to continue? [Yes/No] ")
+    local confirm = io.read("*line")
+    if confirm ~= "Yes" then
+        print("deletion is cancelled")
+        os.exit(1)
+    end
+
+    -- roachme: when it deletes task branch what branch is it on?
+    -- anyway, find a nice logic.
+    if not git.branch_delete(id) then
+        die(1, "repo has uncommited changes", "")
+    end
+    taskunit.del(id)
+    taskid.del(id)
+
+    -- roachme: make it pretty and easire to read.
+    -- switch back to current task (if exists)
+    local curr = taskid.getcurr()
+    if curr then
+        git.branch_switch(curr)
+    end
+
+    -- delete task dir at the end, cuz it causes error for tman.sh
+    struct.delete(id)
+    return 0
+end
+
+--- Get tman items.
+-- Like prev/ curr task ID, etc.
+local function tman_get()
+    local item = arg[1] or "curr"
+
+    if item == "curr" then
+        print(taskid.getcurr() or "")
+        return 0
+    elseif item == "prev" then
+        print(taskid.getprev() or "")
+        return 0
+    end
+
+    -- error handling
+    die(1, "no such task item\n", item)
 end
 
 --- List all task IDs.
@@ -272,30 +373,61 @@ local function tman_list()
     return 0
 end
 
---- Show task unit metadata.
-local function tman_cat()
+--- Pack commits in repos for review.
+local function tman_pack()
     local id
+    local optstr = "cmp"
     local last_index = 1
-    local optstr = "k:"
-    local key
+    local fcommit = true -- default option
+    local fmake, fpush
 
-    for optopt, optarg, optind in getopt(arg, optstr) do
+    for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die(1, "unrecognized option\n", arg[optind - 1])
         end
+
         last_index = optind
-        if optopt == "k" then
-            key = optarg
+        if optopt == "c" then
+            fcommit = true
+        elseif optopt == "m" then
+            fmake = true
+        elseif optopt == "p" then
+            fpush = true
         end
     end
 
     id = arg[last_index] or taskid.getcurr()
+
     if not id then
-        die(1, "no current task ID\n", "")
-    elseif not taskid.exist(id) then
+        die(1, "no current task\n", "")
+    end
+    if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    taskunit.cat(id, key)
+
+    if fpush then
+        print("push branch to remote repo")
+    elseif fmake then
+        print("run commands from the Makefile")
+    elseif fcommit then
+        print("create commits")
+        git.commit_create(id)
+    end
+
+    return 0
+end
+
+--- Switch to previous task.
+local function tman_prev()
+    local prev = taskid.getprev()
+
+    if not prev then
+        die(1, "no previous task\n", "")
+    end
+    if not git.branch_switch(prev) then
+        die(1, "repo has uncommited changes\n", "REPONAME")
+    end
+    taskid.swap()
     return 0
 end
 
@@ -410,167 +542,35 @@ local function tman_sync()
     return errcodes.command_failed
 end
 
---- Delete task.
-local function tman_del()
-    local id = arg[1] or taskid.getcurr()
-
-    if not _checkid(id) then
-        os.exit(1)
-    end
-
-    taskunit.cat(id, "desc")
-    io.write("Do you want to continue? [Yes/No] ")
-    local confirm = io.read("*line")
-    if confirm ~= "Yes" then
-        print("deletion is cancelled")
-        os.exit(1)
-    end
-
-    -- roachme: when it deletes task branch what branch is it on?
-    -- anyway, find a nice logic.
-    if not git.branch_delete(id) then
-        die(1, "repo has uncommited changes", "")
-    end
-    taskunit.del(id)
-    taskid.del(id)
-
-    -- roachme: make it pretty and easire to read.
-    -- switch back to current task (if exists)
-    local curr = taskid.getcurr()
-    if curr then
-        git.branch_switch(curr)
-    end
-
-    -- delete task dir at the end, cuz it causes error for tman.sh
-    struct.delete(id)
-    return 0
-end
-
---- Config util for your workflow
-local function tman_config()
-    local optstr = "b:i:s"
-    local fshow = true -- default option
-    local fbase, finstall
-    local vbase, vinstall
-
-    for optopt, optarg, optind in getopt(arg, optstr) do
-        if optopt == "?" then
-            die(1, "unrecognized option\n", arg[optind - 1])
-        end
-        if optopt == "b" then
-            fbase = true
-            vbase = optarg
-        elseif optopt == "i" then
-            finstall = true
-            vinstall = optarg
-        elseif optopt == "s" then
-            fshow = true
-        end
-    end
-
-    if fbase then
-        print("set base value", vbase)
-    elseif finstall then
-        print("set install value", vinstall)
-    elseif fshow then
-        print("show config")
-        core.showconf()
-    end
-    return 0
-end
-
---- Get tman items.
--- Like prev/ curr task ID, etc.
-local function tman_get()
-    local item = arg[1] or "curr"
-
-    if item == "curr" then
-        print(taskid.getcurr() or "")
-        return 0
-    elseif item == "prev" then
-        print(taskid.getprev() or "")
-        return 0
-    end
-
-    -- error handling
-    die(1, "no such task item\n", item)
-end
-
---- Backup and restore.
-local function tman_archive()
-    local optstr = "Rb:r:"
-    local include_repo = false
-    local backup_file, restore_file
-
-    for optopt, optarg, optind in getopt(arg, optstr) do
-        if optopt == "?" then
-            die(1, "unrecognized option\n", arg[optind - 1])
-        end
-        if optopt == "b" then
-            print("backup")
-            backup_file = optarg
-        elseif optopt == "r" then
-            print("restore")
-            restore_file = optarg
-        elseif optopt == "R" then
-            print("repo included")
-            include_repo = true
-        end
-    end
-
-    if backup_file and restore_file then
-        die(1, "backup and restore options can't be used together\n", "")
-    end
-
-    if backup_file then
-        core.backup(backup_file, include_repo)
-    elseif restore_file then
-        core.restore(restore_file)
-    end
-    return 0
-end
-
---- Pack commits in repos for review.
-local function tman_pack()
+--- Switch to another task.
+local function tman_use()
     local id
-    local optstr = "cmp"
     local last_index = 1
-    local fcommit = true -- default option
-    local fmake, fpush
+    local optstr = ""
 
-    for optopt, _, optind in getopt(arg, optstr) do
+    for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die(1, "unrecognized option\n", arg[optind - 1])
         end
-
-        last_index = optind
-        if optopt == "c" then
-            fcommit = true
-        elseif optopt == "m" then
-            fmake = true
-        elseif optopt == "p" then
-            fpush = true
+        if optopt == "h" then
+            print("WARNING: fake option", optarg or "NIL")
         end
     end
 
-    id = arg[last_index] or taskid.getcurr()
-
+    id = arg[last_index]
     if not id then
-        die(1, "no current task\n", "")
+        die(1, "task ID required\n", "")
     end
     if not taskid.exist(id) then
-        die(1, "no such task ID\n", id)
+        die(1, "task ID doesn't exist\n", id)
     end
-
-    if fpush then
-        print("push branch to remote repo")
-    elseif fmake then
-        print("run commands from the Makefile")
-    elseif fcommit then
-        print("create commits")
-        git.commit_create(id)
+    if taskid.getcurr() == id then
+        die(1, "already in use\n", id)
     end
-
+    if not git.branch_switch(id) then
+        die(1, "has uncommited changes\n", "repo")
+    end
+    taskid.setcurr(id)
     return 0
 end
 
@@ -614,7 +614,7 @@ local function main()
         return 1
     end
 
-    -- Find a call command.
+    -- Call command.
     for name, func in pairs(funcs) do
         if cmd == name then
             return func()
