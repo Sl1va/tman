@@ -1,0 +1,20 @@
+cat         - status: done, implemented
+prev        - status: done, implemented
+use         - status: done, implemented
+set         - status: done, implemented
+help        - status: done, implemented
+ver         - status: done, implemented
+
+
+
+
+archive     - status: almost, need tweaks
+init        - status: might need some tweaks
+
+add         - status: under development: no sure whether or not add flags to set values
+del         - status: almost, migth has bugs
+list        - status: might need to change flags
+get         - status: under development
+config      - status: under development
+pack        - status: under development
+sync        - status: under development
