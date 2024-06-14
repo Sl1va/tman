@@ -283,7 +283,6 @@ local function git_commit_check(msg)
     return true
 end
 
-
 --- Get changed part of the code.
 local function changed_files(reponame)
     local files = {}
@@ -309,7 +308,7 @@ commit message pattern
 ]]
 
 local function get_dirname(ftab)
-    local dirname = ""
+    local dirname
     local dirnames = {}
 
     for _, fname in pairs(ftab) do

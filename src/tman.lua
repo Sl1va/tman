@@ -378,7 +378,7 @@ local function tman_sync(cmd)
         os.exit(1)
     end
 
---[[
+    --[[
 repo        - git pull from remote repo
 task        - update task status
 struct      - update task structure: dirs, files, symlinks

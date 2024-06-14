@@ -1,13 +1,11 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
-
 --[[
     config.lua consist of two parts:
 1. sys.conf  - essential for tman to work
 2. user.conf - let user to customize workflow
 ]]
-
 
 --[[
 
