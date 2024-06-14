@@ -43,6 +43,12 @@ function _tman_handle_command()
     elif [ "$cmd" = "set" ]; then
         echo "WARNING:shell: set: under development"
 
+    elif [ "$cmd" = "sync" ]; then
+        taskid="$(eval "$TMAN" get curr)"
+        taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir" || return 1
+        wd add -q -f task
+
     elif [ "$cmd" = "use" ]; then
         taskid="$2"
         taskdir="${base}/${envcurr}/tasks/${taskid}"
