@@ -15,17 +15,19 @@ function _tman_handle_command()
     local cmd="$1"
     local base="$TMAN_BASE"
     local envcurr=""
+    local taskid=
+    local taskdir=
 
     if [ "$cmd" = "add" ]; then
-        local taskid="$2"
+        taskid="$2"
         local taskdir="${base}/${envcurr}/tasks/${taskid}"
-        cd "$taskdir"
+        cd "$taskdir" || return 1
         wd add -q -f task
 
     elif [ "$cmd" = "del" ]; then
-        local taskid="$(eval $TMAN get curr)"
-        local taskdir="${base}/${envcurr}/tasks/${taskid}"
-        cd "$taskdir"
+        taskid="$(eval "$TMAN" get curr)"
+        taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir" || return 1
         if [ -n "$taskid" ]; then
             wd add -q -f task
         else
@@ -33,18 +35,18 @@ function _tman_handle_command()
         fi
 
     elif [ "$cmd" = "prev" ]; then
-        local taskid="$(eval $TMAN get curr)"
-        local taskdir="${base}/${envcurr}/tasks/${taskid}"
-        cd "$taskdir"
+        taskid="$(eval "$TMAN" get curr)"
+        taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir" || return 1
         wd add -q -f task
 
     elif [ "$cmd" = "set" ]; then
         echo "WARNING:shell: set: under development"
 
     elif [ "$cmd" = "use" ]; then
-        local taskid="$2"
-        local taskdir="${base}/${envcurr}/tasks/${taskid}"
-        cd "$taskdir"
+        taskid="$2"
+        taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir" || return 1
         wd add -q -f task
     fi
 }
@@ -64,7 +66,6 @@ function _tman_get_sys_config_vars()
 function _tman_form_full_command()
 {
     local script="${TMAN_INSTALL}/src/tman.lua"
-    local tman_conf="${HOME}/.config/tman/tman_conf.lua"
 
     local stat="package.path = package.path"
     stat="$stat .. ';${TMAN_INSTALL}/src/?.lua;'"

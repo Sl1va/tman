@@ -9,6 +9,12 @@
 ]]
 
 
+--[[
+
+commit message pattern
+ [<ticket ID>] <изменяемая часть>: <краткое описание>
+]]
+
 local tmanconfig = require("tman_conf")
 local utils = require("aux.utils")
 
