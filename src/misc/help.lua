@@ -7,13 +7,13 @@ local progname = "tman"
 local function show_usage()
     io.stdout:write(([[
 Usage: %s COMMAND [OPTION] [ID]
-Use '%s help COMMAND' to get command's detailed info.
 
-COMMANDS:
+List of available commands:
+
 System:
   archive - backup and restore metadata
-  config  - config for your workflow
-  init    - init util structure.
+  config  - config your workflow
+  init    - init util structure
 
 Basic:
   cat     - cat task info
@@ -35,15 +35,17 @@ Info:
 
 '%s help COMMAND' to get detailed info about command.
 '%s help %s' to get info about util itself.
-]]):format(progname, progname, progname, progname, progname))
+]]):format(progname, progname, progname, progname))
 end
 
 local cmds = {
     {
         name = progname,
         desc = [[
-tman stands for task manager. Used to switch between tasks, git branches and
-make the workflow and nice and painless.
+`tman' stands for task manager. Used to switch between tasks, git branches and
+make the workflow easy and less confusing. You no longer need to memerize task
+IDs, branche names, cd between directories, lose task notes, but instead look
+for 'em in nice structured way.
 ]],
     },
     {
@@ -111,7 +113,7 @@ Options:
     {
         name = "sync",
         desc = [[
-Usage: tman sync COMMAND
+Usage: tman sync OPTION
 Update task repos, structure, etc. Operates on current task ID.
 
 Options:
