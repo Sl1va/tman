@@ -461,19 +461,23 @@ local function tman_config(subcmd)
     end
 end
 
---- Get special task ID unit.
--- @param unit task unit
-local function tman_get(unit)
-    unit = unit or "curr"
+--- Get tman items.
+-- Like prev/ curr task ID, etc.
+-- @param item tman item
+local function tman_get(item)
+    item = item or "curr"
 
-    if unit == "curr" then
+    if item == "curr" then
         print(taskid.getcurr() or "")
-    elseif unit == "prev" then
+        return 0
+    elseif item == "prev" then
         print(taskid.getprev() or "")
-    else
-        local errmsg = "err: no such ID type '%s'\n"
-        io.stderr:write(errmsg:format(unit or "no idtype"))
+        return 0
     end
+
+    -- error handling
+    die(1, "no such task item\n", item)
+    return 1
 end
 
 --- Backup and restore.
