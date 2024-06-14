@@ -473,7 +473,7 @@ local function tman_config()
         print("set base value", vbase)
     elseif finstall then
         print("set install value", vinstall)
-    else
+    elseif fshow then
         print("show config")
         core.showconf()
     end
