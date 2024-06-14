@@ -155,10 +155,10 @@ end
 --- Add a new task.
 -- Fill the rest with default values.
 -- @see tman_set
--- @param id task ID
 -- @return on success - true
 -- @return on failrue - false
-local function tman_add(id)
+local function tman_add()
+    local id = arg[1]
     local prio = "mid"
     local tasktype = "bugfix"
 
@@ -369,9 +369,9 @@ local function tman_set()
 end
 
 --- Update git repos.
--- @param cmd command
-local function tman_sync(cmd)
+local function tman_sync()
     local id = taskid.getcurr()
+    local cmd = arg[1]
 
     if not id then
         io.stderr:write("no current task\n")
@@ -411,9 +411,8 @@ local function tman_sync(cmd)
 end
 
 --- Delete task.
--- @param id task ID
-local function tman_del(id)
-    id = id or taskid.getcurr()
+local function tman_del()
+    local id = arg[1] or taskid.getcurr()
 
     if not _checkid(id) then
         os.exit(1)
@@ -482,9 +481,8 @@ end
 
 --- Get tman items.
 -- Like prev/ curr task ID, etc.
--- @param item tman item
-local function tman_get(item)
-    item = item or "curr"
+local function tman_get()
+    local item = arg[1] or "curr"
 
     if item == "curr" then
         print(taskid.getcurr() or "")
@@ -594,7 +592,7 @@ local function main()
     if cmd == "init" then
         return core.init()
     elseif cmd == "add" then
-        return tman_add(arg[1])
+        return tman_add()
     elseif cmd == "set" then
         return tman_set()
     elseif cmd == "use" then
@@ -602,13 +600,13 @@ local function main()
     elseif cmd == "cat" then
         return tman_cat()
     elseif cmd == "del" then
-        return tman_del(arg[1])
+        return tman_del()
     elseif cmd == "list" then
         return tman_list()
     elseif cmd == "sync" then
-        return tman_sync(arg[1])
+        return tman_sync()
     elseif cmd == "get" then
-        return tman_get(arg[1])
+        return tman_get()
     elseif cmd == "prev" then
         return tman_prev()
     elseif cmd == "config" then
