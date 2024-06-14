@@ -21,7 +21,6 @@ Basic:
   cat     - cat task info
   prev    - switch to previous task
   pack    - pack commits in repos for review.
-  done    - move task to completed status
 
 Amend:
   add     - add new task
@@ -106,15 +105,6 @@ COMMAND:
     struct  create task branch, symlink, etc.
     repo    same as `task', also update branches from remote git repo.
     task    update tasks status (active, completed, etc).
-]],
-    },
-
-    {
-        name = "done",
-        desc = [[
-Usage: tman done [TASKID]
-Move task to completed status.
-TASKID - default is current task.
 ]],
     },
 

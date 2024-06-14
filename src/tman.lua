@@ -453,49 +453,6 @@ local function tman_del(id)
     return 0
 end
 
---- Move current task to done status.
--- @param id task id
--- roachme: It moves to ACTV, COMP status.
-local function tman_done()
-    local retcode
-    local curr = taskid.getcurr()
-    local prev = taskid.getprev()
-    local id = curr
-
-    if id ~= "under development" then
-        print("under development. Gotta check that task branch is merged")
-        return 2
-    end
-
-    if not _checkid() then
-        return errcodes.command_failed
-    end
-
-    taskid.unsetcurr()
-
-    -- provide retcode for shell command
-    if id == curr then
-        retcode = 0
-    elseif id == prev then
-        retcode = 1
-    else
-        retcode = 2
-    end
-
-    if not git.branch_default() then
-        io.stderr:write("repo has uncommited changes\n")
-        os.exit(1)
-    end
-
-    -- roachme:FIXME: switch to previous task branch
-
-    -- roachme: if task's done delete git branch,
-    --          MAYBE task dir as well (nah, leave it)
-    --          BUT make sure task branch's merged into default branch
-
-    return retcode
-end
-
 --- Config util for your workflow
 -- @param subcmd subcommand
 local function tman_config(subcmd)
@@ -519,8 +476,7 @@ local function tman_get(unit)
     end
 end
 
-local function tman_test() end
-
+--- Backup and restore.
 local function tman_archive()
     local optstr = "Rb:r:"
     local include_repo = false
@@ -596,16 +552,12 @@ local function main()
         return tman_list()
     elseif cmd == "sync" then
         return tman_sync(arg[1])
-    elseif cmd == "done" then
-        return tman_done()
     elseif cmd == "get" then
         return tman_get(arg[1])
     elseif cmd == "prev" then
         return tman_prev()
     elseif cmd == "config" then
         return tman_config(arg[1])
-    elseif cmd == "test" then
-        return tman_test()
     elseif cmd == "archive" then
         return tman_archive()
     elseif cmd == "pack" then
