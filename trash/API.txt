@@ -1,20 +1,58 @@
-cat         - status: done, implemented
-prev        - status: done, implemented
-use         - status: done, implemented
-set         - status: done, implemented
-help        - status: done, implemented
-ver         - status: done, implemented
+As we talking about API, all we care's command's name,
+options and funtionality. Implementation details don't matter here.
+
+Done:
+    init        - status: done, implemented
+    cat         - status: done, implemented
+    prev        - status: done, implemented
+    use         - status: done, implemented
+    set         - status: done, implemented
+    help        - status: done, implemented
+    ver         - status: done, implemented
+    del         - status: done, implemented
+    get         - status: done, implemented
+    list        - status: done, implemented
+    add         - status: under development: add flags to set values (and use defaults)
+
+Not done:
+    archive     - status: almost, need tweaks
+
+Under development:
+    pack        - status: under development
+    sync        - status: under development
+    config      - status: under development
 
 
 
+Naming issues:
+    1. Archive. Maybe it's better to name arch?
+    2. Config.  It's ok-ish, but.. too long?
 
-archive     - status: almost, need tweaks
-init        - status: might need some tweaks
+Option issues:
+    1. add. Is it worth to include options like type, priority right into
+       it, or leave to command set?
+    2. sync. what and how many options should it take?
 
-add         - status: under development: no sure whether or not add flags to set values
-del         - status: almost, migth has bugs
-list        - status: might need to change flags
-get         - status: under development
-config      - status: under development
-pack        - status: under development
-sync        - status: under development
+Functonaly issues:
+    2. pack. What exactly should it do? No spec.
+
+
+Usage: tman config OPTION
+Options:
+    -b      - set base path
+    -i      - set install path
+            questionable, cuz util gotta change path in .shellrc
+    -s      - show config: system & user
+
+
+Usage: tman sync OPTION
+Options:
+    -s      - task structure (default)
+    -r      - git pull from remote repo
+    -t      - synchronize task status
+
+Usage: tman pack OPTION
+Options:
+    -c      - create commit (default)
+    -m      - run commands from the Makefile
+    -p      - push branch to remote repo
