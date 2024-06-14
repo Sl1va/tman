@@ -370,13 +370,19 @@ end
 
 --- Update git repos.
 -- @param cmd command
-local function tman_update(cmd)
+local function tman_sync(cmd)
     local id = taskid.getcurr()
 
     if not id then
         io.stderr:write("no current task\n")
         os.exit(1)
     end
+
+--[[
+repo        - git pull from remote repo
+task        - update task status
+struct      - update task structure: dirs, files, symlinks
+]]
 
     -- create task structure if needed
     struct.create(id)
@@ -391,7 +397,7 @@ local function tman_update(cmd)
     end
 
     -- switch to task branch, that's it. Default option.
-    if not cmd or cmd == "task" then
+    if not cmd or cmd == "struct" then
         -- roachme: failes if repo's uncommited changes
         git.branch_switch(id)
         return errcodes.ok
@@ -406,7 +412,7 @@ local function tman_update(cmd)
     end
     local errmsg = "%s: update: command not found '%s'\n"
     io.stderr:write(errmsg:format(help.progname, cmd))
-    io.stderr:write("Commands: [task|repo]\n")
+    io.stderr:write("Commands: [struct|task|repo]\n")
     return errcodes.command_failed
 end
 
@@ -588,8 +594,8 @@ local function main()
         return tman_del(arg[1])
     elseif cmd == "list" then
         return tman_list()
-    elseif cmd == "update" then
-        return tman_update(arg[1])
+    elseif cmd == "sync" then
+        return tman_sync(arg[1])
     elseif cmd == "done" then
         return tman_done()
     elseif cmd == "get" then

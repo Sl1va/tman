@@ -27,8 +27,8 @@ Amend:
   add     - add new task
   del     - delete task
   set     - set task units
+  sync    - synchronize task struct, git branch, repos, etc
   config  - config for your workflow
-  update  - update task struct, git branch, repos, etc
 
 Info:
   ver     - show version
@@ -97,14 +97,15 @@ Options:
 ]],
     },
     {
-        name = "update",
+        name = "sync",
         desc = [[
-Usage: tman update COMMAND
+Usage: tman sync COMMAND
 Update task repos, structure, etc. Operates on current task ID.
 
 COMMAND:
-    task    create task branch, symlink, etc.
-    repos   same as `task', also update branches from remote git repo.
+    struct  create task branch, symlink, etc.
+    repo    same as `task', also update branches from remote git repo.
+    task    update tasks status (active, completed, etc).
 ]],
     },
 
