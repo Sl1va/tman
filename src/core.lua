@@ -15,6 +15,10 @@ local function core_init()
     -- files
     utils.touch(config.taskids)
     utils.touch(config.tmanconf)
+
+    -- TODO: repos
+    -- tryna download repos from user config
+    -- code goes here
 end
 
 --- Check tman dir ain't corrupted and exists.
