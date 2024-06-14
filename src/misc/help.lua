@@ -66,6 +66,19 @@ Options:
 ]],
     },
     {
+        name = "config",
+        desc = [[
+Usage: tman config OPTION
+Work with config files.
+
+Options:
+    -b      - set base path
+    -i      - set install path
+              questionable, cuz util gotta change path in .shellrc
+    -s      - show config: system & user
+]],
+    },
+    {
         name = "add",
         desc = [[
 Usage: tman add TASKID
@@ -101,10 +114,10 @@ Options:
 Usage: tman sync COMMAND
 Update task repos, structure, etc. Operates on current task ID.
 
-COMMAND:
-    struct  create task branch, symlink, etc.
-    repo    same as `task', also update branches from remote git repo.
-    task    update tasks status (active, completed, etc).
+Options:
+    -s      - task structure (default)
+    -r      - git pull from remote repo
+    -t      - synchronize task status
 ]],
     },
 
@@ -138,8 +151,13 @@ Switch to previous task. If no previous task exist informs about it.
     {
         name = "pack",
         desc = [[
-Usage: tman pack [TASKID]
+Usage: tman pack OPTION [TASKID]
 Pack commits in repos for review.
+
+Options:
+    -c      - create commit (default)
+    -m      - run commands from the Makefile
+    -p      - push branch to remote repo
 ]],
     },
     {

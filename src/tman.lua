@@ -378,12 +378,6 @@ local function tman_sync(cmd)
         os.exit(1)
     end
 
-    --[[
-repo        - git pull from remote repo
-task        - update task status
-struct      - update task structure: dirs, files, symlinks
-]]
-
     -- create task structure if needed
     struct.create(id)
 
@@ -454,11 +448,36 @@ local function tman_del(id)
 end
 
 --- Config util for your workflow
--- @param subcmd subcommand
-local function tman_config(subcmd)
-    if not subcmd then
-        return core.showconf()
+local function tman_config()
+    local optstr = "b:i:s"
+    local fshow = true -- default option
+    local fbase, finstall
+    local vbase, vinstall
+
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+        if optopt == "b" then
+            fbase = true
+            vbase = optarg
+        elseif optopt == "i" then
+            finstall = true
+            vinstall = optarg
+        elseif optopt == "s" then
+            fshow = true
+        end
     end
+
+    if fbase then
+        print("set base value", vbase)
+    elseif finstall then
+        print("set install value", vinstall)
+    else
+        print("show config")
+        core.showconf()
+    end
+    return 0
 end
 
 --- Get tman items.
@@ -477,7 +496,6 @@ local function tman_get(item)
 
     -- error handling
     die(1, "no such task item\n", item)
-    return 1
 end
 
 --- Backup and restore.
@@ -515,14 +533,47 @@ local function tman_archive()
 end
 
 --- Pack commits in repos for review.
-local function tman_pack(id)
-    id = id or taskid.getcurr()
+local function tman_pack()
+    local id
+    local optstr = "cmp"
+    local last_index = 1
+    local fcommit = true -- default option
+    local fmake, fpush
 
-    if not taskid.exist(id) then
-        die(1, "task ID doesn't exist\n", id)
+    for optopt, _, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+
+        last_index = optind
+        if optopt == "c" then
+            fcommit = true
+        elseif optopt == "m" then
+            fmake = true
+        elseif optopt == "p" then
+            fpush = true
+        end
     end
 
-    git.commit_create(id)
+    id = arg[last_index] or taskid.getcurr()
+
+    if not id then
+        die(1, "no current task\n", "")
+    end
+    if not taskid.exist(id) then
+        die(1, "no such task ID\n", id)
+    end
+
+    if fpush then
+        print("push branch to remote repo")
+    elseif fmake then
+        print("run commands from the Makefile")
+    elseif fcommit then
+        print("create commits")
+        git.commit_create(id)
+    end
+
+    return 0
 end
 
 -- Public functions: end --
@@ -561,11 +612,11 @@ local function main()
     elseif cmd == "prev" then
         return tman_prev()
     elseif cmd == "config" then
-        return tman_config(arg[1])
+        return tman_config()
     elseif cmd == "archive" then
         return tman_archive()
     elseif cmd == "pack" then
-        return tman_pack(arg[1])
+        return tman_pack()
     elseif cmd == "help" then
         return help.usage(arg[1])
     elseif cmd == "ver" then
