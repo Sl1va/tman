@@ -19,6 +19,7 @@ local getopt = require("posix.unistd").getopt
     2. set command
 ]]
 
+--[[
 local errcodes = {
     ok = 0,
     not_inited = 1,
@@ -26,6 +27,7 @@ local errcodes = {
     command_failed = 2,
     command_not_found = 3,
 }
+]]
 
 --[[
 Erorr codes:
@@ -501,45 +503,56 @@ local function tman_set()
 end
 
 --- Update git repos.
+-- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
     local id = taskid.getcurr()
-    local cmd = arg[1]
+    local optstr = "rst"
+    local fremote, fstruct, ftask
+
+    for optopt, _, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+
+        if optopt == "r" then
+            fremote = true
+        elseif optopt == "s" then
+            fstruct = true
+        elseif optopt == "t" then
+            ftask = true
+        end
+    end
 
     if not id then
-        io.stderr:write("no current task\n")
-        os.exit(1)
+        die(1, "no current task ID", "")
     end
 
-    -- create task structure if needed
-    struct.create(id)
-
-    -- create git branch if needed
-    git.branch_create(id)
-
-    -- update active repos
-    local active_repos = git.branch_ahead(id)
-    if not taskunit.set(id, "repo", active_repos) then
-        return 1
-    end
-
-    -- switch to task branch, that's it. Default option.
-    if not cmd or cmd == "struct" then
-        -- roachme: failes if repo's uncommited changes
+    if fstruct then
+        print("sync: struct")
+        struct.create(id)
+        git.branch_create(id)
         git.branch_switch(id)
-        return errcodes.ok
-    elseif cmd == "repo" then
+
+        -- TODO: refactor it
+        -- update active repos
+        local active_repos = git.branch_ahead(id)
+        if not taskunit.set(id, "repo", active_repos) then
+            return 1
+        end
+    end
+    if fremote then
+        print("sync: remote")
         if not git.branch_default() then
-            return errcodes.command_failed
+            return 1
         end
         git.branch_update(true)
         git.branch_switch(id)
         git.branch_rebase()
-        return errcodes.ok
     end
-    local errmsg = "%s: update: command not found '%s'\n"
-    io.stderr:write(errmsg:format(help.progname, cmd))
-    io.stderr:write("Commands: [struct|task|repo]\n")
-    return errcodes.command_failed
+    if ftask then
+        print("sync: task status: under development")
+    end
+    return 0
 end
 
 --- Switch to another task.

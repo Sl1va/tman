@@ -21,6 +21,7 @@ In progress:
     37.  Move repos into directory cuz their number's getting bigger.
     38.  System and user config variable names might collide with each othre. Fix config.lua. Use diff namespaces.
     39.  Change checker in core.lua to check tman core, not tman base.
+    40.  `tman sync' add `wd' util features. And maybe get rid of wd commmand dependency.
 
 
 Gotta work on (still):

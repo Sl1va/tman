@@ -114,12 +114,13 @@ Options:
         name = "sync",
         desc = [[
 Usage: tman sync OPTION
-Update task repos, structure, etc. Operates on current task ID.
+Update task repos, structure, etc. Operates on current task only.
+With no option applied jump to task directory.
 
 Options:
-    -s      - task structure (default)
+    -s      - synchronize task structure
     -r      - git pull from remote repo
-    -t      - synchronize task status
+    -t      - synchronize task status (active, completed)
 ]],
     },
 
