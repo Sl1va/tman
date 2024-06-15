@@ -350,27 +350,30 @@ local function tman_list()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
-            local errmsg = "unrecognized option '%s'\n"
-            io.stderr:write(errmsg:format(arg[optind - 1]))
-            return 0
+            die(1, "unrecognized option\n", arg[optind - 1])
         end
+
         if optopt == "A" then
-            print("All tasks:")
             active = true
             completed = true
-        --[[
         elseif optopt == "a" then
-            -- use default flags
-        ]]
+            active = true
+            completed = false
         elseif optopt == "c" then
-            print("Completed tasks:")
             active = false
             completed = true
         end
     end
-    if active == true and completed == false then
+
+    -- output header.
+    if active == true and completed == true then
+        print("All tasks:")
+    elseif active == true and completed == false then
         print("Active tasks:")
+    elseif active == false and completed == true then
+        print("Completed tasks:")
     end
+
     taskid.list(active, completed)
     return 0
 end
