@@ -84,6 +84,9 @@ function tman()
 {
     local retcode=
 
+    _tman_get_sys_config_vars
+    _tman_form_full_command
+
     eval $TMAN $@
     retcode="$?"
 
@@ -93,8 +96,3 @@ function tman()
 
     _tman_handle_command $@
 }
-
-
-# Run command
-_tman_get_sys_config_vars
-_tman_form_full_command
