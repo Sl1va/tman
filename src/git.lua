@@ -375,6 +375,36 @@ local function git_commit_create(id)
     return true
 end
 
+local function _repo_exists(reponame)
+    local repopath = config.codebase .. reponame
+
+    if utils.access(repopath) then
+        return true
+    end
+    return false
+end
+
+--- Clone repos from user config.
+-- @return on success - true
+-- @return on failure - false
+local function git_repos_clone()
+    for _, repo in pairs(config.repos) do
+        if not _repo_exists(repo.name) then
+            local repopath = config.codebase .. repo.name
+            local cmd = ("git clone %s %s 2> /dev/null"):format(
+                repo.link,
+                repopath
+            )
+            if utils.exec(cmd) ~= 0 then
+                local errfmt = "tman: %s: couldn't download repo. Check link\n"
+                io.stderr:write(errfmt:format(repo.name))
+                return false
+            end
+            print(("%s: repo downloaded"):format(repo.name))
+        end
+    end
+end
+
 -- Public functions: end --
 
 return {
@@ -388,6 +418,8 @@ return {
     branch_rebase = git_branch_rebase,
     branch_merged = git_branch_merged,
     branch_default = git_branch_default,
+
+    repo_clone = git_repos_clone,
 
     commit_create = git_commit_create,
 

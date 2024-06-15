@@ -3,6 +3,7 @@
 
 local utils = require("aux.utils")
 local config = require("misc.config")
+local git = require("git")
 
 --- Init system to use a util.
 local function core_init()
@@ -16,9 +17,8 @@ local function core_init()
     utils.touch(config.taskids)
     utils.touch(config.tmanconf)
 
-    -- TODO: repos
-    -- tryna download repos from user config
-    -- code goes here
+    -- download repos
+    git.repo_clone()
 end
 
 --- Check tman dir ain't corrupted and exists.
