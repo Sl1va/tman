@@ -459,6 +459,9 @@ local function tman_set()
                 die(1, "description has illegal symbols\n", "")
             end
         elseif optopt == "i" then
+            if not taskunit.check("id", optarg) then
+                die(1, "invalid id\n", optarg)
+            end
             newid = optarg
         elseif optopt == "l" then
             newlink = optarg
