@@ -117,6 +117,7 @@ local function db_size()
 end
 
 --- Get item from database by task ID.
+-- roachme: Seems like no one use it at all.
 -- @param id task ID
 -- @return on success - {id, status}
 -- @return on failure - {}
@@ -134,12 +135,8 @@ end
 -- @return on success - {id, status}
 -- @return on failure - {}
 local function db_getidx(idx)
-    local item = ids[idx]
-
-    if item ~= nil then
-        return { id = item.id, status = item.status }
-    end
-    return {}
+    local item = ids[idx] or {}
+    return { id = item.id, status = item.status }
 end
 
 --- Set new status to task ID.
