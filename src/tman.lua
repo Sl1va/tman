@@ -408,9 +408,9 @@ local function tman_pack()
     end
 
     if fpush then
-        print("push branch to remote repo")
+        print("push branch to remote repo: under development")
     elseif fmake then
-        print("run commands from the Makefile")
+        print("run commands from the Makefile: under development")
     elseif fcommit then
         print("create commits")
         git.commit_create(id)
