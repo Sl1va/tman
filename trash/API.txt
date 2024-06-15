@@ -47,9 +47,11 @@ Options:
 
 Usage: tman sync OPTION
 Options:
-    -s      - task structure (default)
+    -d      - jumd to task directory (done by default)
     -r      - git pull from remote repo
+    -s      - task structure (default)
     -t      - synchronize task status
+    -w      - emulate wd util features (maybe it's a good idea)
 
 Usage: tman pack OPTION
 Options:
