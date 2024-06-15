@@ -136,6 +136,9 @@ local function git_branch_create(id)
 
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
+        -- TODO: check if branch already exists. If so don't create it again.
+        -- code goes here...
+
         utils.exec(gcheckout:format(repopath, repo.branch))
         utils.exec(gcheckoutb:format(repopath, branch))
     end

@@ -558,12 +558,14 @@ local function tman_sync()
     return 0
 end
 
---- Switch to another task.
+--- Switch to task.
 local function tman_use()
     local id
     local last_index = 1
     local optstr = ""
 
+    -- roachme: if this command doesn't take any options, delete this code.
+    --          no need for it, dude.
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die(1, "unrecognized option\n", arg[optind - 1])
