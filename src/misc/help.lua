@@ -113,9 +113,12 @@ Options:
     {
         name = "sync",
         desc = [[
-Usage: tman sync OPTION
-Update task repos, structure, etc. Operates on current task only.
+Usage: tman sync OPTION [ID]
+Update task repos, structure, etc. Default: current task.
 With no option applied jump to task directory.
+
+Note: Add support for other task cuz another task might be broken so
+      repair's need (if task branch's deleted)
 
 Options:
     -s      - synchronize task structure

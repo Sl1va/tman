@@ -511,15 +511,17 @@ end
 --- Update git repos.
 -- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
-    local id = taskid.getcurr()
+    local id = nil
     local optstr = "rst"
     local fremote, fstruct, ftask
+    local last_index = 1
 
     for optopt, _, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die(1, "unrecognized option\n", arg[optind - 1])
         end
 
+        last_index = optind
         if optopt == "r" then
             fremote = true
         elseif optopt == "s" then
@@ -529,8 +531,12 @@ local function tman_sync()
         end
     end
 
+    id = arg[last_index] or taskid.getcurr()
     if not id then
-        die(1, "no current task ID", "")
+        die(1, "no current task ID\n", "")
+    end
+    if not taskid.exist(id) then
+        die(1, "no such task ID\n", id)
     end
 
     if fstruct then
