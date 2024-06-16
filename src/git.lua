@@ -202,7 +202,10 @@ local function git_branch_create(id)
         -- TODO: check if branch already exists. If so don't create it again.
         -- code goes here...
 
+        -- switch to repo's default branch.
         utils.exec(gcheckout:format(repopath, repo.branch))
+
+        -- create task branch.
         utils.exec(gcheckoutb:format(repopath, branch))
     end
     return true
