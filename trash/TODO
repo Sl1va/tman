@@ -9,7 +9,6 @@ In progress:
     19.  Add module for default values so util doesn't break if no config is preesented.
     20.  `tman update' doesn't work if no current task. Fix it.
     22.  taskunit status - fix it or get rid of it.
-    24.  git: Add support to download repos.
     25.  Find a good way to delete unused and that no longer on remote repo.
     26.  Add support to work on different environments: work, personal, test.
     27.  Optimize db.lua: use task ID as table index.
@@ -22,6 +21,7 @@ In progress:
     38.  System and user config variable names might collide with each othre. Fix config.lua. Use diff namespaces.
     39.  Change checker in core.lua to check tman core, not tman base.
     40.  `tman sync' add `wd' util features. And maybe get rid of wd commmand dependency.
+    41.  Need rubost API. It's discombobulated now.
 
 
 Gotta work on (still):
@@ -45,6 +45,7 @@ Done:
     17.  Command `del': switch to previous task branch if it exists
     21.  `tman del' doesn't show task ID. Fix it.
     23.  Add unit for actvite repos.
+    24.  git: Add support to download repos.
     28.  Delete sort() from db.lua, it shouldn't know about it.
     29.  taskunit.lua can't change task type.
     31.  Function die() should be used only in tman.lua.
