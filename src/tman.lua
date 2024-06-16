@@ -582,22 +582,8 @@ end
 
 --- Switch to task.
 local function tman_use()
-    local id
-    local last_index = 1
-    local optstr = ""
+    local id = arg[1]
 
-    -- roachme: if this command doesn't take any options, delete this code.
-    --          no need for it, dude.
-    for optopt, optarg, optind in getopt(arg, optstr) do
-        if optopt == "?" then
-            die(1, "unrecognized option\n", arg[optind - 1])
-        end
-        if optopt == "h" then
-            print("WARNING: fake option", optarg or "NIL")
-        end
-    end
-
-    id = arg[last_index]
     if not id then
         die(1, "task ID required\n", "")
     end
