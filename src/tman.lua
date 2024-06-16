@@ -160,6 +160,11 @@ local function tman_add()
     local prio = "mid"
     local tasktype = "bugfix"
 
+    if not git.branch_isuncommited() then
+        -- roachme: would be nice to know what repo.
+        io.stderr:write("repo has uncommited changes\n")
+        os.exit(1)
+    end
     if not id then
         io.stderr:write("task ID required\n")
         os.exit(1)
@@ -178,13 +183,6 @@ local function tman_add()
         io.stderr:write("could not create new task structure\n")
         taskid.del(id)
         taskunit.del(id)
-        os.exit(1)
-    end
-    if not git.branch_isuncommited() then
-        io.stderr:write("could not create new branch for a task\n")
-        taskid.del(id)
-        taskunit.del(id)
-        struct.delete(id)
         os.exit(1)
     end
     git.branch_create(id)
