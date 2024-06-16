@@ -3,13 +3,11 @@
 
 local config = require("misc.config")
 local taskunit = require("taskunit")
-local log = require("misc.log").init("git")
 local utils = require("aux.utils")
 
 local repos = config.repos
 
 -- local git = "git -C %s " -- roachme: how to use it in here
-local gdiff_word = "git -C %s diff --quiet --exit-code"
 local gcheckout = "git -C %s checkout --quiet %s"
 local gcheckoutb = "git -C %s checkout --quiet -b %s 2>/dev/null"
 local gpull = "git -C %s pull --quiet origin %s"
@@ -22,22 +20,27 @@ local gdiff_commits = "git -C %s diff --quiet --exit-code %s %s"
 local grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null"
 local grebaseabort = "git -C %s rebase --abort"
 
+
 -- Private functions: end --
 
---- Check that repo has no uncommited changes.
--- @param reponame repo name
--- @return true on success, otherwise false
-local function change_check_repo(reponame)
-    local repopath = config.codebase .. reponame
-    local cmd = string.format(gdiff_word, repopath)
-    return utils.exec(cmd) == 0
+--- Check that task branch exists.
+local function branch_exists(repopath, branchname)
+    local gitcmd = "git -C %s "
+    local cmd_branch_exists = gitcmd .. "show-ref --quiet refs/heads/%s"
+    local cmd = cmd_branch_exists:format(repopath, branchname)
+    local retcode = utils.exec(cmd)
+    if retcode ~= 0 then
+        return false
+    end
+    return true
 end
 
 --- Check whether repo has uncommited changes.
 -- @param reponame repo name
 -- @return has uncommited changes - true
 -- @return no uncommited changes -  false
-local function has_changes(reponame)
+local function isuncommited(reponame)
+    -- roachme: gotta take argument for task branch, right?
     local repopath = config.codebase .. reponame
     local cmd = "git -C %s diff --quiet --exit-code"
     cmd = string.format(cmd, repopath)
@@ -46,11 +49,9 @@ local function has_changes(reponame)
     return ret ~= 0
 end
 
---- Check repos for uncommited chanegs.
-local function changes_check()
+local function git_branch_isuncommited()
     for _, repo in pairs(repos) do
-        if not change_check_repo(repo.name) then
-            log:err("repo '%s' has uncommited changes", repo.name)
+        if isuncommited(repo.name) then
             return false
         end
     end
@@ -64,9 +65,6 @@ end
 --- Switch to repo default branch.
 -- @treturn bool true on success, otherwise false
 local function git_branch_default()
-    if not changes_check() then
-        return false
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
@@ -80,9 +78,6 @@ end
 local function git_branch_switch(id)
     local branch = taskunit.get(id, "branch")
 
-    if not changes_check() then
-        return false
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         utils.exec(gcheckout:format(repopath, branch))
@@ -93,9 +88,6 @@ end
 --- Git pull command.
 -- @param all true pull all branches, otherwise only default branch
 local function git_branch_update(all)
-    if not changes_check() then
-        return false
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
@@ -109,9 +101,6 @@ end
 
 --- Rebase task branch against default.
 local function git_branch_rebase()
-    if not changes_check() then
-        return false
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         if utils.exec(grebase:format(repopath, repo.branch)) ~= 0 then
@@ -130,10 +119,6 @@ end
 local function git_branch_create(id)
     local branch = taskunit.get(id, "branch")
 
-    if not changes_check() then
-        return false
-    end
-
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         -- TODO: check if branch already exists. If so don't create it again.
@@ -151,9 +136,6 @@ end
 local function git_branch_rename(id)
     local newbranch = taskunit.get(id, "branch")
 
-    if not changes_check() then
-        return 1
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         utils.exec(gbranchm:format(repopath, newbranch))
@@ -167,9 +149,6 @@ end
 local function git_branch_delete(id)
     local branch = taskunit.get(id, "branch")
 
-    if not changes_check() then
-        return false
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
@@ -189,9 +168,6 @@ local function git_branch_merged(id)
     --  roachme: doesn't work if merge conflic with default branch.
     --  which happens quite often.
 
-    if not changes_check() then
-        return false
-    end
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         local cmd = gbranchmrg:format(repopath, repo.branch, branch)
@@ -218,8 +194,7 @@ local function git_branch_ahead(id)
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         local cmd = gdiff_commits:format(repopath, repo.branch, branch)
-        if not change_check_repo(repo.name) then
-            --print("change_check_repo")
+        if isuncommited(repo.name) then
             -- has uncommited changes
             table.insert(res, repo.name)
         elseif utils.exec(cmd) ~= 0 then
@@ -232,47 +207,31 @@ local function git_branch_ahead(id)
     return res
 end
 
+--- Check that task branch exists and its has no uncommited changes.
+-- @return on success - true
+-- @return on failure - false
 local function git_check(id)
-    -- mini-map: check that
-    -- 1. task branch exists
-    -- 2. task branch has no uncommited changes.
-    -- 3. task branch can be rebased against default branch (pro'ly)
-
     local branch = taskunit.get(id, "branch")
-    local gitcmd = "git -C %s "
 
-    -- 1. task branch exists
     for _, repo in pairs(repos) do
-        local cmd_branch_exists = gitcmd .. "show-ref --quiet refs/heads/%s"
         local repopath = config.codebase .. repo.name
-        local cmd = cmd_branch_exists:format(repopath, branch)
-        if utils.exec(cmd) ~= 0 then
+        local reponame = repo.name
+
+        -- First off, check that task branch exists.
+        if not branch_exists(repopath, branch) then
             io.stderr:write(("branch '%s' doesn't exist\n"):format(branch))
             return false
         end
-    end
 
-    -- 2. task branch has no uncommited changes.
-    for _, repo in pairs(repos) do
-        local cmd_uncommited_changes = "git -C %s status --porcelain %s"
-        local repopath = config.codebase .. repo.name
-        local cmd = cmd_uncommited_changes:format(repopath, branch)
-        local file = assert(io.popen(cmd))
-        local res = file:read()
-        file:close()
-        if res ~= nil then
-            io.stderr:write(
-                ("repo '%s' uncommited changes\n"):format(repo.name)
-            )
+        -- Second off, check that branch has no uncommited changes.
+        if isuncommited(reponame) then
+            local errmsg = ("repo '%s' uncommited changes\n"):format(reponame)
+            io.stderr:write(errmsg)
             return false
         end
-    end
 
-    -- 3. task branch can be rebased against default branch (pro'ly)
-    --[[
-    for _, repo in pairs(repos) do
+        -- Third off, check that task branch can be rebased against default
     end
-    ]]
     return true
 end
 
@@ -354,7 +313,7 @@ local function git_commit_create(id)
     -- if not tryna switch to task branch.
 
     for _, repo in pairs(repos) do
-        if has_changes(repo.name) then
+        if isuncommited(repo.name) then
             --print("repo", repo.name)
             local repopath = config.codebase .. repo.name
 
@@ -390,20 +349,24 @@ end
 --- Clone repos from user config.
 -- @return on success - true
 -- @return on failure - false
-local function git_repos_clone()
+local function git_repo_clone()
     for _, repo in pairs(config.repos) do
         if not _repo_exists(repo.name) then
             local repopath = config.codebase .. repo.name
-            local cmd = ("git clone %s %s 2> /dev/null"):format(
+            if not repo.link then
+                io.stderr:write("no repo link in config: ", repo.name, "\n")
+            else
+                local cmd = ("git clone %s %s 2> /dev/null"):format(
                 repo.link,
                 repopath
-            )
-            if utils.exec(cmd) ~= 0 then
-                local errfmt = "tman: %s: couldn't download repo. Check link\n"
-                io.stderr:write(errfmt:format(repo.name))
-                return false
+                )
+                if utils.exec(cmd) ~= 0 then
+                    local errfmt = "tman: %s: couldn't download repo. Check link\n"
+                    io.stderr:write(errfmt:format(repo.name))
+                    return false
+                end
+                print(("%s: repo downloaded"):format(repo.name))
             end
-            print(("%s: repo downloaded"):format(repo.name))
         end
     end
 end
@@ -411,7 +374,8 @@ end
 -- Public functions: end --
 
 return {
-    check = git_check,
+    check = git_check, -- general check
+
     --branch_prune = git_branch_prune,
     branch_create = git_branch_create,
     branch_delete = git_branch_delete,
@@ -422,7 +386,9 @@ return {
     branch_merged = git_branch_merged,
     branch_default = git_branch_default,
 
-    repo_clone = git_repos_clone,
+    branch_isuncommited = git_branch_isuncommited,
+
+    repo_clone = git_repo_clone,
 
     commit_create = git_commit_create,
 

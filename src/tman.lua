@@ -58,9 +58,7 @@ end
 -- @return on success - 0
 -- @return on failure - error code
 local function _set_desc(id, newdesc)
-    if not git.branch_switch(id) then
-        return 1
-    end
+    git.branch_switch(id)
     -- roachme: the only reasons why it might fail
     -- 1. Dir doesn't exist.
     -- 2. Has no permition.
@@ -85,9 +83,7 @@ local function _set_id(id, newid)
         die(1, "task ID already exists\n", newid)
     end
 
-    if not git.branch_switch(id) then
-        return 1
-    end
+    git.branch_switch(id)
     if not taskunit.set(id, "id", newid) then
         return 1
     end
@@ -174,7 +170,7 @@ local function tman_add()
     end
     if not taskunit.add(id, tasktype, prio) then
         io.stderr:write("could not create new task unit\n")
-        -- roachme: in case of error deletes previous task ID
+        -- roachme:BUG: in case of error deletes previous task ID
         taskid.del(id)
         os.exit(1)
     end
@@ -184,13 +180,14 @@ local function tman_add()
         taskunit.del(id)
         os.exit(1)
     end
-    if not git.branch_create(id) then
+    if not git.branch_isuncommited() then
         io.stderr:write("could not create new branch for a task\n")
         taskid.del(id)
         taskunit.del(id)
         struct.delete(id)
         os.exit(1)
     end
+    git.branch_create(id)
     return 0
 end
 
@@ -306,9 +303,10 @@ local function tman_del()
 
     -- roachme: when it deletes task branch what branch is it on?
     -- anyway, find a nice logic.
-    if not git.branch_delete(id) then
+    if not git.check(id) then
         die(1, "repo has uncommited changes", "")
     end
+    git.branch_delete(id)
     taskunit.del(id)
     taskid.del(id)
 
@@ -409,6 +407,9 @@ local function tman_pack()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
+    if not git.check(id) then
+        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    end
 
     if fpush then
         print("push branch to remote repo: under development")
@@ -429,9 +430,11 @@ local function tman_prev()
     if not prev then
         die(1, "no previous task\n", "")
     end
-    if not git.branch_switch(prev) then
-        die(1, "repo has uncommited changes\n", "REPONAME")
+    if not git.check(prev) then
+        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
     end
+
+    git.branch_switch(prev)
     taskid.swap()
     return 0
 end
@@ -490,8 +493,12 @@ local function tman_set()
     id = arg[last_index] or taskid.getcurr()
     if not id then
         die(1, "no current task ID\n", "")
-    elseif not taskid.exist(id) then
+    end
+    if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
+    end
+    if not git.check(id) then
+        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
     end
 
     -- roachme: error if no arguments're passed
@@ -511,7 +518,8 @@ local function tman_set()
     return 0
 end
 
---- Update git repos.
+--- Synchronize task dir: structure, task status, remote repo.
+-- With no options jump to task dir.
 -- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
     local id = nil
@@ -541,25 +549,21 @@ local function tman_sync()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
+    if not git.check(id) then
+        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    end
 
     if fstruct then
         print("sync: struct")
         struct.create(id)
         git.branch_create(id)
         git.branch_switch(id)
-
-        -- TODO: refactor it
-        -- update active repos
-        local active_repos = git.branch_ahead(id)
-        if not taskunit.set(id, "repo", active_repos) then
-            return 1
-        end
+        -- update list of active repos
+        taskunit.set(id, "repo", git.branch_ahead(id))
     end
     if fremote then
         print("sync: remote")
-        if not git.branch_default() then
-            return 1
-        end
+        git.branch_default()
         git.branch_update(true)
         git.branch_switch(id)
         git.branch_rebase()
@@ -597,9 +601,10 @@ local function tman_use()
     if taskid.getcurr() == id then
         die(1, "already in use\n", id)
     end
-    if not git.branch_switch(id) then
-        die(1, "has uncommited changes\n", "repo")
+    if not git.check(id) then
+        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
     end
+    git.branch_switch(id)
     taskid.setcurr(id)
     return 0
 end
