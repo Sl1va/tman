@@ -425,11 +425,8 @@ local function tman_prev()
     if not prev then
         die(1, "no previous task\n", "")
     end
-    if not git.branch_isuncommited() then
+    if not git.check(prev) then
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
-    end
-    if not git.branch_exists(prev) then
-        git.branch_create(prev)
     end
 
     git.branch_switch(prev)
@@ -495,11 +492,8 @@ local function tman_set()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    if not git.branch_isuncommited() then
+    if not git.check(id) then
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
-    end
-    if not git.branch_exists(id) then
-        git.branch_create(id)
     end
 
     -- roachme: error if no arguments're passed
@@ -554,7 +548,7 @@ local function tman_sync()
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
     end
 
-    -- if task branch doesn't exist, create it.
+    -- base case: other options might depend on it.
     if not git.branch_exists(id) then
         git.branch_create(id)
     end
@@ -593,11 +587,8 @@ local function tman_use()
     if taskid.getcurr() == id then
         die(1, "already in use\n", id)
     end
-    if not git.branch_isuncommited() then
+    if not git.check(id) then
         die(1, "one of the repos has uncommited changes", "REPONAME")
-    end
-    if not git.branch_exists(id) then
-        git.branch_create(id)
     end
 
     git.branch_switch(id)
