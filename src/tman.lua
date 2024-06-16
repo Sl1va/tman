@@ -299,9 +299,7 @@ local function tman_del()
         os.exit(1)
     end
 
-    -- roachme: when it deletes task branch what branch is it on?
-    -- anyway, find a nice logic.
-    if not git.check(id) then
+    if not git.branch_isuncommited() then
         die(1, "repo has uncommited changes", "")
     end
     git.branch_delete(id)
@@ -427,8 +425,11 @@ local function tman_prev()
     if not prev then
         die(1, "no previous task\n", "")
     end
-    if not git.check(prev) then
+    if not git.branch_isuncommited() then
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    end
+    if not git.branch_exists(prev) then
+        git.branch_create(prev)
     end
 
     git.branch_switch(prev)
@@ -494,8 +495,11 @@ local function tman_set()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    if not git.check(id) then
+    if not git.branch_isuncommited() then
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    end
+    if not git.branch_exists(id) then
+        git.branch_create(id)
     end
 
     -- roachme: error if no arguments're passed
@@ -546,8 +550,13 @@ local function tman_sync()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    if not git.check(id) then
+    if not git.branch_isuncommited() then
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    end
+
+    -- if task branch doesn't exist, create it.
+    if not git.branch_exists(id) then
+        git.branch_create(id)
     end
 
     if fstruct then
@@ -598,9 +607,13 @@ local function tman_use()
     if taskid.getcurr() == id then
         die(1, "already in use\n", id)
     end
-    if not git.check(id) then
-        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    if not git.branch_isuncommited() then
+        die(1, "one of the repos has uncommited changes", "REPONAME")
     end
+    if not git.branch_exists(id) then
+        git.branch_create(id)
+    end
+
     git.branch_switch(id)
     taskid.setcurr(id)
     return 0
