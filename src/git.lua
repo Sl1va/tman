@@ -20,7 +20,6 @@ local gdiff_commits = "git -C %s diff --quiet --exit-code %s %s"
 local grebase = "git -C %s rebase --quiet %s 2> /dev/null > /dev/null"
 local grebaseabort = "git -C %s rebase --abort"
 
-
 -- githelper functions: start --
 
 --- Get changed part of the code.
@@ -362,11 +361,12 @@ local function git_repo_clone()
                 io.stderr:write("no repo link in config: ", repo.name, "\n")
             else
                 local cmd = ("git clone %s %s 2> /dev/null"):format(
-                repo.link,
-                repopath
+                    repo.link,
+                    repopath
                 )
                 if utils.exec(cmd) ~= 0 then
-                    local errfmt = "tman: %s: couldn't download repo. Check link\n"
+                    local errfmt =
+                        "tman: %s: couldn't download repo. Check link\n"
                     io.stderr:write(errfmt:format(repo.name))
                     return false
                 end

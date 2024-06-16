@@ -522,7 +522,7 @@ end
 -- With no options jump to task dir.
 -- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
-    local id = nil
+    local id
     local optstr = "rst"
     local fremote, fstruct, ftask
     local last_index = 1
