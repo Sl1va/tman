@@ -405,8 +405,8 @@ local function tman_pack()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    if not git.check(id) then
-        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+    if not git.branch_exists(id) then
+        die(1, "task branch doesn't exist\n", "REPONAME")
     end
 
     if fpush then
@@ -417,7 +417,6 @@ local function tman_pack()
         print("create commits")
         git.commit_create(id)
     end
-
     return 0
 end
 

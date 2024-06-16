@@ -102,7 +102,7 @@ local function _repo_exists(reponame)
 end
 
 --- Check that task branch exists.
-local function branch_exists(repopath, branchname)
+local function _branch_exists(repopath, branchname)
     local gitcmd = "git -C %s "
     local cmd_branch_exists = gitcmd .. "show-ref --quiet refs/heads/%s"
     local cmd = cmd_branch_exists:format(repopath, branchname)
@@ -297,7 +297,7 @@ local function git_check(id)
         local reponame = repo.name
 
         -- First off, check that task branch exists.
-        if not branch_exists(repopath, branch) then
+        if not _branch_exists(repopath, branch) then
             io.stderr:write(("branch '%s' doesn't exist\n"):format(branch))
             return false
         end
@@ -376,6 +376,19 @@ local function git_repo_clone()
     end
 end
 
+--- Check that task branch exists.
+local function git_branch_exists(id)
+    local branch = taskunit.get(id, "branch")
+
+    for _, repo in pairs(repos) do
+        local repopath = config.codebase .. repo.name
+        if not _branch_exists(repopath, branch) then
+            return false
+        end
+    end
+    return true
+end
+
 -- Public functions: end --
 
 return {
@@ -392,6 +405,7 @@ return {
     branch_default = git_branch_default,
 
     branch_isuncommited = git_branch_isuncommited,
+    branch_exists = git_branch_exists,
 
     repo_clone = git_repo_clone,
 
