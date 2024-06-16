@@ -442,7 +442,14 @@ local function tman_set()
     local id
     local last_index = 1
     local optstr = "di:l:p:t:"
-    local newdesc, newid, newlink, newprio, newtype
+    local newdesc -- roachme: get rid of this variable
+    local options = {
+        newid = { arg = nil, func = _set_id },
+        newdesc = { arg = nil, func = _set_desc },
+        newlink = { arg = nil, func = _set_link },
+        newprio = { arg = nil, func = _set_prio },
+        newtype = { arg = nil, func = _set_type },
+    }
 
     -- roachme: It'd be better to show what task ID's changing. Maybe?
 
@@ -458,23 +465,25 @@ local function tman_set()
             if not taskunit.check("desc", newdesc) then
                 die(1, "description has illegal symbols\n", "")
             end
+            -- roachme: be careful when delete newdesc variable.
+            options.newdesc.arg = newdesc
         elseif optopt == "i" then
             if not taskunit.check("id", optarg) then
                 die(1, "invalid id\n", optarg)
             end
-            newid = optarg
+            options.newid.arg = optarg
         elseif optopt == "l" then
-            newlink = optarg
+            options.newlink.arg = optarg
         elseif optopt == "p" then
             if not taskunit.check("prio", optarg) then
                 die(1, "invalid priority\n", optarg)
             end
-            newprio = optarg
+            options.newprio.arg = optarg
         elseif optopt == "t" then
             if not taskunit.check("type", optarg) then
                 die(1, "invalid task type\n", optarg)
             end
-            newtype = optarg
+            options.newtype.arg = optarg
         end
     end
 
@@ -485,25 +494,19 @@ local function tman_set()
         die(1, "no such task ID\n", id)
     end
 
-    if newid and newtype then
+    -- roachme: error if no arguments're passed
+
+    if options.newid.arg and options.newtype.arg then
         io.stderr:write("BUG: options '-i' and '-t' can't be used togother\n")
         return 1
     end
 
-    if newdesc then
-        _set_desc(id, newdesc)
-    end
-    if newid then
-        _set_id(id, newid)
-    end
-    if newlink then
-        _set_link(id, newlink)
-    end
-    if newprio then
-        _set_prio(id, newprio)
-    end
-    if newtype then
-        _set_type(id, newtype)
+    -- set values
+    for _, item in pairs(options) do
+        if item.arg then
+            -- no worries, a function exit if there're any errors.
+            item.func(id, item.arg)
+        end
     end
     return 0
 end
