@@ -3,7 +3,7 @@
 source tman.sh
 
 TASK_PREFIX="TEST_TEST"
-ITERS=10000
+ITERS=1000
 
 function tman_add()
 {
@@ -25,7 +25,7 @@ function tman_del()
 
 
 #tman_add
-tman_del
+#tman_del
 # delete: bash tests/use/add.sh  46.14s user 18.75s system 107% cpu 1:00.52 total
 # add:    bash tests/use/add.sh  39.40s user 15.31s system 107% cpu 50.929 total
 
