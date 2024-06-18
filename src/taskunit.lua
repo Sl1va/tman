@@ -41,8 +41,7 @@ local function format_branch()
     for _, item in pairs(sepcomponents) do
         local uitem = unit.get(string.lower(item))
 
-        -- roachme: gotta figure out whether or not defval is necessary.
-        if not uitem or uitem == unit.defval then
+        if not uitem then
             local errmsg = "error: branch formatiton: '%s': unit not found\n"
             io.stderr:write(errmsg:format(item))
             return nil
@@ -219,7 +218,7 @@ local function taskunit_add(id, tasktype, prio)
     unit.set("type", tasktype)
     unit.set("desc", desc)
 
-    unit.set("time", "N/A")
+    --unit.set("time", "N/A")
     unit.set("date", os.date("%Y%m%d"))
     unit.set("status", "progress")
     unit.set("branch", format_branch())

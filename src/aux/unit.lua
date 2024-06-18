@@ -7,7 +7,6 @@ local unitfile = ""
 local unitregex = "(.*): (.*)"
 local unitfmt = "%s: %s\n"
 
-unit.defval = "N/A"
 unit.keys = {
     "id",
     "prio",
@@ -79,11 +78,10 @@ function unit.get(key)
 end
 
 --- Set new value into units.
--- If no value's passed, set default value - `N/A'.
 -- @param key key
 -- @param val value
 function unit.set(key, val)
-    units[key] = val or unit.defval
+    units[key] = val
 end
 
 return unit
