@@ -1,16 +1,17 @@
 --- Simple database for task IDs.
 -- @module db
 
-local ids = {}
+local db = {}
 local idfile = ""
 local idregex = "(.*) (.*)"
 local idfmt = "%s %s\n"
+local ids = {}
 
 --- Check that variable entry's safe to save.
 -- @return on success - true
 -- @return on failure - false
 local function _db_check()
-    for _, item in pairs(ids) do
+    for _, item in pairs(db) do
         if item.id == nil or item.status == nil then
             return false
         end
@@ -31,14 +32,14 @@ local function _db_load()
 
     for line in f:lines() do
         local id, idstatus = string.match(line, idregex)
-        table.insert(ids, { id = id, status = tonumber(idstatus) })
+        table.insert(db, { id = id, status = tonumber(idstatus) })
     end
     return f:close()
 end
 
 --- Init database (load task IDs from the file).
 -- @param fname database filename
-local function db_init(fname)
+function ids.init(fname)
     idfile = fname
     _db_load()
 end
@@ -47,11 +48,11 @@ end
 -- @param id task ID to check
 -- @return on success - true
 -- @return on failure - false
-local function db_exist(id)
+function ids.exist(id)
     if not id then
         return false
     end
-    for _, item in pairs(ids) do
+    for _, item in pairs(db) do
         if item.id == id then
             return true
         end
@@ -62,7 +63,7 @@ end
 --- Save task IDs to file.
 -- @return on success - true
 -- @return on failure - false
-local function db_save()
+function ids.save()
     local f = io.open(idfile, "w")
 
     if not f then
@@ -72,7 +73,7 @@ local function db_save()
         return false
     end
 
-    for _, item in pairs(ids) do
+    for _, item in pairs(db) do
         f:write(idfmt:format(item.id, item.status))
     end
     return f:close()
@@ -83,11 +84,11 @@ end
 -- @param status task status
 -- @return on success - true
 -- @return on failure - false
-local function db_add(id, status)
-    if db_exist(id) then
+function ids.add(id, status)
+    if ids.exist(id) then
         return false
     end
-    table.insert(ids, { id = id, status = status })
+    table.insert(db, { id = id, status = status })
     return true
 end
 
@@ -95,10 +96,10 @@ end
 -- @param id task id
 -- @return on success - true
 -- @return on failure - false
-local function db_del(id)
-    for i, item in pairs(ids) do
+function ids.del(id)
+    for i, item in pairs(db) do
         if item.id == id then
-            table.remove(ids, i)
+            table.remove(db, i)
             return true
         end
     end
@@ -107,10 +108,10 @@ end
 
 --- Get size of database entries.
 -- @return size of database entries
-local function db_size()
+function ids.size()
     local size = 0
 
-    for _, _ in pairs(ids) do
+    for _, _ in pairs(db) do
         size = size + 1
     end
     return size
@@ -121,8 +122,8 @@ end
 -- @param id task ID
 -- @return on success - {id, status}
 -- @return on failure - {}
-local function db_get(id)
-    for _, item in pairs(ids) do
+function ids.get(id)
+    for _, item in pairs(db) do
         if item.id == id then
             return { id = item.id, status = item.status }
         end
@@ -134,8 +135,8 @@ end
 -- @param idx task ID index
 -- @return on success - {id, status}
 -- @return on failure - {}
-local function db_getidx(idx)
-    local item = ids[idx] or {}
+function ids.getidx(idx)
+    local item = db[idx] or {}
     return { id = item.id, status = item.status }
 end
 
@@ -143,8 +144,8 @@ end
 -- @param id task ID
 -- @param status new task status
 -- @return true on success, otherwise false
-local function db_set(id, status)
-    for _, item in pairs(ids) do
+function ids.set(id, status)
+    for _, item in pairs(db) do
         if item.id == id then
             item.status = status
             return true
@@ -153,14 +154,4 @@ local function db_set(id, status)
     return false
 end
 
-return {
-    add = db_add,
-    del = db_del,
-    set = db_set,
-    get = db_get,
-    init = db_init,
-    size = db_size,
-    save = db_save,
-    exist = db_exist,
-    getidx = db_getidx,
-}
+return ids

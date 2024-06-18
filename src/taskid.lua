@@ -4,7 +4,7 @@
 
 local taskunit = require("taskunit")
 local config = require("misc.config")
-local db = require("aux.db")
+local ids = require("aux.ids")
 
 --- Types of task IDs.
 local status = {
@@ -21,10 +21,10 @@ local status = {
 -- @return on success - task ID
 -- @return on failure - nil
 local function _getspec(taskstatus)
-    local size = db.size()
+    local size = ids.size()
 
     for i = 1, size do
-        local entry = db.getidx(i)
+        local entry = ids.getidx(i)
         if entry.status == taskstatus then
             return entry.id
         end
@@ -37,13 +37,13 @@ end
 -- @param taskstatus task status to move a previous ID to
 -- @return true on success, otherwise false
 local function unsetprev(taskstatus)
-    local size = db.size()
+    local size = ids.size()
     taskstatus = taskstatus or status.ACTV
 
     for i = 1, size do
-        local entry = db.getidx(i)
+        local entry = ids.getidx(i)
         if entry.status == status.PREV then
-            return db.set(entry.id, taskstatus)
+            return ids.set(entry.id, taskstatus)
         end
     end
     return false
@@ -55,7 +55,7 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 local function setprev(id)
     unsetprev()
-    return db.set(id, status.PREV)
+    return ids.set(id, status.PREV)
 end
 
 --- Unset current task ID.
@@ -63,13 +63,13 @@ end
 -- @param taskstatus task status to move a current ID to
 -- @return true on success, otherwise false
 local function unsetcurr(taskstatus)
-    local size = db.size()
+    local size = ids.size()
     taskstatus = taskstatus or status.ACTV
 
     for i = 1, size do
-        local entry = db.getidx(i)
+        local entry = ids.getidx(i)
         if entry.status == status.CURR then
-            return db.set(entry.id, taskstatus)
+            return ids.set(entry.id, taskstatus)
         end
     end
     return false
@@ -80,7 +80,7 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 local function setcurr(id)
     unsetcurr()
-    return db.set(id, status.CURR)
+    return ids.set(id, status.CURR)
 end
 
 -- Private functions: end --
@@ -91,7 +91,7 @@ end
 -- @param id task ID to look up
 -- @treturn bool true if task ID exist, otherwise false
 local function taskid_exist(id)
-    return db.exist(id)
+    return ids.exist(id)
 end
 
 --- Get previous task ID from database.
@@ -117,7 +117,7 @@ local function taskid_swap()
 
     setprev(curr)
     setcurr(prev)
-    return db.save()
+    return ids.save()
 end
 
 --- Add a new task ID.
@@ -129,13 +129,13 @@ local function taskid_add(id)
     --         There's setcurr() for it.
     local curr = taskid_getcurr()
 
-    if db.add(id, status.CURR) == false then
+    if ids.add(id, status.CURR) == false then
         return false
     end
 
     setprev(curr)
     setcurr(id)
-    return db.save()
+    return ids.save()
 end
 
 --- Delete a task ID.
@@ -148,11 +148,11 @@ local function taskid_del(id)
         return false
     end
 
-    db.del(id)
+    ids.del(id)
     if id == curr then
         return taskid_swap()
     end
-    return db.save()
+    return ids.save()
 end
 
 --- Move task ID to new status.
@@ -166,14 +166,14 @@ local function taskid_move(taskid, taskstatus)
 
     if taskid == curr then
         unsetprev(status.ACTV)
-        db.set(prev, status.CURR)
-        db.set(curr, taskstatus)
+        ids.set(prev, status.CURR)
+        ids.set(curr, taskstatus)
     elseif taskid == prev then
-        db.set(prev, status.COMP)
+        ids.set(prev, status.COMP)
     else
-        db.set(taskid, taskstatus)
+        ids.set(taskid, taskstatus)
     end
-    return db.save()
+    return ids.save()
 end
 
 --- Move current task to completed status.
@@ -193,7 +193,7 @@ local function taskid_setcurr(id)
     end
     setcurr(id)
     setprev(curr)
-    return db.save()
+    return ids.save()
 end
 
 --- List task IDs.
@@ -203,7 +203,7 @@ end
 -- @return count of task IDs
 local function taskid_list(active, completed)
     local desc
-    local size = db.size()
+    local size = ids.size()
     local curr = taskid_getcurr()
     local prev = taskid_getprev()
 
@@ -217,7 +217,7 @@ local function taskid_list(active, completed)
     end
 
     for idx = 1, size do
-        local entry = db.getidx(idx)
+        local entry = ids.getidx(idx)
         if entry.id ~= curr and entry.id ~= prev then
             if entry.status == status.ACTV and active then
                 desc = taskunit.get(entry.id, "desc")
@@ -233,7 +233,7 @@ end
 
 -- Public functions: end --
 
-db.init(config.taskids)
+ids.init(config.taskids)
 
 return {
     -- roachme: should it be public?
