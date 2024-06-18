@@ -77,6 +77,8 @@ end
 -- @return on success - 0
 -- @return on failure - error code
 local function _set_id(id, newid)
+    local curr = taskid.getcurr()
+
     if id == newid then
         die(1, "the same task ID\n", newid)
     elseif taskid.exist(newid) then
@@ -91,6 +93,12 @@ local function _set_id(id, newid)
     -- It's ok, but not obvious.
     taskid.del(id)
     taskid.add(newid)
+
+    -- mark current task as current back again.
+    if curr ~= id then
+        taskid.setcurr(curr)
+    end
+
     struct.rename(id, newid)
     git.branch_rename(newid)
     return 0
