@@ -265,7 +265,7 @@ local function taskunit_cat(id, key)
     if key then
         for _, ukey in pairs(unit.keys) do
             if ukey == key then
-                print(("%-8s: %s"):format(key, unit.get(key) or defval))
+                print(unit.get(key) or defval)
                 return true
             end
         end
@@ -274,7 +274,8 @@ local function taskunit_cat(id, key)
 
     -- output all key values
     for _, ukey in pairs(unit.keys) do
-        print(("%-8s: %s"):format(ukey, unit.get(ukey) or defval))
+        local value = unit.get(ukey) or defval
+        print(("%-8s: %s"):format(ukey, value))
     end
     return true
 end

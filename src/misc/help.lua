@@ -185,11 +185,11 @@ Notes:
         name = "cat",
         desc = [[
 Usage: tman cat [OPTION] [TASKID]
-Show task units (current task by default).
-TASKID - default is current task.
+Show task units.
+TASKID - task ID (default is current task).
 
 Options:
-    -k   cat specific unit key
+    -k   cat specific task unit
 ]],
     },
     {
