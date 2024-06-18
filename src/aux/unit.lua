@@ -1,12 +1,14 @@
 --- Auxilary module for taskunit.lua
 -- @module unit
 
+local unit = {}
 local units = {}
-local defval = "N/A"
 local unitfile = ""
 local unitregex = "(.*): (.*)"
 local unitfmt = "%s: %s\n"
-local unitkeys = {
+
+unit.defval = "N/A"
+unit.keys = {
     "id",
     "prio",
     "type",
@@ -18,8 +20,7 @@ local unitkeys = {
     "status",
     "branch",
 }
-
-local unitprios = {
+unit.prios = {
     highest = "highest",
     high = "high",
     mid = "mid",
@@ -50,7 +51,7 @@ end
 --- Save task units into the file.
 -- @return on success - true
 -- @return on failure - false
-local function unit_save()
+function unit.save()
     local f = io.open(unitfile, "w")
 
     if not f then
@@ -60,14 +61,14 @@ local function unit_save()
     for key, val in pairs(units) do
         -- roachme: unit_set() already sets default value.
         -- so no need to check it again here.
-        f:write(unitfmt:format(key, val or defval))
+        f:write(unitfmt:format(key, val or unit.defval))
     end
     return f:close()
 end
 
 --- Init task unit database.
 -- @param fname task ID filename
-local function unit_init(fname)
+function unit.init(fname)
     unitfile = fname
     _unit_load()
 end
@@ -76,7 +77,7 @@ end
 -- @param key key to get
 -- @return on success - return actial value
 -- @return on failure - return default value (N/A)
-local function unit_get(key)
+function unit.get(key)
     return units[key]
 end
 
@@ -84,17 +85,8 @@ end
 -- @param key key
 -- @param val value
 -- @return unit value
-local function unit_set(key, val)
-    units[key] = val or defval
+function unit.set(key, val)
+    units[key] = val or unit.defval
 end
 
-return {
-    keys = unitkeys,
-    prios = unitprios,
-    defval = defval,
-
-    get = unit_get,
-    set = unit_set,
-    init = unit_init,
-    save = unit_save,
-}
+return unit
