@@ -30,7 +30,7 @@ unit.prios = {
 --- Load task units from the file.
 -- @return on success - true
 -- @return on failure - false
-local function _unit_load()
+local function load_units()
     units = {}
     local f = io.open(unitfile)
 
@@ -43,6 +43,13 @@ local function _unit_load()
         units[key] = val
     end
     return f:close()
+end
+
+--- Init task unit database.
+-- @param fname task ID filename
+function unit.init(fname)
+    unitfile = fname
+    return load_units()
 end
 
 --- Save task units into the file.
@@ -59,13 +66,6 @@ function unit.save()
         f:write(unitfmt:format(key, val))
     end
     return f:close()
-end
-
---- Init task unit database.
--- @param fname task ID filename
-function unit.init(fname)
-    unitfile = fname
-    _unit_load()
 end
 
 --- Get unit from unit file.
