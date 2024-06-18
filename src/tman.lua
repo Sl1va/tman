@@ -132,20 +132,6 @@ local function _set_type(id, newtype)
     return 0
 end
 
---- Check ID is passed and exists in database.
--- @param id task ID
--- @return true on success, otherwise false
-local function _checkid(id)
-    id = id or taskid.getcurr()
-    if not id then
-        die(1, "no current task\n", "")
-    end
-    if not taskid.exist(id) then
-        die(1, "no such task ID\n", id)
-    end
-    return true
-end
-
 -- Private functions: end --
 
 -- Public functions: start --
@@ -287,8 +273,11 @@ end
 local function tman_del()
     local id = arg[1] or taskid.getcurr()
 
-    if not _checkid(id) then
-        os.exit(1)
+    if not id then
+        die(1, "no current task\n", "")
+    end
+    if not taskid.exist(id) then
+        die(1, "no such task ID\n", id)
     end
 
     taskunit.cat(id, "desc")
