@@ -288,6 +288,7 @@ local function tman_del()
         die(1, "no such task ID\n", id)
     end
 
+    io.write("Task: ")
     taskunit.cat(id, "desc")
     io.write("Do you want to continue? [Yes/No] ")
     local confirm = io.read("*line")
