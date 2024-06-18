@@ -57,9 +57,7 @@ function unit.save()
     end
 
     for key, val in pairs(units) do
-        -- roachme: unit_set() already sets default value.
-        -- so no need to check it again here.
-        f:write(unitfmt:format(key, val or unit.defval))
+        f:write(unitfmt:format(key, val))
     end
     return f:close()
 end
@@ -72,17 +70,18 @@ function unit.init(fname)
 end
 
 --- Get unit from unit file.
--- @param key key to get
--- @return on success - return actial value
--- @return on failure - return default value (N/A)
+-- If no such key, return nil (as does Lua table).
+-- @param key key
+-- @return on success - value
+-- @return on failure - nil
 function unit.get(key)
     return units[key]
 end
 
---- Set new value to units.
+--- Set new value into units.
+-- If no value's passed, set default value - `N/A'.
 -- @param key key
 -- @param val value
--- @return unit value
 function unit.set(key, val)
     units[key] = val or unit.defval
 end
