@@ -41,8 +41,6 @@ local function _unit_load()
 
     for line in f:lines() do
         local key, val = string.match(line, unitregex)
-        -- for backward compatibily: old task has capitalized keys
-        key = string.lower(key)
         units[key] = val
     end
     return f:close()
