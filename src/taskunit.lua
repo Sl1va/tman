@@ -311,10 +311,7 @@ local function taskunit_set(id, key, value)
     elseif key == string.lower("type") then
         return _set_type(id, value)
     end
-    -- set new value
-    unit.init(config.units .. id)
-    unit.set(key, value)
-    return unit.save()
+    return false
 end
 
 --- Check task units.
