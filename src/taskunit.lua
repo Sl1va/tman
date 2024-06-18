@@ -7,6 +7,8 @@ local config = require("misc.config")
 local utils = require("aux.utils")
 local unit = require("aux.unit")
 
+local taskunit = {}
+
 -- Private functions: end --
 
 local function get_input(prompt)
@@ -208,7 +210,7 @@ end
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
 -- @param prio task priority
-local function taskunit_add(id, tasktype, prio)
+function taskunit.add(id, tasktype, prio)
     local desc = get_input("Desc")
     prio = prio or unit.prios.mid
     unit.init(config.units .. id)
@@ -248,7 +250,7 @@ end
 
 --- Delete task unit.
 -- @param id task ID
-local function taskunit_del(id)
+function taskunit.del(id)
     local unitfile = config.units .. id
     return utils.rm(unitfile)
 end
@@ -257,7 +259,7 @@ end
 -- @param id task ID
 -- @param key show only that key
 -- @return true on success
-local function taskunit_cat(id, key)
+function taskunit.cat(id, key)
     local defval = "N/A"
     unit.init(config.units .. id)
 
@@ -285,7 +287,7 @@ end
 -- @param key unit key
 -- @return on success - return actial value
 -- @return on failure - return default value ("N/A")
-local function taskunit_get(id, key)
+function taskunit.get(id, key)
     unit.init(config.units .. id)
     return unit.get(key)
 end
@@ -297,7 +299,7 @@ end
 -- @param value new value to set
 -- @return on success - true
 -- @return on failure - false
-local function taskunit_set(id, key, value)
+function taskunit.set(id, key, value)
     if key == string.lower("desc") then
         return _set_desc(id, value)
     elseif key == string.lower("id") then
@@ -319,7 +321,7 @@ end
 -- @param value unit value to check
 -- @return on success - true
 -- @return on failure - false
-local function taskunit_check(key, value)
+function taskunit.check(key, value)
     if key == "id" then
         return _check_id(value)
     elseif key == "desc" then
@@ -334,11 +336,4 @@ end
 
 -- Public functions: end --
 
-return {
-    add = taskunit_add,
-    del = taskunit_del,
-    cat = taskunit_cat,
-    get = taskunit_get,
-    set = taskunit_set,
-    check = taskunit_check,
-}
+return taskunit
