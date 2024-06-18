@@ -259,17 +259,23 @@ end
 -- @param key show only that key
 -- @return true on success
 local function taskunit_cat(id, key)
+    local defval = "N/A"
     unit.init(config.units .. id)
 
+    -- output only key value
     if key then
-        -- use defval for backward compatibility with old tasks
-        print(("%-8s: %s"):format(key, unit.get(key) or unit.defval))
-        return true
+        for _, ukey in pairs(unit.keys) do
+            if ukey == key then
+                print(("%-8s: %s"):format(key, unit.get(key) or defval))
+                return true
+            end
+        end
+        return false
     end
 
+    -- output all key values
     for _, ukey in pairs(unit.keys) do
-        -- use defval for backward compatibility with old tasks
-        print(("%-8s: %s"):format(ukey, unit.get(ukey) or unit.defval))
+        print(("%-8s: %s"):format(ukey, unit.get(ukey) or defval))
     end
     return true
 end
