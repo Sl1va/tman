@@ -124,6 +124,9 @@ end
 -- @param id task ID to add to database
 -- @treturn bool true on success, otherwise false
 local function taskid_add(id)
+    -- roacme: Don't make it current.
+    --         Add it to database with status: ACTV
+    --         There's setcurr() for it.
     local curr = taskid_getcurr()
 
     if db.add(id, status.CURR) == false then
