@@ -278,17 +278,17 @@ end
 -- @return on success - true
 -- @return on failure - false
 function taskunit.set(id, key, value)
-    if key == string.lower("desc") then
+    if key == "desc" then
         return _set_desc(id, value)
-    elseif key == string.lower("id") then
+    elseif key == "id" then
         return _set_id(id, value)
-    elseif key == string.lower("link") then
+    elseif key == "link" then
         return _set_link(id, value)
-    elseif key == string.lower("prio") then
+    elseif key == "prio" then
         return _set_prio(id, value)
-    elseif key == string.lower("repo") then
+    elseif key == "repo" then
         return _set_repo(id, value)
-    elseif key == string.lower("type") then
+    elseif key == "type" then
         return _set_type(id, value)
     end
     return false
