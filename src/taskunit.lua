@@ -119,7 +119,7 @@ local function _set_desc(id, newdesc)
     return unit.save()
 end
 
---- Chaneg task ID.
+--- Change task ID.
 -- @param id current task ID
 -- @param newid new ID
 -- @return on success - true
@@ -127,10 +127,6 @@ end
 local function _set_id(id, newid)
     local old_taskdir = config.taskbase .. id
     local new_taskdir = config.taskbase .. newid
-
-    if not _check_id(newid) then
-        return false
-    end
 
     unit.init(config.units .. id)
     unit.set("id", newid)
@@ -143,10 +139,6 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_type(id, newtype)
-    if not _check_type(newtype) then
-        return false
-    end
-
     unit.init(config.units .. id)
     unit.set("type", newtype)
     unit.set("branch", format_branch())
@@ -160,10 +152,6 @@ end
 -- @return on failure - false
 local function _set_prio(id, newprio)
     unit.init(config.units .. id)
-
-    if not _check_prio(newprio) then
-        return false
-    end
     unit.set("prio", newprio)
     return unit.save()
 end
@@ -173,7 +161,6 @@ end
 -- @return on failure - false
 local function _set_link(id, newlink)
     unit.init(config.units .. id)
-
     unit.set("link", newlink)
     return unit.save()
 end
