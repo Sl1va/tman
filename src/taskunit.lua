@@ -282,11 +282,46 @@ function taskunit.add(id, tasktype, prio)
     return unit.save()
 end
 
---- Delete task unit.
+--- Set unit key value.
+-- Update related units as well.
 -- @param id task ID
+-- @param key key to look up
+-- @param value new value to set
+-- @return on success - true
+-- @return on failure - false
+function taskunit.set(id, key, value)
+    if key == string.lower("desc") then
+        return _set_desc(id, value)
+    elseif key == string.lower("id") then
+        return _set_id(id, value)
+    elseif key == string.lower("link") then
+        return _set_link(id, value)
+    elseif key == string.lower("prio") then
+        return _set_prio(id, value)
+    elseif key == string.lower("repo") then
+        return _set_repo(id, value)
+    elseif key == string.lower("type") then
+        return _set_type(id, value)
+    end
+    return false
+end
+
+--- Delete task unit.
+---@param id string
+---@return boolean
 function taskunit.del(id)
     local unitfile = config.units .. id
     return utils.rm(unitfile)
+end
+
+--- Get unit from task metadata.
+-- @param id task ID
+-- @param key unit key
+-- @return on success - value
+-- @return on failure - nil
+function taskunit.get(id, key)
+    unit.init(config.units .. id)
+    return unit.get(key)
 end
 
 --- Show task unit metadata.
@@ -314,40 +349,6 @@ function taskunit.cat(id, key)
         print(("%-8s: %s"):format(ukey, value))
     end
     return true
-end
-
---- Get unit from task metadata.
--- @param id task ID
--- @param key unit key
--- @return on success - value
--- @return on failure - nil
-function taskunit.get(id, key)
-    unit.init(config.units .. id)
-    return unit.get(key)
-end
-
---- Set unit key value.
--- Update related units as well.
--- @param id task ID
--- @param key key to look up
--- @param value new value to set
--- @return on success - true
--- @return on failure - false
-function taskunit.set(id, key, value)
-    if key == string.lower("desc") then
-        return _set_desc(id, value)
-    elseif key == string.lower("id") then
-        return _set_id(id, value)
-    elseif key == string.lower("link") then
-        return _set_link(id, value)
-    elseif key == string.lower("prio") then
-        return _set_prio(id, value)
-    elseif key == string.lower("repo") then
-        return _set_repo(id, value)
-    elseif key == string.lower("type") then
-        return _set_type(id, value)
-    end
-    return false
 end
 
 -- Public functions: end --
