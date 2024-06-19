@@ -108,9 +108,7 @@ end
 -- @param id task ID
 -- @param newlink new task link
 local function _set_link(id, newlink)
-    if not taskunit.set(id, "link", newlink) then
-        return 1
-    end
+    taskunit.set(id, "link", newlink)
     return 0
 end
 
@@ -133,9 +131,7 @@ end
 -- @param id task ID
 -- @param newtype new type
 local function _set_type(id, newtype)
-    if not taskunit.set(id, "type", newtype) then
-        return 1
-    end
+    taskunit.set(id, "type", newtype)
     git.branch_rename(id)
     return 0
 end
