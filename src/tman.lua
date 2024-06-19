@@ -557,6 +557,7 @@ local function tman_sync()
         git.branch_create(id)
         git.branch_switch(id)
         -- update list of active repos
+        -- roachme:BUG: shouldn't it be `repos'?
         taskunit.set(id, "repo", git.branch_ahead(id))
     end
     if fremote then
