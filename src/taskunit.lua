@@ -206,6 +206,42 @@ end
 
 -- Public functions: start --
 
+--- Check task units.
+-- @param key unit key
+-- @param value unit value to check
+-- @return on success - true
+-- @return on failure - false
+function taskunit.check(key, value)
+    if key == "id" then
+        return _check_id(value)
+    elseif key == "desc" then
+        return _check_desc(value)
+    elseif key == "prio" then
+        return _check_prio(value)
+    elseif key == "type" then
+        return _check_type(value)
+
+    elseif key == "branch" then
+        -- roachme: gotta add check function.
+        if value then
+            return true
+        end
+        return false
+
+    elseif key == "status" then
+        return true
+    elseif key == "date" then
+        return true
+    elseif key == "time" then
+        return true
+    elseif key == "link" then
+        return true
+    elseif key == "repos" then
+        return true
+    end
+    return false
+end
+
 --- Add a new unit for a task.
 -- @param id task id
 -- @param tasktype task type: bugfix, hotfix, feature
@@ -312,24 +348,6 @@ function taskunit.set(id, key, value)
         return _set_repo(id, value)
     elseif key == string.lower("type") then
         return _set_type(id, value)
-    end
-    return false
-end
-
---- Check task units.
--- @param key unit key
--- @param value unit value to check
--- @return on success - true
--- @return on failure - false
-function taskunit.check(key, value)
-    if key == "id" then
-        return _check_id(value)
-    elseif key == "desc" then
-        return _check_desc(value)
-    elseif key == "prio" then
-        return _check_prio(value)
-    elseif key == "type" then
-        return _check_type(value)
     end
     return false
 end
