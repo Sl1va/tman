@@ -317,23 +317,24 @@ end
 -- @param key show only that key
 -- @return true on success
 function taskunit.cat(id, key)
-    local defval = "N/A"
     unit.init(config.units .. id)
 
     -- output only key value
     if key then
         for _, ukey in pairs(unit.keys) do
             if ukey == key then
-                print(unit.get(key) or defval)
+                local uval = unit.get(key)
+                io.write(("%s"):format(uval and uval .. "\n" or ""))
                 return true
             end
         end
+        -- roachme: should it inform about an error?
         return false
     end
 
     -- output all key values
     for _, ukey in pairs(unit.keys) do
-        local value = unit.get(ukey) or defval
+        local value = unit.get(ukey) or ""
         print(("%-8s: %s"):format(ukey, value))
     end
     return true
