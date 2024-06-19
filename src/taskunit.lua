@@ -99,11 +99,6 @@ end
 local function _check_type(type)
     local tasktypes = { "bugfix", "feature", "hotfix" }
 
-    -- roachme: gotta delete this check cuz algorithm takes it into account.
-    if not type then
-        return false
-    end
-
     for _, dtype in pairs(tasktypes) do
         if type == dtype then
             return true
