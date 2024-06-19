@@ -285,8 +285,8 @@ end
 --- Get unit from task metadata.
 -- @param id task ID
 -- @param key unit key
--- @return on success - return actial value
--- @return on failure - return default value ("N/A")
+-- @return on success - value
+-- @return on failure - nil
 function taskunit.get(id, key)
     unit.init(config.units .. id)
     return unit.get(key)
