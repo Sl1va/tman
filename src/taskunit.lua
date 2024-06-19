@@ -249,38 +249,29 @@ end
 function taskunit.add(id, tasktype, prio)
     local desc = get_input("Desc")
     prio = prio or unit.prios.mid
-    unit.init(config.units .. id)
 
+    -- Set values.
+    unit.init(config.units .. id)
     unit.set("id", id)
     unit.set("prio", prio)
     unit.set("type", tasktype)
     unit.set("desc", desc)
-
     --unit.set("time", "N/A")
+    --unit.set("link", "N/A")
+    --unit.set("repos", "N/A")
     unit.set("date", os.date("%Y%m%d"))
     unit.set("status", "progress")
     unit.set("branch", format_branch())
 
-    if not _check_id(id) then
-        log:err("task ID isn't valid", config.branchpatt)
-        return false
+    -- Check input values for validity.
+    for _, ukey in pairs(unit.keys) do
+        local value = unit.get(ukey)
+        if not taskunit.check(ukey, value) then
+            return false
+        end
     end
-    if not _check_desc(desc) then
-        log:err("description isn't valid", config.branchpatt)
-        return false
-    end
-    if not unit.get("branch") then
-        log:err("branch pattern isn't valid", config.branchpatt)
-        return false
-    end
-    if not _check_type(tasktype) then
-        log:err("unknown task type: '%s'", tasktype)
-        return false
-    end
-    if not _check_prio(prio) then
-        log:err("unknown task priority: '%s'", prio)
-        return false
-    end
+
+    -- Save values into the database.
     return unit.save()
 end
 
