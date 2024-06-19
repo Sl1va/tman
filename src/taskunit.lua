@@ -81,6 +81,14 @@ local function _check_desc(desc)
     return false
 end
 
+local function _check_link(link)
+    local linkregex = "[a-zA-Z0-9_%s-:/.]*"
+    if string.match(link, linkregex) == link then
+        return true
+    end
+    return false
+end
+
 --- Check that priority exists.
 -- @param priority priority to check
 -- @return true on success, otherwise false
@@ -198,6 +206,7 @@ function taskunit.check(key, value)
         desc = _check_desc,
         prio = _check_prio,
         type = _check_type,
+        link = _check_link,
         branch = function(val)
             return not (val == nil or val == "")
         end,
@@ -210,9 +219,6 @@ function taskunit.check(key, value)
 
         -- roachme: under development.
         time = function()
-            return true
-        end,
-        link = function()
             return true
         end,
         repos = function()
