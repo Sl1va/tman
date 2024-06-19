@@ -593,7 +593,7 @@ end
 
 -- Public functions: end --
 
-local funcs = {
+local commands = {
     add = tman_add,
     archive = tman_archive,
     cat = tman_cat,
@@ -632,7 +632,7 @@ local function main()
     end
 
     -- Call command.
-    for name, func in pairs(funcs) do
+    for name, func in pairs(commands) do
         if cmd == name then
             return func()
         end
