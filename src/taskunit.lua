@@ -2,7 +2,6 @@
 -- Metadata like branch name, date, description and so on.
 -- @module TaskUnit
 
-local log = require("misc.log").init("taskunit")
 local config = require("misc.config")
 local utils = require("aux.utils")
 local unit = require("aux.unit")
@@ -212,33 +211,41 @@ end
 -- @return on success - true
 -- @return on failure - false
 function taskunit.check(key, value)
-    if key == "id" then
-        return _check_id(value)
-    elseif key == "desc" then
-        return _check_desc(value)
-    elseif key == "prio" then
-        return _check_prio(value)
-    elseif key == "type" then
-        return _check_type(value)
+    local params = {
+        id = _check_id,
+        desc = _check_desc,
+        prio = _check_prio,
+        type = _check_type,
+        branch = function(val)
+            return not (val == nil or val == "")
+        end,
+        status = function(val)
+            return not (val == nil or val == "")
+        end,
+        date = function(val)
+            return not (val == nil or val == "")
+        end,
 
-    elseif key == "branch" then
-        -- roachme: gotta add check function.
-        if value then
+        -- roachme: under development.
+        time = function()
             return true
-        end
-        return false
+        end,
+        link = function()
+            return true
+        end,
+        repos = function()
+            return true
+        end,
+    }
 
-    elseif key == "status" then
-        return true
-    elseif key == "date" then
-        return true
-    elseif key == "time" then
-        return true
-    elseif key == "link" then
-        return true
-    elseif key == "repos" then
-        return true
+    -- Check a key-value pair.
+    for name, func in pairs(params) do
+        if name == key then
+            return func(value)
+        end
     end
+
+    -- Unknown key, return false.
     return false
 end
 
