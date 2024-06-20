@@ -30,12 +30,12 @@ Change:
   sync    - synchronize task struct, git branch, repos, etc
 
 Info:
-  help    - show this help message
+  help    - display help information about %s
   ver     - show version
 
 '%s help COMMAND' to get detailed info about command.
 '%s help %s' to get info about util itself.
-]]):format(progname, progname, progname, progname))
+]]):format(progname, progname, progname, progname, progname))
 end
 
 local cmds = {
