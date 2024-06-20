@@ -328,7 +328,6 @@ function taskunit.cat(id, key)
                 return true
             end
         end
-        -- roachme: should it inform about an error?
         return false
     end
 

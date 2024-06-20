@@ -236,7 +236,12 @@ local function tman_cat()
     elseif not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    taskunit.cat(id, key)
+
+    if not taskunit.cat(id, key) then
+        if key then
+            die(1, "no such key\n", key)
+        end
+    end
     return 0
 end
 
