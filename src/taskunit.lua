@@ -181,15 +181,10 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_repo(id, taskrepos)
-    local res = "["
-
-    for _, repo in pairs(taskrepos) do
-        res = res .. " " .. repo
-    end
-    res = res .. " ]"
+    local repos = table.concat(taskrepos, " ")
 
     unit.init(config.units .. id)
-    unit.set("repos", res)
+    unit.set("repos", repos)
     return unit.save()
 end
 
