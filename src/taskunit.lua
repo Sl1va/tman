@@ -83,6 +83,8 @@ end
 
 local function _check_link(link)
     local linkregex = "[a-zA-Z0-9_%s-:/.]*"
+    link = link or "" -- roachme: find a better way.
+
     if string.match(link, linkregex) == link then
         return true
     end
