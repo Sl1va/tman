@@ -99,7 +99,7 @@ tilde_to_home()
 -- Tman core structure
 tmanconfig.tmanconf = tmanconf
 tmanconfig.units = tmanconfig.core .. "/units/"
-tmanconfig.taskids = tmanconfig.core .. "/taskids"
+tmanconfig.taskids = tmanconfig.core .. "/ids" -- it's a file
 
 -- Tman base structure
 tmanconfig.tmanbase = tmanconfig.base
