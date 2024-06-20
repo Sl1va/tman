@@ -99,19 +99,32 @@ install_system_utils()
 # TODO: add a checker to not install it more than once
 install_shell()
 {
-    # env SHELL might be not set
-    local USERSHELL="$(basename $(getent passwd $(whoami) | awk -F: '{print $7}'))"
+    echo "Add: 'source $(pwd)/tman.sh' into yer shell config .bashrc or .zshrc"
+    echo "Whatever shell ya use."
+    echo "And restart your current shell"
 
-    if [ "$USERSHELL" == "bash" ]; then
-        echo "install into bash"
-    elif [ "$USERSHELL" == "zsh" ]; then
-        echo "install into zsh"
-    else
-        echo "Unsupported shell '$USERSHELL'"
-        exit 1
-    fi
-    echo "source $(pwd)/tman.sh" >> "${HOME}/.${USERSHELL}rc"
-    echo "'source ~/$USERSHELL' - to restart shell"
+    return 1
+    # env SHELL might be not set
+    #local USERSHELL="$(basename $(getent passwd $(whoami) | awk -F: '{print $7}'))"
+#    local bashpath
+#    local USERSHELL
+#
+#    bashpath="$(readlink /proc/$$/exe)"
+#    USERSHELL="$(basename "${bashpath}")"
+#
+#    if [ "$USERSHELL" == "bash" ]; then
+#        echo "install into bash"
+#    elif [ "$USERSHELL" == "zsh" ]; then
+#        echo "install into zsh"
+#    else
+#        echo "Unsupported shell '$USERSHELL'"
+#        exit 1
+#    fi
+#
+#
+#    echo "source $(pwd)/tman.sh" >> "${HOME}/.${USERSHELL}rc"
+#    echo
+#    echo "WARNING: 'source ~/$USERSHELL' - to restart shell"
 }
 
 
