@@ -22,6 +22,7 @@ In progress:
     39.  Change checker in core.lua to check tman core, not tman base.
     40.  `tman sync' add `wd' util features. And maybe get rid of wd commmand dependency.
     41.  Need rubost API. It's discombobulated now.
+    42.  Add option `-h' support into commands.
 
 
 Gotta work on (still):
