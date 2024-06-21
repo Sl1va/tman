@@ -517,8 +517,7 @@ end
 -- TODO: if wd util not supported then add its features here. Optioon `-w'.
 local function tman_sync()
     local id
-    local optstr = "wrst"
-    local fwd = true -- default option: jump to task dir
+    local optstr = "rst"
     local fremote, fstruct, ftask
     local last_index = 1
 
@@ -534,8 +533,6 @@ local function tman_sync()
             fstruct = true
         elseif optopt == "t" then
             ftask = true
-        elseif optopt == "w" then
-            fwd = true
         end
     end
 
@@ -543,12 +540,6 @@ local function tman_sync()
     if not id then
         die(1, "no current task ID\n", "")
     end
-
-    -- hotfix: default: just jump to task directory.
-    if fwd then
-        return
-    end
-
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
