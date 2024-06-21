@@ -5,6 +5,8 @@
 local utils = require("aux.utils")
 local config = require("misc.config")
 
+local struct = {}
+
 -- Private functions: end --
 
 --- Create dirs.
@@ -42,7 +44,7 @@ end
 -- @param id task ID
 -- @return on success - true
 -- @return on failure - false
-local function struct_create(id)
+function struct.create(id)
     local taskdir = config.taskbase .. "/" .. id
 
     utils.mkdir(taskdir)
@@ -56,7 +58,7 @@ end
 -- @param id task ID
 -- @return on success - true
 -- @return on failure - false
-local function struct_delete(id)
+function struct.delete(id)
     local taskdir = config.taskbase .. "/" .. id
     return utils.rm(taskdir)
 end
@@ -66,7 +68,7 @@ end
 -- @param newid new task ID
 -- @return on success - true
 -- @return on failure - false
-local function struct_rename(oldid, newid)
+function struct.rename(oldid, newid)
     local old_dir = config.units .. oldid
     local new_dir = config.units .. newid
     return utils.rename(old_dir, new_dir) == 0
@@ -74,8 +76,4 @@ end
 
 -- Public functions: end --
 
-return {
-    create = struct_create,
-    delete = struct_delete,
-    rename = struct_rename,
-}
+return struct
