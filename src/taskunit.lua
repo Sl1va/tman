@@ -142,6 +142,8 @@ local function _set_id(id, newid)
     unit.set("id", newid)
     unit.set("branch", format_branch())
     unit.save()
+
+    -- gotta update curr & prev task IDs.
     return utils.rename(old_taskdir, new_taskdir)
 end
 
