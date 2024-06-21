@@ -11,7 +11,7 @@ local struct = {}
 
 --- Create dirs.
 -- @param base directry structure base
-local function _struct_dirs(base)
+local function create_dirs(base)
     for _, dir in pairs(config.struct.dirs) do
         utils.mkdir(base .. "/" .. dir)
     end
@@ -19,7 +19,7 @@ end
 
 --- Create files.
 -- @param base file structure base
-local function _struct_files(base)
+local function create_files(base)
     for _, file in pairs(config.struct.files) do
         utils.touch(base .. "/" .. file)
     end
@@ -27,7 +27,7 @@ end
 
 --- Create symlinks to repos.
 -- @param id task ID
-local function _struct_repos(id)
+local function link_repos(id)
     for _, repo in pairs(config.repos) do
         local reponame = repo.name
         local target = config.codebase .. "/" .. reponame
@@ -48,9 +48,9 @@ function struct.create(id)
     local taskdir = config.taskbase .. "/" .. id
 
     utils.mkdir(taskdir)
-    _struct_dirs(taskdir)
-    _struct_files(taskdir)
-    _struct_repos(id)
+    create_dirs(taskdir)
+    create_files(taskdir)
+    link_repos(id)
     return true
 end
 
