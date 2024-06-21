@@ -6,6 +6,12 @@ local taskunit = require("taskunit")
 local config = require("misc.config")
 local ids = require("aux.ids")
 
+-- Hold special task IDs: curr and prev.
+local lcurr, lprev
+
+-- roachme: delete `local curr, prev' from functions.
+-- BUT be careful: swap() fails in this case.
+
 --- Types of task IDs.
 local status = {
     CURR = 0, -- current task
@@ -16,27 +22,12 @@ local status = {
 
 -- Private functions: start --
 
---- Get special task ID by status.
--- @param taskstatus special task ID's status
--- @return on success - task ID
--- @return on failure - nil
-local function _getspec(taskstatus)
-    local size = ids.size()
-
-    for i = 1, size do
-        local entry = ids.getidx(i)
-        if entry.status == taskstatus then
-            return entry.id
-        end
-    end
-    return nil
-end
-
 --- Unset previous task ID.
 -- Assumes that ID exists in database.
 -- @param taskstatus task status to move a previous ID to
 -- @return true on success, otherwise false
 local function unsetprev(taskstatus)
+    -- roachme: use `ids.get()' to unset specific ID and optimize code.
     local size = ids.size()
     taskstatus = taskstatus or status.ACTV
 
@@ -55,6 +46,7 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 local function setprev(id)
     unsetprev()
+    lprev = id
     return ids.set(id, status.PREV)
 end
 
@@ -63,6 +55,7 @@ end
 -- @param taskstatus task status to move a current ID to
 -- @return true on success, otherwise false
 local function unsetcurr(taskstatus)
+    -- roachme: use `ids.get()' to unset specific ID and optimize code.
     local size = ids.size()
     taskstatus = taskstatus or status.ACTV
 
@@ -80,7 +73,23 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 local function setcurr(id)
     unsetcurr()
+    lcurr = id
     return ids.set(id, status.CURR)
+end
+
+--- Load curr & prev IDs into local variables to minimize lookup.
+local function _load_special_ids()
+    local size = ids.size()
+
+    for i = 1, size do
+        local entry = ids.getidx(i)
+
+        if entry.status == status.CURR then
+            lcurr = entry.id
+        elseif entry.status == status.PREV then
+            lprev = entry.id
+        end
+    end
 end
 
 -- Private functions: end --
@@ -99,7 +108,7 @@ end
 -- @return on success - previous task ID
 -- @return on failure - nil
 local function taskid_getprev()
-    return _getspec(status.PREV)
+    return lprev
 end
 
 --- Get current task ID from database.
@@ -107,7 +116,7 @@ end
 -- @return on success - current task ID
 -- @return on failure - nil
 local function taskid_getcurr()
-    return _getspec(status.CURR)
+    return lcurr
 end
 
 --- Swap current and previous task IDs.
@@ -204,8 +213,8 @@ end
 local function taskid_list(active, completed)
     local desc
     local size = ids.size()
-    local curr = taskid_getcurr()
-    local prev = taskid_getprev()
+    local curr = lcurr
+    local prev = lprev
 
     if active and curr then
         desc = taskunit.get(curr, "desc")
@@ -234,6 +243,7 @@ end
 -- Public functions: end --
 
 ids.init(config.taskids)
+_load_special_ids()
 
 return {
     -- roachme: should it be public?
