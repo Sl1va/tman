@@ -283,7 +283,7 @@ function taskunit.set(id, key, value)
         return _set_link(id, value)
     elseif key == "prio" then
         return _set_prio(id, value)
-    elseif key == "repo" then
+    elseif key == "repos" then
         return _set_repo(id, value)
     elseif key == "type" then
         return _set_type(id, value)

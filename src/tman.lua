@@ -603,9 +603,7 @@ local function tman_sync()
         struct.create(id)
         git.branch_create(id)
         git.branch_switch(id)
-        -- update list of active repos
-        -- roachme:BUG: shouldn't it be `repos'?
-        taskunit.set(id, "repo", git.branch_ahead(id))
+        taskunit.set(id, "repos", git.branch_ahead(id))
     end
     if fremote then
         print("sync: remote")
