@@ -150,8 +150,10 @@ PARAM can have one of the next values
     {
         name = "prev",
         desc = [[
-Usage: tman prev
-Switch to previous task. If no previous task exist informs about it.
+Usage: tman prev [ENVNAME]
+Switch to previous task if set.
+
+ENVNAME - environment name. Under development (pro'ly).
 ]],
     },
     {

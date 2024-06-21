@@ -420,6 +420,7 @@ end
 --- Switch to previous task.
 local function tman_prev()
     local prev = taskid.getprev()
+    local envname = arg[1]
 
     if not prev then
         die(1, "no previous task\n", "")
@@ -428,6 +429,10 @@ local function tman_prev()
         die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
     end
 
+    if envname then
+        io.stderr:write("tman: env not supported yet. under development\n")
+        os.exit(1)
+    end
     git.branch_switch(prev)
     taskid.swap()
     return 0
