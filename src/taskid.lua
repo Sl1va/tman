@@ -6,6 +6,8 @@ local taskunit = require("taskunit")
 local config = require("misc.config")
 local ids = require("aux.ids")
 
+local taskid = {}
+
 -- Hold special task IDs: curr and prev.
 local lcurr, lprev
 
@@ -99,7 +101,7 @@ end
 --- Check that task ID exist.
 -- @param id task ID to look up
 -- @treturn bool true if task ID exist, otherwise false
-local function taskid_exist(id)
+function taskid.exist(id)
     return ids.exist(id)
 end
 
@@ -107,7 +109,7 @@ end
 -- @return previous task ID
 -- @return on success - previous task ID
 -- @return on failure - nil
-local function taskid_getprev()
+function taskid.getprev()
     return lprev
 end
 
@@ -115,14 +117,14 @@ end
 -- @return current task ID
 -- @return on success - current task ID
 -- @return on failure - nil
-local function taskid_getcurr()
+function taskid.getcurr()
     return lcurr
 end
 
 --- Swap current and previous task IDs.
-local function taskid_swap()
-    local prev = taskid_getprev()
-    local curr = taskid_getcurr()
+function taskid.swap()
+    local prev = taskid.getprev()
+    local curr = taskid.getcurr()
 
     setprev(curr)
     setcurr(prev)
@@ -132,11 +134,11 @@ end
 --- Add a new task ID.
 -- @param id task ID to add to database
 -- @treturn bool true on success, otherwise false
-local function taskid_add(id)
+function taskid.add(id)
     -- roacme: Don't make it current.
     --         Add it to database with status: ACTV
     --         There's setcurr() for it.
-    local curr = taskid_getcurr()
+    local curr = taskid.getcurr()
 
     if ids.add(id, status.CURR) == false then
         return false
@@ -150,51 +152,51 @@ end
 --- Delete a task ID.
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
-local function taskid_del(id)
-    local curr = taskid_getcurr()
+function taskid.del(id)
+    local curr = taskid.getcurr()
 
-    if not taskid_exist(id) then
+    if not taskid.exist(id) then
         return false
     end
 
     ids.del(id)
     if id == curr then
-        return taskid_swap()
+        return taskid.swap()
     end
     return ids.save()
 end
 
 --- Move task ID to new status.
 -- roachme: Under development.
--- @param taskid task ID
+-- @param id task ID
 -- @param taskstatus task new status (default: active)
 -- @return true on success, otherwise false
-local function taskid_move(taskid, taskstatus)
-    local prev = taskid_getprev()
-    local curr = taskid_getcurr()
+function taskid.move(id, taskstatus)
+    local prev = taskid.getprev()
+    local curr = taskid.getcurr()
 
-    if taskid == curr then
+    if id == curr then
         unsetprev(status.ACTV)
         ids.set(prev, status.CURR)
         ids.set(curr, taskstatus)
-    elseif taskid == prev then
+    elseif id == prev then
         ids.set(prev, status.COMP)
     else
-        ids.set(taskid, taskstatus)
+        ids.set(id, taskstatus)
     end
     return ids.save()
 end
 
 --- Move current task to completed status.
-local function taskid_unsetcurr()
+function taskid.unsetcurr()
     unsetcurr(status.COMP)
-    return taskid_swap()
+    return taskid.swap()
 end
 
 --- Set task ID as current.
 -- Set previous task ID if needed.
-local function taskid_setcurr(id)
-    local curr = taskid_getcurr()
+function taskid.setcurr(id)
+    local curr = taskid.getcurr()
 
     -- don't do unnecessary work.
     if not id or id == curr then
@@ -210,7 +212,7 @@ end
 -- @param active list only active task IDs
 -- @param completed list only completed task IDs
 -- @return count of task IDs
-local function taskid_list(active, completed)
+function taskid.list(active, completed)
     local desc
     local size = ids.size()
     local curr = lcurr
@@ -245,23 +247,4 @@ end
 ids.init(config.taskids)
 _load_special_ids()
 
-return {
-    -- roachme: should it be public?
-    status = status,
-
-    add = taskid_add,
-    del = taskid_del,
-    swap = taskid_swap,
-    list = taskid_list,
-    exist = taskid_exist,
-    getcurr = taskid_getcurr,
-    getprev = taskid_getprev,
-    setcurr = taskid_setcurr,
-
-    -- roachme: seems like no one uses this API command.
-    -- but `tman done' command will use it.
-    unsetcurr = taskid_unsetcurr,
-
-    -- roachme: under development & tests
-    move = taskid_move,
-}
+return taskid
