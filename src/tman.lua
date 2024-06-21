@@ -181,24 +181,34 @@ end
 
 --- Backup and restore.
 local function tman_archive()
-    local optstr = "Rb:r:"
+    local optstr = "Rb:hr:"
     local include_repo = false
     local backup_file, restore_file
+    local cmdname = "archive"
+    local keyhelp
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
             die(1, "unrecognized option\n", arg[optind - 1])
         end
-        if optopt == "b" then
+
+        if optopt == "R" then
+            print("repo included")
+            include_repo = true
+        elseif optopt == "b" then
             print("backup")
             backup_file = optarg
         elseif optopt == "r" then
             print("restore")
             restore_file = optarg
-        elseif optopt == "R" then
-            print("repo included")
-            include_repo = true
+        elseif optopt == "h" then
+            keyhelp = true
         end
+    end
+
+    if keyhelp then
+        help.usage(cmdname)
+        return 0
     end
 
     if backup_file and restore_file then
@@ -217,8 +227,9 @@ end
 local function tman_cat()
     local id
     local last_index = 1
-    local optstr = "k:"
-    local key
+    local optstr = "hk:"
+    local key, keyhelp
+    local cmdname = "cat"
 
     for optopt, optarg, optind in getopt(arg, optstr) do
         if optopt == "?" then
@@ -227,7 +238,14 @@ local function tman_cat()
         last_index = optind
         if optopt == "k" then
             key = optarg
+        elseif optopt == "h" then
+            keyhelp = true
         end
+    end
+
+    if keyhelp then
+        help.usage(cmdname)
+        return 0
     end
 
     id = arg[last_index] or taskid.getcurr()
@@ -337,9 +355,11 @@ end
 --- List all task IDs.
 -- Default: show only active task IDs.
 local function tman_list()
+    local cmdname = "list"
     local active = true
     local completed = false
-    local optstring = "Aac"
+    local optstring = "Aach"
+    local keyhelp
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
@@ -355,7 +375,14 @@ local function tman_list()
         elseif optopt == "c" then
             active = false
             completed = true
+        elseif optopt == "h" then
+            keyhelp = true
         end
+    end
+
+    if keyhelp then
+        help.usage(cmdname)
+        return 0
     end
 
     -- output header.
@@ -419,8 +446,26 @@ end
 
 --- Switch to previous task.
 local function tman_prev()
+    local keyhelp
     local prev = taskid.getprev()
     local envname = arg[1]
+    local optstr = "h"
+    local cmdname = "prev"
+
+    for optopt, _, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+
+        if optopt == "h" then
+            keyhelp = true
+        end
+    end
+
+    if keyhelp then
+        help.usage(cmdname)
+        return 0
+    end
 
     if not prev then
         die(1, "no previous task\n", "")
@@ -433,6 +478,7 @@ local function tman_prev()
         io.stderr:write("tman: env not supported yet. under development\n")
         os.exit(1)
     end
+
     git.branch_switch(prev)
     taskid.swap()
     return 0
@@ -580,6 +626,7 @@ end
 --- Switch to task.
 local function tman_use()
     local id = arg[1]
+    -- roachme: can't use help option cuz tman.sh fails.
 
     if not id then
         die(1, "task ID required\n", "")

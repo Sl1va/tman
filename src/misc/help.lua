@@ -62,9 +62,10 @@ Usage: tman archive OPTION
 Make backup and restore util data.
 
 Options:
-    -b FILE     create backup (default extension: .tar)
-    -r FILE     restore from archive
     -R          include repos into archive (default: false)
+    -b FILE     create backup (default extension: .tar)
+    -h          Show this help message.
+    -r FILE     restore from archive
 ]],
     },
     {
@@ -154,6 +155,9 @@ Usage: tman prev [ENVNAME]
 Switch to previous task if set.
 
 ENVNAME - environment name. Under development (pro'ly).
+
+Options:
+    -h   Show this help message.
 ]],
     },
     {
@@ -178,6 +182,7 @@ Options:
     -c   List only complete tasks.
     -a   List only active tasks (default).
     -A   List all tasks: active and complete.
+    -h   Show this help message.
 Notes:
     *   Marks current task.
     -   Makrs previous task.
@@ -192,6 +197,7 @@ TASKID - task ID (default is current task).
 
 Options:
     -k   cat specific task unit
+    -h   Show this help message.
 ]],
     },
     {
