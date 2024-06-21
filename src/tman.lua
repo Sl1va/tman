@@ -543,17 +543,12 @@ local function tman_sync()
     if not taskid.exist(id) then
         die(1, "no such task ID\n", id)
     end
-    if not git.branch_isuncommited() then
-        die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
-    end
-
-    -- base case: other options might depend on it.
-    if not git.branch_exists(id) then
-        git.branch_create(id)
-    end
 
     if fstruct then
         print("sync: struct")
+        if not git.check(id) then
+            die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+        end
         struct.create(id)
         git.branch_create(id)
         git.branch_switch(id)
@@ -563,6 +558,9 @@ local function tman_sync()
     end
     if fremote then
         print("sync: remote")
+        if not git.check(id) then
+            die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
+        end
         git.branch_default()
         git.branch_update(true)
         git.branch_switch(id)
