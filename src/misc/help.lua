@@ -84,24 +84,24 @@ Options:
     {
         name = "add",
         desc = [[
-Usage: tman add TASKID
+Usage: tman add ID
 Add new task.
 ]],
     },
     {
         name = "del",
         desc = [[
-Usage: tman del [TASKID]
+Usage: tman del [ID]
 Delete task.
-TASKID - default is current task.
+ID - default is current task.
 ]],
     },
     {
         name = "set",
         desc = [[
-Usage: tman set OPTION [TASKID]
+Usage: tman set OPTION [ID]
 Amend task items.
-TASKID - default is current task.
+ID - default is current task.
 
 Options:
     -i      set task ID
@@ -118,7 +118,7 @@ Usage: tman sync OPTION [ID]
 Update task repos, structure, etc. Default: current task.
 With no option applied jump to task directory.
 
-Note: Add support for other task cuz another task might be broken so
+Notes: Add support for other task cuz another task might be broken so
       repair's need (if task branch's deleted)
 
 Options:
@@ -131,9 +131,11 @@ Options:
     {
         name = "use",
         desc = [[
-Usage: tman use TASKID
+Usage: tman use ID
 Switch to specified task. Use `tman list` to see existing tasks.
-TASKID - default is current task.
+
+Notes:
+    ID - taks ID. Default is current task.
 ]],
     },
     {
@@ -163,7 +165,7 @@ Options:
     {
         name = "pack",
         desc = [[
-Usage: tman pack OPTION [TASKID]
+Usage: tman pack OPTION [ID]
 Pack commits in repos for review.
 
 Options:
@@ -183,6 +185,7 @@ Options:
     -a   List only active tasks (default).
     -A   List all tasks: active and complete.
     -h   Show this help message.
+
 Notes:
     *   Marks current task.
     -   Makrs previous task.
@@ -191,9 +194,9 @@ Notes:
     {
         name = "cat",
         desc = [[
-Usage: tman cat [OPTION] [TASKID]
+Usage: tman cat [OPTION] [ID]
 Show task units.
-TASKID - task ID (default is current task).
+ID - task ID (default is current task).
 
 Options:
     -k   cat specific task unit
