@@ -23,6 +23,7 @@ In progress:
     40.  `tman sync' add `wd' util features. And maybe get rid of wd commmand dependency.
     41.  Need rubost API. It's discombobulated now.
     42.  Add option `-h' support into commands.
+    43.  Add support to work wih git submodules as well.
 
 
 Gotta work on (still):
