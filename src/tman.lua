@@ -597,6 +597,8 @@ local function tman_sync()
 
     if fstruct then
         print("sync: struct")
+        -- roach:BUG: It's gotta update list of active repos, but can't if
+        -- they have uncommited changes. BUT it should be able.
         if not git.check(id) then
             die(1, "errors in repo. Put meaningful desc here\n", "REPONAME")
         end
