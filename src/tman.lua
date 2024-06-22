@@ -52,6 +52,14 @@ local function die(exit_code, errfmt, ...)
     os.exit(exit_code)
 end
 
+local function die_atomic(id, errfmt, ...)
+    taskid.del(id)
+    taskunit.del(id)
+    git.branch_delete(id)
+    struct.delete(id)
+    die(1, errfmt, ...)
+end
+
 --- Set task description.
 -- @param id task ID
 -- @param newdesc new description
@@ -159,23 +167,20 @@ local function tman_add()
         io.stderr:write("task ID required\n")
         os.exit(1)
     end
+
     if not taskid.add(id) then
-        io.stderr:write(("'%s': already exists\n"):format(id))
-        os.exit(1)
+        -- don't use die_atomic() cuz it'll delete existing task ID.
+        die(1, "task ID already exists\n", id)
     end
     if not taskunit.add(id, tasktype, prio) then
-        io.stderr:write("could not create new task unit\n")
-        -- roachme:BUG: in case of error deletes previous task ID
-        taskid.del(id)
-        os.exit(1)
+        die_atomic(id, "could not create new task unit\n", id)
     end
     if not struct.create(id) then
-        io.stderr:write("could not create new task structure\n")
-        taskid.del(id)
-        taskunit.del(id)
-        os.exit(1)
+        die_atomic(id, "could not create new task structure\n", id)
     end
-    git.branch_create(id)
+    if not git.branch_create(id) then
+        die_atomic(id, "could not create new task branch\n", id)
+    end
     return 0
 end
 

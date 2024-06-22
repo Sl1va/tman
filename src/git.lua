@@ -233,7 +233,11 @@ local function git_branch_delete(id)
     for _, repo in pairs(repos) do
         local repopath = config.codebase .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
-        utils.exec(gbranchD:format(repopath, branch))
+
+        -- if there's branch in task unit file then delete it.
+        if branch then
+            utils.exec(gbranchD:format(repopath, branch))
+        end
     end
     return true
 end
