@@ -20,7 +20,7 @@ function _tman_handle_command()
     local taskdir=
 
     if [ "$cmd" = "add" ]; then
-        taskid="$2"
+        taskid="${*: -1}" # get last argument
         local taskdir="${base}/${envcurr}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task

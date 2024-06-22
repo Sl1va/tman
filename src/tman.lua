@@ -154,9 +154,37 @@ end
 -- @return on success - true
 -- @return on failrue - false
 local function tman_add()
-    local id = arg[1]
+    local id
+    local cmdname = "add"
     local prio = "mid"
     local tasktype = "bugfix"
+    -- roachme: move `-d' option from taskunit.lua to here.
+    local optstr = "hp:t:"
+    local last_index = 1
+    local keyhelp
+
+    for optopt, optarg, optind in getopt(arg, optstr) do
+        if optopt == "?" then
+            die(1, "unrecognized option\n", arg[optind - 1])
+        end
+
+        last_index = optind
+        if optopt == "h" then
+            keyhelp = true
+        elseif optopt == "p" then
+            prio = optarg
+        elseif optopt == "t" then
+            tasktype = optarg
+        end
+    end
+
+    if keyhelp then
+        help.usage(cmdname)
+        -- roachme:hotfix: so tman.sh doesn't jump to any task directory.
+        return 1
+    end
+
+    id = arg[last_index]
 
     if not git.branch_isuncommited() then
         -- roachme: would be nice to know what repo.

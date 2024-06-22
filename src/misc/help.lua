@@ -84,8 +84,14 @@ Options:
     {
         name = "add",
         desc = [[
-Usage: tman add ID
+Usage: tman add [OPTION] ID
 Add new task.
+
+Options:
+    -d      set task description (under development)
+    -h      show this help message.
+    -p      set task priority. Values: [highest|high|mid|low|lowest]
+    -t      set task type. Values: [bugfix|hotfix|feature]
 ]],
     },
     {
