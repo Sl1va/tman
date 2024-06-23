@@ -4,7 +4,7 @@
 local sysconfig = {}
 local configcontent
 local fconfig
-local config_vars = { "base", "core", "install" }
+local config_vars = { "prefix", "base", "core", "install" }
 
 local function check_config_var(var)
     for _, cvar in pairs(config_vars) do

@@ -3,6 +3,7 @@
 TMAN=""
 TMAN_WD=
 TMAN_CWD=
+TMAN_PREFIX=
 TMAN_BASE=
 TMAN_INSTALL=
 TMAN_TMANCONF=
@@ -94,8 +95,12 @@ function _tman_get_tmanconf()
 function _tman_get_sys_config_vars()
 {
     _tman_get_tmanconf
+    TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_BASE="$(grep base "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+
+    # expand values
+    TMAN_BASE="$TMAN_PREFIX/$TMAN_BASE"
 }
 
 function _tman_form_full_command()

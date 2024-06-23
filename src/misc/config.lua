@@ -54,7 +54,7 @@ local function remove_quotes(str)
 end
 
 local function tmanconf_getvals(fname)
-    local core, base, install
+    local prefix, core, base, install
     local f = io.open(fname)
 
     if not f then
@@ -64,7 +64,10 @@ local function tmanconf_getvals(fname)
     -- parse vars
     for line in f:lines() do
         local mark = string.match(line, "([a-z]*)")
-        if mark == "base" then
+        if mark == "prefix" then
+            prefix = string.match(line, ".*%s=%s(.*)")
+            prefix = remove_quotes(prefix)
+        elseif mark == "base" then
             base = string.match(line, ".*%s=%s(.*)")
             base = remove_quotes(base)
         elseif mark == "install" then
@@ -77,7 +80,7 @@ local function tmanconf_getvals(fname)
     end
 
     f:close()
-    return core, base, install
+    return prefix .. "/" .. core, prefix .. "/" .. base, install
 end
 
 local tmanconf = find_tmanconf()

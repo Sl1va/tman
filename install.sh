@@ -21,26 +21,28 @@ generate_system_config()
     # roachme: User defined pathes.
     # Add flags to change 'em from script interface.
     local confdir="${HOME}/.config/tman"
-    local tmanbase="${HOME}/work/tman"
+    local prefix="${HOME}/work"
+    local tmanbase="tman"
+    local tmancore="${tmanbase}/.tman"
 
     local tmaninst="$(pwd)" # roachme: pro'ly change it to ~/.local/bin
-    local tmancore="${tmanbase}/.tman"
     local tmanconf="$confdir/sys.conf"
     local userconf="$confdir/tman_conf.lua" # FIXME: should be user.conf
 
     # create tman base directory
-    mkdir -p "$tmanbase"
+    mkdir -p -v "$prefix/$tmanbase"
 
     # create tman core directory (core migth be inside base)
-    mkdir -p "$tmancore"
+    mkdir -p -v "$prefix/$tmancore"
 
     # create system and user configs
-    mkdir -p "$confdir"
+    mkdir -p -v "$confdir"
     touch "$tmanconf"
     touch "$userconf"
 
     # fill tman system config
     echo "# NOT recommended to change this file manually." > "$tmanconf"
+    echo "prefix = $prefix" >> "$tmanconf"
     echo "base = $tmanbase" >> "$tmanconf"
     echo "core = $tmancore" >> "$tmanconf"
     echo "install = $tmaninst" >> "$tmanconf"
@@ -49,10 +51,10 @@ generate_system_config()
     echo "return {}" > "$userconf"
 
     # create task ID database file
-    touch "$tmancore/taskids"
+    touch "$prefix/$tmancore/taskids"
 
     # create task units database directory
-    mkdir -p "$tmancore/units"
+    mkdir -p "$prefix/$tmancore/units"
 }
 
 check_system_utils()
