@@ -8,11 +8,8 @@ local ids = require("aux.ids")
 
 local taskid = {}
 
--- Hold special task IDs: curr and prev.
+-- Hold special task IDs: curr and prev. To minimize lookup.
 local curr, prev
-
--- roachme: delete `local curr, prev' from functions.
--- BUT be careful: swap() fails in this case.
 
 --- Types of task IDs.
 local status = {
@@ -124,9 +121,8 @@ end
 --- Swap current and previous task IDs.
 function taskid.swap()
     local tmpprev = taskid.getprev()
-    local tmpcurr = taskid.getcurr()
 
-    setprev(tmpcurr)
+    setprev(curr)
     setcurr(tmpprev)
     return ids.save()
 end
@@ -138,13 +134,11 @@ function taskid.add(id)
     -- roacme: Don't make it current.
     --         Add it to database with status: ACTV
     --         There's setcurr() for it.
-    local tmpcurr = taskid.getcurr()
-
     if ids.add(id, status.CURR) == false then
         return false
     end
 
-    setprev(tmpcurr)
+    setprev(curr)
     setcurr(id)
     return ids.save()
 end
@@ -153,14 +147,12 @@ end
 -- @param id task ID
 -- @treturn bool true on success, otherwise false
 function taskid.del(id)
-    local tmpcurr = taskid.getcurr()
-
     if not taskid.exist(id) then
         return false
     end
 
     ids.del(id)
-    if id == tmpcurr then
+    if id == curr then
         return taskid.swap()
     end
     return ids.save()
@@ -172,15 +164,12 @@ end
 -- @param taskstatus task new status (default: active)
 -- @return true on success, otherwise false
 function taskid.move(id, taskstatus)
-    local tmpprev = taskid.getprev()
-    local tmpcurr = taskid.getcurr()
-
-    if id == tmpcurr then
+    if id == curr then
         unsetprev(status.ACTV)
-        ids.set(tmpprev, status.CURR)
-        ids.set(tmpcurr, taskstatus)
-    elseif id == tmpprev then
-        ids.set(tmpprev, status.COMP)
+        ids.set(prev, status.CURR)
+        ids.set(curr, taskstatus)
+    elseif id == prev then
+        ids.set(prev, status.COMP)
     else
         ids.set(id, taskstatus)
     end
@@ -196,14 +185,13 @@ end
 --- Set task ID as current.
 -- Set previous task ID if needed.
 function taskid.setcurr(id)
-    local tmpcurr = taskid.getcurr()
-
     -- don't do unnecessary work.
-    if not id or id == tmpcurr then
+    if not id or id == curr then
         return false
     end
+
+    setprev(curr)
     setcurr(id)
-    setprev(tmpcurr)
     return ids.save()
 end
 
@@ -215,21 +203,19 @@ end
 function taskid.list(active, completed)
     local desc
     local size = ids.size()
-    local tmpcurr = curr
-    local tmpprev = prev
 
-    if active and tmpcurr then
-        desc = taskunit.get(tmpcurr, "desc")
-        print(("* %-10s %s"):format(tmpcurr, desc))
+    if active and curr then
+        desc = taskunit.get(curr, "desc")
+        print(("* %-10s %s"):format(curr, desc))
     end
-    if active and tmpprev then
-        desc = taskunit.get(tmpprev, "desc")
-        print(("- %-10s %s"):format(tmpprev, desc))
+    if active and prev then
+        desc = taskunit.get(prev, "desc")
+        print(("- %-10s %s"):format(prev, desc))
     end
 
     for idx = 1, size do
         local entry = ids.getidx(idx)
-        if entry.id ~= tmpcurr and entry.id ~= tmpprev then
+        if entry.id ~= curr and entry.id ~= prev then
             if entry.status == status.ACTV and active then
                 desc = taskunit.get(entry.id, "desc")
                 print(("  %-10s %s"):format(entry.id, desc))
