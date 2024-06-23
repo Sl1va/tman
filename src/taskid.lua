@@ -9,7 +9,7 @@ local ids = require("aux.ids")
 local taskid = {}
 
 -- Hold special task IDs: curr and prev.
-local lcurr, lprev
+local curr, prev
 
 -- roachme: delete `local curr, prev' from functions.
 -- BUT be careful: swap() fails in this case.
@@ -48,7 +48,7 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 local function setprev(id)
     unsetprev()
-    lprev = id
+    prev = id
     return ids.set(id, status.PREV)
 end
 
@@ -75,7 +75,7 @@ end
 -- @treturn bool true if previous task is set, otherwise false
 local function setcurr(id)
     unsetcurr()
-    lcurr = id
+    curr = id
     return ids.set(id, status.CURR)
 end
 
@@ -87,9 +87,9 @@ local function _load_special_ids()
         local entry = ids.getidx(i)
 
         if entry.status == status.CURR then
-            lcurr = entry.id
+            curr = entry.id
         elseif entry.status == status.PREV then
-            lprev = entry.id
+            prev = entry.id
         end
     end
 end
@@ -110,7 +110,7 @@ end
 -- @return on success - previous task ID
 -- @return on failure - nil
 function taskid.getprev()
-    return lprev
+    return prev
 end
 
 --- Get current task ID from database.
@@ -118,7 +118,7 @@ end
 -- @return on success - current task ID
 -- @return on failure - nil
 function taskid.getcurr()
-    return lcurr
+    return curr
 end
 
 --- Swap current and previous task IDs.
@@ -215,8 +215,8 @@ end
 function taskid.list(active, completed)
     local desc
     local size = ids.size()
-    local tmpcurr = lcurr
-    local tmpprev = lprev
+    local tmpcurr = curr
+    local tmpprev = prev
 
     if active and tmpcurr then
         desc = taskunit.get(tmpcurr, "desc")
