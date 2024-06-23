@@ -26,10 +26,10 @@ local default_struct = {
     files = {},
 }
 
-local function find_tmanconf()
+local function find_tmanconf(fname)
     local confpathes = {
-        userhome .. "/" .. ".tman/sys.conf",
-        userhome .. "/" .. ".config/tman/sys.conf",
+        userhome .. "/" .. ".tman/" .. fname,
+        userhome .. "/" .. ".config/tman/" .. fname,
     }
     for _, conf in pairs(confpathes) do
         if utils.access(conf) then
@@ -83,9 +83,14 @@ local function tmanconf_getvals(fname)
     return prefix .. "/" .. core, prefix .. "/" .. base, install
 end
 
-local tmanconf = find_tmanconf()
+local tmanconf = find_tmanconf("sys.conf")
+local fenv = find_tmanconf("env.list")
 if not tmanconf then
     io.stderr:write("tman: sys.conf: system tmanconf missing\n")
+    os.exit(1)
+end
+if not fenv then
+    io.stderr:write("tman: env.list: env file missing\n")
     os.exit(1)
 end
 
@@ -114,5 +119,8 @@ tmanconfig.taskbase = tmanconfig.base .. "/tasks/"
 tmanconfig.repos = tmanconfig.repos or default_repos
 tmanconfig.struct = tmanconfig.struct or default_struct
 tmanconfig.branchpatt = tmanconfig.branchpatt or default_branch
+
+-- Get env file.
+tmanconfig.fenv = fenv
 
 return tmanconfig

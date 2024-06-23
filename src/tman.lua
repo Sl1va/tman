@@ -4,6 +4,7 @@
 
 -- Tman main components.
 local git = require("git")
+local env = require("misc.env")
 local core = require("core")
 local struct = require("struct")
 local taskid = require("taskid")
@@ -376,6 +377,38 @@ local function tman_del()
     return 0
 end
 
+--- Define or display task environments.
+local function tman_env()
+    local cmd = arg[1] or "list"
+    local envname = arg[2]
+
+    if cmd == "add" then
+        if not envname then
+            die(1, "env name is required\n", "no envname")
+        end
+        print("env: add new env")
+        env.add(envname, "auto generated description " .. envname)
+    elseif cmd == "curr" then
+        print(env.getcurr())
+    elseif cmd == "del" then
+        print("env: del env")
+    elseif not cmd or cmd == "list" then
+        print("env: list")
+        env.list()
+    elseif cmd == "prev" then
+        local prev = env.getprev()
+        env.setcurr(prev)
+    elseif cmd == "use" then
+        if not env.exists(envname) then
+            die(1, "no such env name\n", envname)
+        end
+        env.setcurr(envname)
+    else
+        die(1, "no such env command\n", cmd)
+    end
+    return 0
+end
+
 --- Get tman items.
 -- Like prev/ curr task ID, etc.
 local function tman_get()
@@ -399,8 +432,9 @@ local function tman_list()
     local cmdname = "list"
     local active = true
     local completed = false
-    local optstring = "Aach"
+    local optstring = "Aaech"
     local keyhelp
+    local envname = env.getcurr()
 
     for optopt, _, optind in getopt(arg, optstring) do
         if optopt == "?" then
@@ -427,6 +461,7 @@ local function tman_list()
     end
 
     -- output header.
+    print(("Current env: %s"):format(envname))
     if active == true and completed == true then
         print("All tasks:")
     elseif active == true and completed == false then
@@ -490,7 +525,7 @@ local function tman_prev()
     local keyhelp
     local prev = taskid.getprev()
     local envname = arg[1]
-    local optstr = "h"
+    local optstr = "e:h" -- roachme:API: should option be used?
     local cmdname = "prev"
 
     for optopt, _, optind in getopt(arg, optstr) do
@@ -695,6 +730,7 @@ local commands = {
     cat = tman_cat,
     config = tman_config,
     del = tman_del,
+    env = tman_env,
     get = tman_get,
     help = function()
         return help.usage(arg[1])

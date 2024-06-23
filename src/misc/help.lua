@@ -157,6 +157,23 @@ PARAM can have one of the next values
 ]],
     },
     {
+        name = "env",
+        desc = [[
+Usage: tman env COMMAND [ENVNAME]
+Define or display environments.
+
+ENVNAME - environment name
+
+COMMANDs:
+    add     - add new environment
+    curr    - show current environment
+    del     - delete an environment
+    list    - list environments
+    prev    - switch to previous environment
+    use     - use environment
+]],
+    },
+    {
         name = "prev",
         desc = [[
 Usage: tman prev [ENVNAME]

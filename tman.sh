@@ -14,6 +14,22 @@ TMAN_TMANCONF=
 
 # TODO: switch to current task ID when change env
 
+function _tman_get_tmanconf()
+{
+    TMAN_TMANCONF="${HOME}/.config/tman/sys.conf"
+}
+
+function _tman_get_sys_config_vars()
+{
+    _tman_get_tmanconf
+    TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+    TMAN_BASE="$(grep base "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+    TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
+
+    # expand values
+    TMAN_BASE="$TMAN_PREFIX/$TMAN_BASE"
+}
+
 function _tman_handle_command()
 {
     local cmd="$1"
@@ -41,6 +57,17 @@ function _tman_handle_command()
     elif [ "$cmd" = "prev" ]; then
         taskid="$(eval "$TMAN" get curr)"
         taskdir="${base}/${envcurr}/tasks/${taskid}"
+        cd "$taskdir" || return 1
+        wd add -q -f task
+
+    elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
+        # update sys.conf values
+        _tman_get_sys_config_vars
+        _tman_form_full_command
+        local base="$TMAN_BASE"
+
+        taskid="$(eval "$TMAN" get curr)"
+        taskdir="${base}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
@@ -85,22 +112,6 @@ function _tman_handle_command()
         cd "$taskdir" || return 1
         wd add -q -f task
     fi
-}
-
-function _tman_get_tmanconf()
-{
-    TMAN_TMANCONF="${HOME}/.config/tman/sys.conf"
-}
-
-function _tman_get_sys_config_vars()
-{
-    _tman_get_tmanconf
-    TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-    TMAN_BASE="$(grep base "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-    TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-
-    # expand values
-    TMAN_BASE="$TMAN_PREFIX/$TMAN_BASE"
 }
 
 function _tman_form_full_command()

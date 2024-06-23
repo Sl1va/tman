@@ -58,3 +58,11 @@ Options:
     -c      - create commit (default)
     -m      - run commands from the Makefile
     -p      - push branch to remote repo
+
+Usage: tman env COMMAND
+    list      - list environment names
+    prev
+    curr
+    use
+    add
+    del
