@@ -11,6 +11,8 @@ TMAN_TMANCONF=
 # tman -b basepath -c configpath CMD OPTIONS arg
 
 
+# TODO: switch to current task ID when change env
+
 function _tman_handle_command()
 {
     local cmd="$1"
