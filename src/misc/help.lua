@@ -17,6 +17,7 @@ System:
 
 Basic:
   cat     - cat task info
+  env     - define or display environments
   get     - get parameters like curr, prev tasks, etc
   list    - list tasks
   prev    - switch to previous task
