@@ -75,7 +75,7 @@ Usage: tman config OPTION
 Work with config files.
 
 Options:
-    -b      - set base path
+    -b      - set base path. Prefix is user home.
     -i      - set install path
               questionable, cuz util gotta change path in .shellrc
     -s      - show config: system & user

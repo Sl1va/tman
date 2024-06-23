@@ -8,6 +8,8 @@ local core = require("core")
 local struct = require("struct")
 local taskid = require("taskid")
 local taskunit = require("taskunit")
+local config = require("misc.config")
+local sysconfig = require("misc.sysconfig")
 
 -- Tman misc components.
 local help = require("misc.help")
@@ -318,13 +320,19 @@ local function tman_config()
         end
     end
 
+    sysconfig.init(config.tmanconf)
+
     if fbase then
-        print("set base value", vbase)
+        local userhome = os.getenv("HOME")
+        print("set base & core values")
+        sysconfig.set("base", userhome .. "/" .. vbase)
+        sysconfig.set("core", userhome .. "/" .. vbase .. "/.tman")
     elseif finstall then
-        print("set install value", vinstall)
+        print("set install value (under development)", vinstall)
     elseif fshow then
         print("show config")
-        core.showconf()
+        sysconfig.show()
+        --core.showconf()
     end
     return 0
 end
