@@ -152,9 +152,12 @@ function taskid.del(id)
     end
 
     ids.del(id)
+
+    -- update special IDs.
     if id == curr then
         return taskid.swap()
     end
+
     return ids.save()
 end
 
@@ -178,6 +181,7 @@ end
 
 --- Move current task to completed status.
 function taskid.unsetcurr()
+    -- roachme: maybe it should be ACTV?
     unsetcurr(status.COMP)
     return taskid.swap()
 end
