@@ -24,6 +24,7 @@ In progress:
     41.  Need rubost API. It's discombobulated now.
     42.  Add option `-h' support into commands.
     43.  Add support to work wih git submodules as well.
+    44.  Add support for fucking env.
 
 
 Gotta work on (still):
