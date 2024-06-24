@@ -16,8 +16,7 @@ local sysconfig = require("misc.sysconfig")
 local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
-
-env.init(config.fenv)
+env.init(config.sys.fenv)
 
 --[[
     TODO: gotta refactor
@@ -389,7 +388,6 @@ local function tman_env()
         if not envname then
             die(1, "env name is required\n", "no envname")
         end
-        print("env: add new env")
         env.add(envname, "auto generated description " .. envname)
         core.init()
     elseif cmd == "curr" then
@@ -397,7 +395,6 @@ local function tman_env()
     elseif cmd == "del" then
         envname = envname or env.getcurr()
         print("env: del env", envname)
-        print(config.fenv)
 
         io.write("Do you want to continue? [Yes/No] ")
         local confirm = io.read("*line")
@@ -475,7 +472,7 @@ local function tman_list()
     end
 
     -- output header.
-    print(("Current env: %s"):format(envname))
+    --print(("Current env: %s"):format(envname))
     if active == true and completed == true then
         print("All tasks:")
     elseif active == true and completed == false then

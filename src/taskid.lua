@@ -234,7 +234,7 @@ end
 
 -- Public functions: end --
 
-ids.init(config.taskids)
+ids.init(config.core.ids)
 _load_special_ids()
 
 return taskid

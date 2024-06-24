@@ -7,19 +7,14 @@ local git = require("git")
 
 --- Init system to use a util.
 local function core_init()
-    -- tman core/base
-    utils.mkdir(config.units)
-    utils.touch(config.taskids)
+    -- tman core structure
+    utils.mkdir(config.core.path)
+    utils.touch(config.core.ids)
+    utils.mkdir(config.core.units)
 
-    -- env dir
-    utils.mkdir(config.prefix .. "/" .. config.envcurr)
-
-    utils.mkdir(config.taskbase)
-    utils.mkdir(config.codebase)
-
-
-    -- files (no clue what's it)
-    utils.touch(config.tmanconf)
+    -- tman aux structure
+    utils.mkdir(config.aux.code)
+    utils.mkdir(config.aux.tasks)
 
     -- download repos
     git.repo_clone()
@@ -33,14 +28,14 @@ local function core_check()
     -- retrun 2: tman base stuff are corrupted
     -- NOT dirs / files
     local files = {
-        config.taskids,
-        config.tmanconf,
+        config.ids,
+        --config.tmanconf,
     }
     local dirs = {
-        config.units,
-        config.tmanbase,
-        config.taskbase,
-        config.codebase,
+        config.core.units,
+        config.core.path,
+        config.aux.coce,
+        config.aux.tasks,
     }
 
     for _, dir in pairs(dirs) do

@@ -36,8 +36,8 @@ end
 -- @return nil if branch pattern isn't valid
 local function format_branch()
     local separators = "/_-"
-    local sepcomponents = pattsplit(config.branchpatt, separators)
-    local branch = config.branchpatt
+    local sepcomponents = pattsplit(config.user.branchpatt, separators)
+    local branch = config.user.branchpatt
 
     for _, item in pairs(sepcomponents) do
         local uitem = unit.get(string.lower(item))
@@ -123,7 +123,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_desc(id, newdesc)
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("desc", newdesc)
     unit.set("branch", format_branch())
     return unit.save()
@@ -135,10 +135,10 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_id(id, newid)
-    local old_taskdir = config.taskbase .. id
-    local new_taskdir = config.taskbase .. newid
+    local old_taskdir = config.aux.tasks .. id
+    local new_taskdir = config.aux.tasks .. newid
 
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("id", newid)
     unit.set("branch", format_branch())
     unit.save()
@@ -151,7 +151,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_type(id, newtype)
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("type", newtype)
     unit.set("branch", format_branch())
     return unit.save()
@@ -163,7 +163,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_prio(id, newprio)
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("prio", newprio)
     return unit.save()
 end
@@ -172,7 +172,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function _set_link(id, newlink)
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("link", newlink)
     return unit.save()
 end
@@ -185,7 +185,7 @@ end
 local function _set_repo(id, taskrepos)
     local repos = table.concat(taskrepos, " ")
 
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("repos", repos)
     return unit.save()
 end
@@ -245,7 +245,7 @@ function taskunit.add(id, tasktype, prio)
     prio = prio or unit.prios.mid
 
     -- Set values.
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     unit.set("id", id)
     unit.set("prio", prio)
     unit.set("type", tasktype)
@@ -297,7 +297,7 @@ end
 ---@param id string
 ---@return boolean
 function taskunit.del(id)
-    local unitfile = config.units .. id
+    local unitfile = config.core.units .. id
     return utils.rm(unitfile)
 end
 
@@ -307,7 +307,7 @@ end
 -- @return on success - value
 -- @return on failure - nil
 function taskunit.get(id, key)
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
     return unit.get(key)
 end
 
@@ -316,7 +316,7 @@ end
 -- @param key show only that key
 -- @return true on success
 function taskunit.cat(id, key)
-    unit.init(config.units .. id)
+    unit.init(config.core.units .. id)
 
     -- output only key value
     if key then

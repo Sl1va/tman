@@ -12,7 +12,7 @@ local struct = {}
 --- Create dirs.
 -- @param base directry structure base
 local function create_dirs(base)
-    for _, dir in pairs(config.struct.dirs) do
+    for _, dir in pairs(config.user.struct.dirs) do
         utils.mkdir(base .. "/" .. dir)
     end
 end
@@ -20,7 +20,7 @@ end
 --- Create files.
 -- @param base file structure base
 local function create_files(base)
-    for _, file in pairs(config.struct.files) do
+    for _, file in pairs(config.user.struct.files) do
         utils.touch(base .. "/" .. file)
     end
 end
@@ -29,10 +29,10 @@ end
 -- @param id task ID
 local function link_repos(id)
     -- roachme: has a problem if link exists and its wrong.
-    for _, repo in pairs(config.repos) do
+    for _, repo in pairs(config.user.repos) do
         local reponame = repo.name
-        local target = config.codebase .. "/" .. reponame
-        local linkname = config.taskbase .. "/" .. id .. "/" .. reponame
+        local target = config.aux.code .. "/" .. reponame
+        local linkname = config.aux.tasks .. "/" .. id .. "/" .. reponame
         utils.link(target, linkname)
     end
 end
@@ -46,7 +46,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 function struct.create(id)
-    local taskdir = config.taskbase .. "/" .. id
+    local taskdir = config.aux.tasks .. "/" .. id
 
     utils.mkdir(taskdir)
     create_dirs(taskdir)
@@ -60,7 +60,7 @@ end
 -- @return on success - true
 -- @return on failure - false
 function struct.delete(id)
-    local taskdir = config.taskbase .. "/" .. id
+    local taskdir = config.aux.tasks .. "/" .. id
     return utils.rm(taskdir)
 end
 

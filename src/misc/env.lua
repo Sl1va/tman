@@ -16,14 +16,13 @@ local status = {
     OTHER = 2, -- roachme: rename it.
 }
 
-
 local function unset(name)
+    --local prev = envdb.getcurr()
     envdb.set(name, status.OTHER)
 end
 
 local function update_config(name)
-    config.set("env", name)
-    print("env: update_config: env", name)
+    config.setsys("env", name)
 end
 
 local function load_spec_envs()
@@ -70,20 +69,19 @@ function env.add(name, desc)
     update_config(name)
 
     -- create env dir
-    local prefix = config.get("prefix")
-    local envname = config.get("env")
+    local prefix = config.getsys("prefix")
+    local envname = config.getsys("env")
     local envdir = prefix .. "/" .. envname
+    io.stderr:write("name: ", name, "\n")
+    io.stderr:write("envname: ", envname, "\n")
+    io.stderr:write("prefix: ", prefix, "\n")
+    io.stderr:write("envdir: ", envdir, "\n")
 
-    print("env: envdir", envdir)
     utils.mkdir(envdir)
     utils.mkdir(envdir .. "/.tman")
-
-    -- roachme: doesn't work for some reason
-    print("env: init env structure")
 end
 
-function env.get(name)
-end
+function env.get(name) end
 
 function env.getcurr()
     return curr
@@ -93,8 +91,7 @@ function env.getprev()
     return prev
 end
 
-function env.set(name, status)
-end
+function env.set(name, status) end
 
 function env.list()
     if curr then
@@ -122,8 +119,8 @@ function env.del(name)
     end
 
     -- delete env dir
-    local prefix = config.get("prefix")
-    local envname = config.get("env")
+    local prefix = config.getsys("prefix")
+    local envname = config.getsys("env")
     local envdir = prefix .. "/" .. envname
     utils.rm(envdir)
 
@@ -149,11 +146,12 @@ function env.setcurr(name)
     envdb.set(curr, status.CURR)
 
     -- update sys.conf
-    config.set("env", name)
+    config.setsys("env", name)
     return true
 end
 
 function env.init(fenv)
+    --io.stderr:write("fenv: ", fenv, "\n")
     envdb.init(fenv)
     load_spec_envs()
 end

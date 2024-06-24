@@ -5,7 +5,7 @@ local config = require("misc.config")
 local taskunit = require("taskunit")
 local utils = require("aux.utils")
 
-local repos = config.repos
+local repos = config.user.repos
 
 -- local git = "git -C %s " -- roachme: how to use it in here
 local gcheckout = "git -C %s checkout --quiet %s"
@@ -25,7 +25,7 @@ local grebaseabort = "git -C %s rebase --abort"
 --- Get changed part of the code.
 local function changed_files(reponame)
     local files = {}
-    local repopath = config.codebase .. reponame
+    local repopath = config.aux.code .. reponame
     local cmd = ("git -C %s diff --name-only"):format(repopath)
     local fprog = io.popen(cmd)
 
@@ -93,7 +93,7 @@ local function commit_check(msg)
 end
 
 local function _repo_exists(reponame)
-    local repopath = config.codebase .. reponame
+    local repopath = config.aux.code .. reponame
 
     if utils.access(repopath) then
         return true
@@ -119,7 +119,7 @@ end
 -- @return no uncommited changes -  false
 local function isuncommited(reponame)
     -- roachme: gotta take argument for task branch, right?
-    local repopath = config.codebase .. reponame
+    local repopath = config.aux.code .. reponame
     local cmd = "git -C %s diff --quiet --exit-code"
     cmd = string.format(cmd, repopath)
     local ret = utils.exec(cmd)
@@ -144,7 +144,7 @@ end
 -- @treturn bool true on success, otherwise false
 local function git_branch_default()
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
     end
     return true
@@ -157,7 +157,7 @@ local function git_branch_switch(id)
     local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, branch))
     end
     return true
@@ -167,7 +167,7 @@ end
 -- @param all true pull all branches, otherwise only default branch
 local function git_branch_update(all)
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
         if all then
             utils.exec(gpull_generic:format(repopath))
@@ -180,7 +180,7 @@ end
 --- Rebase task branch against default.
 local function git_branch_rebase()
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         if utils.exec(grebase:format(repopath, repo.branch)) ~= 0 then
             local errmsg = "repo '%s': rebase conflic. Resolve it manually.\n"
             io.stderr:write((errmsg):format(repo.name))
@@ -198,7 +198,7 @@ local function git_branch_create(id)
     local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         -- TODO: check if branch already exists. If so don't create it again.
         -- code goes here...
 
@@ -218,7 +218,7 @@ local function git_branch_rename(id)
     local newbranch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         utils.exec(gbranchm:format(repopath, newbranch))
     end
     return 0
@@ -231,7 +231,7 @@ local function git_branch_delete(id)
     local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         utils.exec(gcheckout:format(repopath, repo.branch))
 
         -- if there's branch in task unit file then delete it.
@@ -254,7 +254,7 @@ local function git_branch_merged(id)
     --  which happens quite often.
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         local cmd = gbranchmrg:format(repopath, repo.branch, branch)
 
         -- update list of local branches with remote one
@@ -277,7 +277,7 @@ local function git_branch_ahead(id)
     local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         local cmd = gdiff_commits:format(repopath, repo.branch, branch)
 
         if isuncommited(repo.name) then
@@ -300,7 +300,7 @@ local function git_check(id)
     local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         local reponame = repo.name
 
         -- First off, check that task branch exists.
@@ -335,7 +335,7 @@ local function git_commit_create(id)
     for _, repo in pairs(repos) do
         if isuncommited(repo.name) then
             --print("repo", repo.name)
-            local repopath = config.codebase .. repo.name
+            local repopath = config.aux.code .. repo.name
 
             local part = changed_part(repo.name)
             local msg = ("[%s] %s: %s"):format(id, part, desc)
@@ -361,9 +361,9 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function git_repo_clone()
-    for _, repo in pairs(config.repos) do
+    for _, repo in pairs(config.user.repos) do
         if not _repo_exists(repo.name) then
-            local repopath = config.codebase .. repo.name
+            local repopath = config.aux.code .. repo.name
 
             if not repo.link then
                 io.stderr:write("no repo link in config: ", repo.name, "\n")
@@ -389,7 +389,7 @@ local function git_branch_exists(id)
     local branch = taskunit.get(id, "branch")
 
     for _, repo in pairs(repos) do
-        local repopath = config.codebase .. repo.name
+        local repopath = config.aux.code .. repo.name
         if not _branch_exists(repopath, branch) then
             return false
         end

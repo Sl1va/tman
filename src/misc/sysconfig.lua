@@ -85,4 +85,14 @@ function sysconfig.init(fname)
     load_sysconfig()
 end
 
+
+
+function sysconfig.getvars()
+    return {
+        env = sysconfig.get("env"),
+        prefix = sysconfig.get("prefix"),
+        install = sysconfig.get("install"),
+    }
+end
+
 return sysconfig
