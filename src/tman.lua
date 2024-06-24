@@ -391,7 +391,17 @@ local function tman_env()
     elseif cmd == "curr" then
         print(env.getcurr())
     elseif cmd == "del" then
-        print("env: del env")
+        envname = envname or env.getcurr()
+        print("env: del env", envname)
+        print(config.fenv)
+
+        io.write("Do you want to continue? [Yes/No] ")
+        local confirm = io.read("*line")
+        if confirm ~= "Yes" then
+            print("deletion is cancelled")
+            os.exit(1)
+        end
+        env.del(envname)
     elseif not cmd or cmd == "list" then
         print("env: list")
         env.list()

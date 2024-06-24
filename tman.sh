@@ -60,7 +60,8 @@ function _tman_handle_command()
         cd "$taskdir" || return 1
         wd add -q -f task
 
-    elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
+    #elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
+    elif [ "$cmd" = "env" ]; then
         # update sys.conf values
         _tman_get_sys_config_vars
         _tman_form_full_command

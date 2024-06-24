@@ -7,6 +7,7 @@ local git = require("git")
 
 --- Init system to use a util.
 local function core_init()
+    print("core: init")
     -- dirs
     utils.mkdir(config.units)
     utils.mkdir(config.tmanbase)
