@@ -1,21 +1,7 @@
 --- Parse config file and provide env for the rest of the code.
 -- @module config
 
---[[
-    config.lua consist of two parts:
-1. sys.conf  - essential for tman to work
-2. user.conf - let user to customize workflow
-]]
-
---[[
-
-commit message pattern
- [<ticket ID>] <изменяемая часть>: <краткое описание>
-]]
-
---local tmanconfig = require("tman_conf")
 local utils = require("aux.utils")
-
 -- roachme: gotto move these two into aux dir.
 local sysconfig = require("misc.sysconfig")
 local userconfig = require("misc.userconfig")

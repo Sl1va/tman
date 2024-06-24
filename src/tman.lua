@@ -388,6 +388,9 @@ local function tman_env()
         if not envname then
             die(1, "env name is required\n", "no envname")
         end
+        if env.exists(envname) then
+            die(1, "such env name already exists\n", envname)
+        end
         env.add(envname, "auto generated description " .. envname)
         core.init()
     elseif cmd == "curr" then
