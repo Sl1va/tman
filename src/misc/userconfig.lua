@@ -3,12 +3,9 @@
 
 local main_user_config = require("tman_conf")
 
-
 local userconfig = {}
 
-
-function userconfig.init(fname)
-end
+--function userconfig.init(fname) end
 
 function userconfig.getvars()
     return {

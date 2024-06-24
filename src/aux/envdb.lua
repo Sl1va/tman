@@ -1,3 +1,6 @@
+--- Module to manipulate env names.
+-- @module envdb
+
 local envfile
 local myenvdb = {}
 local envdbregex = "(.*) (.*): (.*)"
@@ -144,7 +147,7 @@ local function envdb_del(name)
 end
 
 local function envdb_set(name, status)
-    for i, item in pairs(myenvdb) do
+    for _, item in pairs(myenvdb) do
         if item.name == name then
             item.status = status
             return _envdb_save()

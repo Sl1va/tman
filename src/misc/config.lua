@@ -22,7 +22,6 @@ local userconfig = require("misc.userconfig")
 
 local config = {}
 
-
 local function find_tmanconf(fname)
     local userhome = os.getenv("HOME")
     local confpathes = {
@@ -57,7 +56,7 @@ end
 local function load_structure()
     local prefix, env
     sysconfig.init(fsysconf)
-    userconfig.init(fusreconf)
+    --userconfig.init(fusreconf)
 
     -- get system config values
     prefix = sysconfig.get("prefix")
@@ -72,7 +71,7 @@ local function load_structure()
         name = ".tman",
         ids = prefix .. "/" .. env .. "/.tman/ids",
         units = prefix .. "/" .. env .. "/.tman/units/",
-        path = prefix .. "/" .. env .. "/.tman"
+        path = prefix .. "/" .. env .. "/.tman",
     }
 
     config.aux = {

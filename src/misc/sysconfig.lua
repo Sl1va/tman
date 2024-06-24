@@ -29,7 +29,11 @@ local function load_sysconfig()
         if not string.match(line, "#") then
             local key, val = string.match(line, "(%w*)%s*=%s*(.*)")
             if not check_config_var(key) then
-                io.stderr:write("load: error: no such key: ", key or "no key", "\n")
+                io.stderr:write(
+                    "load: error: no such key: ",
+                    key or "no key",
+                    "\n"
+                )
                 os.exit(1)
             end
             configcontent[key] = val
@@ -53,14 +57,6 @@ local function save_sysconfig()
     return f:close() == true
 end
 
-local function table_size(tab)
-    local size = 0
-    for _, _ in pairs(tab) do
-        size = size + 1
-    end
-    return size
-end
-
 function sysconfig.set(key, val)
     if not check_config_var(key) then
         io.stderr:write("sysconfig: unknown config var: ", key or "no var")
@@ -74,18 +70,18 @@ function sysconfig.get(var)
     return configcontent[var]
 end
 
+--[[
 function sysconfig.show()
     for _, var in pairs(config_vars) do
         local val = sysconfig.get(var)
     end
 end
+]]
 
 function sysconfig.init(fname)
     fconfig = fname
     load_sysconfig()
 end
-
-
 
 function sysconfig.getvars()
     return {

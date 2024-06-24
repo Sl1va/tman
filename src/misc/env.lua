@@ -13,12 +13,12 @@ local curr, prev
 local status = {
     CURR = 0,
     PREV = 1,
-    OTHER = 2, -- roachme: rename it.
+    ACTV = 2, -- roachme: rename it.
 }
 
 local function unset(name)
     --local prev = envdb.getcurr()
-    envdb.set(name, status.OTHER)
+    envdb.set(name, status.ACTV)
 end
 
 local function update_config(name)
@@ -81,7 +81,15 @@ function env.add(name, desc)
     utils.mkdir(envdir .. "/.tman")
 end
 
-function env.get(name) end
+function env.get(name)
+    for i = 1, envdb.size() do
+        local item = envdb.getix(i)
+        if item.name == name then
+            return item
+        end
+    end
+    return {}
+end
 
 function env.getcurr()
     return curr
@@ -91,7 +99,16 @@ function env.getprev()
     return prev
 end
 
-function env.set(name, status) end
+function env.set(name, stat)
+    for i = 1, envdb.size() do
+        local item = envdb.getix(i)
+        if item.name == name then
+            envdb.set(name, stat)
+            return true
+        end
+    end
+    return false
+end
 
 function env.list()
     if curr then
