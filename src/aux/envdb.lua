@@ -7,7 +7,8 @@ local env_def_name = "work"
 
 local statuses = {
     CURR = 0,
-    ACTV = 1,
+    PREV = 1,
+    ACTV = 2,
 }
 
 local function _envdb_load()
