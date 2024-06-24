@@ -391,6 +391,7 @@ local function tman_env()
         end
         print("env: add new env")
         env.add(envname, "auto generated description " .. envname)
+        core.init()
     elseif cmd == "curr" then
         print(env.getcurr())
     elseif cmd == "del" then
@@ -406,7 +407,7 @@ local function tman_env()
         end
         env.del(envname)
     elseif not cmd or cmd == "list" then
-        print("env: list")
+        print("env: list env names")
         env.list()
     elseif cmd == "prev" then
         local prev = env.getprev()

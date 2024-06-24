@@ -7,15 +7,18 @@ local git = require("git")
 
 --- Init system to use a util.
 local function core_init()
-    print("core: init")
-    -- dirs
+    -- tman core/base
     utils.mkdir(config.units)
-    utils.mkdir(config.tmanbase)
+    utils.touch(config.taskids)
+
+    -- env dir
+    utils.mkdir(config.prefix .. "/" .. config.envcurr)
+
     utils.mkdir(config.taskbase)
     utils.mkdir(config.codebase)
 
-    -- files
-    utils.touch(config.taskids)
+
+    -- files (no clue what's it)
     utils.touch(config.tmanconf)
 
     -- download repos

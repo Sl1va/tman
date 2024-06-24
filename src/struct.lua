@@ -28,6 +28,7 @@ end
 --- Create symlinks to repos.
 -- @param id task ID
 local function link_repos(id)
+    -- roachme: has a problem if link exists and its wrong.
     for _, repo in pairs(config.repos) do
         local reponame = repo.name
         local target = config.codebase .. "/" .. reponame

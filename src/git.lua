@@ -361,19 +361,13 @@ end
 -- @return on success - true
 -- @return on failure - false
 local function git_repo_clone()
-    print("git: git_repo_clone")
-
     for _, repo in pairs(config.repos) do
-        local repopath2 = config.codebase .. repo.name
-        print("-- git: repo.key", repopath2 or "no repopath2")
-
         if not _repo_exists(repo.name) then
             local repopath = config.codebase .. repo.name
 
             if not repo.link then
                 io.stderr:write("no repo link in config: ", repo.name, "\n")
             else
-                print("- git: git_repo_clone: repos: clone")
                 local cmd = ("git clone %s %s 2> /dev/null"):format(
                     repo.link,
                     repopath

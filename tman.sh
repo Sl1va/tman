@@ -3,9 +3,12 @@
 TMAN=""
 TMAN_WD=
 TMAN_CWD=
+
+# config vars
+TMAN_ENV=
 TMAN_PREFIX=
-TMAN_BASE=
 TMAN_INSTALL=
+
 TMAN_TMANCONF=
 
 
@@ -22,34 +25,29 @@ function _tman_get_tmanconf()
 function _tman_get_sys_config_vars()
 {
     _tman_get_tmanconf
+    TMAN_ENV="$(grep env "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_PREFIX="$(grep prefix "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-    #TMAN_BASE="$(grep base "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
     TMAN_INSTALL="$(grep install "$TMAN_TMANCONF" | cut -f 2 -d '=' | tr -d ' ' | tr -d '"' | tr -d "'")"
-
-    # expand values
-    #TMAN_BASE="$TMAN_PREFIX/$TMAN_BASE"
 }
 
 function _tman_handle_command()
 {
     local cmd="$1"
-    local base=
-    local envcurr=""
     local taskid=
     local taskdir=
 
     # roachme:TODO: it's a big permormance issue, it executes tman command twice
-    envcurr="$(eval "$TMAN" env curr)"
+    # roachme: should've used TMAN_ENV
 
     if [ "$cmd" = "add" ]; then
         taskid="${*: -1}" # get last argument
-        local taskdir="${TMAN_PREFIX}/${envcurr}/tasks/${taskid}"
+        local taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
     elif [ "$cmd" = "del" ]; then
         taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${envcurr}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
         cd "$taskdir" || return 1
         if [ -n "$taskid" ]; then
             wd add -q -f task
@@ -59,18 +57,18 @@ function _tman_handle_command()
 
     elif [ "$cmd" = "prev" ]; then
         taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${envcurr}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
     #elif [ "$cmd" = "env" ] && [ "$2" = "prev" ]; then
     elif [ "$cmd" = "env" ]; then
-        # update sys.conf values
+        # load updated sys.conf values
         _tman_get_sys_config_vars
         _tman_form_full_command
 
         taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
@@ -92,7 +90,7 @@ function _tman_handle_command()
 
         if [ "$flag" = true ]; then
             taskid="$(eval "$TMAN" get curr)"
-            taskdir="${TMAN_PREFIX}/${envcurr}/tasks/${taskid}"
+            taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
 
             cd "$taskdir" || return 1
             wd add -q -f task
@@ -105,13 +103,13 @@ function _tman_handle_command()
 
     elif [ "$cmd" = "sync" ]; then
         taskid="$(eval "$TMAN" get curr)"
-        taskdir="${TMAN_PREFIX}/${envcurr}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task
 
     elif [ "$cmd" = "use" ]; then
         taskid="$2"
-        taskdir="${TMAN_PREFIX}/${envcurr}/tasks/${taskid}"
+        taskdir="${TMAN_PREFIX}/${TMAN_ENV}/tasks/${taskid}"
         cd "$taskdir" || return 1
         wd add -q -f task
     fi
@@ -136,6 +134,7 @@ function tman()
     _tman_form_full_command
 
     TMAN_CWD="$(pwd)"
+
     eval $TMAN $@
     retcode="$?"
 

@@ -14,9 +14,7 @@ commit message pattern
 ]]
 
 local tmanconfig = require("tman_conf")
-local env = require("misc.env")
 local utils = require("aux.utils")
-
 
 -- roachme: gotto move these two into aux dir.
 local sysconfig = require("misc.sysconfig")
@@ -60,7 +58,7 @@ local function remove_quotes(str)
 end
 
 local function tmanconf_getvals(fname)
-    local prefix, core, base, install
+    local prefix, install
     local f = io.open(fname)
 
     if not f then
@@ -73,20 +71,15 @@ local function tmanconf_getvals(fname)
         if mark == "prefix" then
             prefix = string.match(line, ".*%s=%s(.*)")
             prefix = remove_quotes(prefix)
-        elseif mark == "base" then
-            base = string.match(line, ".*%s=%s(.*)")
-            base = remove_quotes(base)
         elseif mark == "install" then
             install = string.match(line, ".*%s=%s(.*)")
             install = remove_quotes(install)
-        elseif mark == "core" then
-            core = string.match(line, ".*%s=%s(.*)")
-            core = remove_quotes(core)
         end
     end
 
     f:close()
-    return prefix .. "/" .. core, prefix .. "/" .. base, install
+    return prefix, install
+    --return prefix .. "/" .. core, prefix .. "/" .. base, install
 end
 
 local function sysconfig_show(conf)
@@ -98,6 +91,7 @@ end
 
 local tmanconf = find_tmanconf("sys.conf")
 local fenv = find_tmanconf("env.list")
+
 if not tmanconf then
     io.stderr:write("tman: sys.conf: system tmanconf missing\n")
     os.exit(1)
@@ -107,25 +101,36 @@ if not fenv then
     os.exit(1)
 end
 
-local core, base, install = tmanconf_getvals(tmanconf)
+local prefix, install = tmanconf_getvals(tmanconf)
 
 local function tilde_to_home()
-    tmanconfig.base = string.gsub(base, "~", userhome or "")
-    tmanconfig.core = string.gsub(core, "~", userhome or "")
+    tmanconfig.prefix = string.gsub(prefix, "~", userhome or "")
     tmanconfig.install = string.gsub(install, "~", userhome or "")
 end
 
 tilde_to_home()
 
--- Tman core structure
-tmanconfig.tmanconf = tmanconf
-tmanconfig.units = tmanconfig.core .. "/units/"
-tmanconfig.taskids = tmanconfig.core .. "/ids" -- it's a file
 
--- Tman base structure
-tmanconfig.tmanbase = tmanconfig.base
-tmanconfig.codebase = tmanconfig.base .. "/codebase/"
-tmanconfig.taskbase = tmanconfig.base .. "/tasks/"
+
+local function load_tman_structure(fname)
+    sysconfig.init(fname)
+    local envcurr = sysconfig.get("env")
+
+    -- Tman core structure
+    local envbase = tmanconfig.prefix .. "/" .. envcurr .. "/"
+    tmanconfig.tmanconf = tmanconf
+    tmanconfig.units = envbase .. ".tman/" .. "/units/"
+    tmanconfig.taskids = envbase .. ".tman/".. "/ids" -- it's a file
+
+    -- Tman base structure
+    tmanconfig.codebase = envbase .. "/codebase/"
+    tmanconfig.taskbase = envbase .. "/tasks/"
+
+    tmanconfig.envcurr = envcurr
+end
+
+load_tman_structure(tmanconf)
+
 
 -- User config.
 -- Add default value if they're not defined in the config file
@@ -135,5 +140,17 @@ tmanconfig.branchpatt = tmanconfig.branchpatt or default_branch
 
 -- Get env file.
 tmanconfig.fenv = fenv
+
+
+function tmanconfig.set(key, val)
+    sysconfig.set(key, val)
+
+    -- reload env related variables.
+    load_tman_structure(tmanconf)
+end
+
+function tmanconfig.get(key)
+    return sysconfig.get(key)
+end
 
 return tmanconfig
