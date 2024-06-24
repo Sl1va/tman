@@ -120,7 +120,7 @@ function env.del(name)
 
     -- delete env dir
     local prefix = config.getsys("prefix")
-    local envname = config.getsys("env")
+    local envname = name
     local envdir = prefix .. "/" .. envname
     utils.rm(envdir)
 
