@@ -55,12 +55,12 @@ if not fenv then
 end
 
 local function load_structure()
-    local prefix2, env
+    local prefix, env
     sysconfig.init(fsysconf)
     userconfig.init(fusreconf)
 
     -- get system config values
-    prefix2 = sysconfig.get("prefix")
+    prefix = sysconfig.get("prefix")
     env = sysconfig.get("env")
 
     -- load stuff from diff modules
@@ -70,14 +70,14 @@ local function load_structure()
     -- roachme: maybe it's better to move it to struct.lua
     config.core = {
         name = ".tman",
-        ids = prefix2 .. "/" .. env .. "/.tman/ids",
-        units = prefix2 .. "/" .. env .. "/.tman/units/",
-        path = prefix2 .. "/" .. env .. "/.tman"
+        ids = prefix .. "/" .. env .. "/.tman/ids",
+        units = prefix .. "/" .. env .. "/.tman/units/",
+        path = prefix .. "/" .. env .. "/.tman"
     }
 
     config.aux = {
-        code = prefix2 .. "/" .. env .. "/code/",
-        tasks = prefix2 .. "/" .. env .. "/tasks/",
+        code = prefix .. "/" .. env .. "/code/",
+        tasks = prefix .. "/" .. env .. "/tasks/",
     }
 
     -- roachme: hotfixes

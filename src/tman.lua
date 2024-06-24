@@ -472,7 +472,7 @@ local function tman_list()
     end
 
     -- output header.
-    --print(("Current env: %s"):format(envname))
+    print(("Current env: %s"):format(envname))
     if active == true and completed == true then
         print("All tasks:")
     elseif active == true and completed == false then
