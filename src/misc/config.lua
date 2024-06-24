@@ -14,7 +14,13 @@ commit message pattern
 ]]
 
 local tmanconfig = require("tman_conf")
+local env = require("misc.env")
 local utils = require("aux.utils")
+
+
+-- roachme: gotto move these two into aux dir.
+local sysconfig = require("misc.sysconfig")
+local userconfig = require("misc.userconfig")
 
 -- get tmanconf: base and install
 
@@ -82,6 +88,13 @@ local function tmanconf_getvals(fname)
     f:close()
     return prefix .. "/" .. core, prefix .. "/" .. base, install
 end
+
+local function sysconfig_show(conf)
+end
+
+local function userconfig_show(conf)
+end
+
 
 local tmanconf = find_tmanconf("sys.conf")
 local fenv = find_tmanconf("env.list")

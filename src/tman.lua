@@ -16,6 +16,9 @@ local sysconfig = require("misc.sysconfig")
 local help = require("misc.help")
 local getopt = require("posix.unistd").getopt
 
+
+env.init(config.fenv)
+
 --[[
     TODO: gotta refactor
     1. update command

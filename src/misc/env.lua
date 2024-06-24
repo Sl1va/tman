@@ -1,11 +1,8 @@
 --- Module to edit and manipulate environment.
 -- @module env
 
-local config = require("misc.config")
-local sysconfig = require("misc.sysconfig")
 local envdb = require("aux.envdb")
 local utils = require("aux.utils")
-local core = require("core")
 
 local env = {}
 
@@ -23,6 +20,7 @@ local function unset(name)
     envdb.set(name, status.OTHER)
 end
 
+--[[
 local function update_config(name)
     sysconfig.set("base", name)
     sysconfig.set("core", name .. "/.tman")
@@ -32,6 +30,7 @@ local function update_config(name)
     print("env: sysconfig: base", base)
     print("env: sysconfig: core", core)
 end
+]]
 
 local function load_spec_envs()
     for i = 1, envdb.size() do
@@ -65,6 +64,7 @@ function env.swap()
     return true
 end
 
+--[[
 function env.add(name, desc)
     if envdb.exists(name) then
         return false
@@ -87,6 +87,7 @@ function env.add(name, desc)
     print("env: init env structure")
     return core.init()
 end
+]]
 
 function env.get(name)
 end
@@ -122,6 +123,7 @@ function env.list()
     return true
 end
 
+--[[
 function env.del(name)
     if not envdb.exists(name) then
         return false
@@ -145,7 +147,9 @@ function env.del(name)
 
     return true
 end
+]]
 
+--[[
 function env.setcurr(name)
     if not envdb.exists(name) then
         return false
@@ -166,8 +170,11 @@ function env.setcurr(name)
 end
 
 sysconfig.init(config.tmanconf)
-envdb.init(config.fenv)
-load_spec_envs()
+]]
 
+function env.init(fenv)
+    envdb.init(fenv)
+    load_spec_envs()
+end
 
 return env
