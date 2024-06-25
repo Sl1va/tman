@@ -2,24 +2,17 @@ Phylosophy:
     1. Changes should be atomic. Check all things before changing anything.
 
 
-# Local functions.
-_setprev - mark a task ID as previous
-_setcurr - mark a task ID as current
 
 
-# Public functions
-getprev     - get previous task ID
-getcurr     - get current task ID
-exist       - check that ID exists in database
-add         - add new task ID into the database
-del         - delete task ID  from the database
-swap        - swap current and previous task IDs
-move        - move task ID to new status
-list        - list task IDs
+tman structure
+    tman         - main module. Handle user commands and options
+    env          - display and manipulate environments
 
-# Delete 'em. Use move() instead.
-setcurr     - set task ID as current
-unsetcurr   - unset task ID (move its status to ACTV)
+core:
+    git          - manipulate task repos
+    struct       - manipulate task structure
+    taskid       - display and manipulate task IDs
+    config       - display and manipulate system and user configs
+    taskunit     - display and manipulate task units
 
-get(id)
-set(id, status)
+
