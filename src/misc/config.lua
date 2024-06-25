@@ -71,6 +71,7 @@ function config.load()
 end
 
 ---@param key string
+---@return string|table
 function config.getsys(key)
     return config.sys[key]
 end

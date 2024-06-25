@@ -5,6 +5,7 @@ local sysconfig = {}
 local configcontent
 local fconfig
 local config_vars = { "env", "prefix", "install" }
+local default_env = "work"
 
 local function check_config_var(var)
     for _, cvar in pairs(config_vars) do
@@ -67,6 +68,9 @@ function sysconfig.set(key, val)
 end
 
 function sysconfig.get(var)
+    if var == "env" then
+        return configcontent[var] or default_env
+    end
     return configcontent[var]
 end
 
@@ -85,7 +89,7 @@ end
 
 function sysconfig.getvars()
     return {
-        env = sysconfig.get("env"),
+        env = sysconfig.get("env") or default_env,
         prefix = sysconfig.get("prefix"),
         install = sysconfig.get("install"),
     }
