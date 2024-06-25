@@ -149,12 +149,13 @@ Notes:
         name = "get",
         desc = [[
 Usage: tman get PARAM
-Get parameters like curr, prev tasks, etc
+Get parameters like curr, prev tasks, current env, etc
 
 Notes:
 PARAM can have one of the next values
-    curr    - current task id
-    prev    - previous task id
+    env     - current env
+    curr    - current task ID
+    prev    - previous task ID
 ]],
     },
     {

@@ -426,6 +426,9 @@ local function tman_get()
     elseif item == "prev" then
         print(taskid.getprev() or "")
         return 0
+    elseif item == "env" then
+        print(env.getprev() or "")
+        return 0
     end
 
     -- error handling
