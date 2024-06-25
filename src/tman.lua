@@ -6,10 +6,10 @@
 local git = require("git")
 local env = require("misc.env")
 local core = require("core")
+local config = require("config")
 local struct = require("struct")
 local taskid = require("taskid")
 local taskunit = require("taskunit")
-local config = require("misc.config")
 
 -- Tman misc components.
 local help = require("misc.help")

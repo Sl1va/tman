@@ -3,7 +3,7 @@
 -- @module TaskID
 
 local taskunit = require("taskunit")
-local config = require("misc.config")
+local config = require("config")
 local ids = require("aux.ids")
 
 local taskid = {}

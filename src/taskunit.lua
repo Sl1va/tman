@@ -2,7 +2,7 @@
 -- Metadata like branch name, date, description and so on.
 -- @module TaskUnit
 
-local config = require("misc.config")
+local config = require("config")
 local utils = require("aux.utils")
 local unit = require("aux.unit")
 
