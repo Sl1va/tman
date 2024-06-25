@@ -2,13 +2,13 @@
 -- @module config
 
 local utils = require("aux.utils")
--- roachme: gotto move these two into aux dir.
+-- roachme: gotta move these two into aux dir.
 local sysconfig = require("misc.sysconfig")
 local userconfig = require("misc.userconfig")
 
 local config = {}
 
-local function find_tmanconf(fname)
+local function find_config_file(fname)
     local userhome = os.getenv("HOME")
     local confpathes = {
         userhome .. "/" .. ".tman/" .. fname,
@@ -22,27 +22,28 @@ local function find_tmanconf(fname)
     return nil
 end
 
-local fsysconf = find_tmanconf("sys.conf")
-local fusreconf = find_tmanconf("tman_conf.lua")
-local fenv = find_tmanconf("env.list")
+local fsysconf = find_config_file("sys.conf")
+local fusreconf = find_config_file("tman_conf.lua")
+local fenv = find_config_file("env.list")
 
-if not fsysconf then
-    io.stderr:write("tman: sys.conf: system tmanconf missing\n")
-    os.exit(1)
-end
-if not fusreconf then
-    io.stderr:write("tman: user.conf: user config missing\n")
-    os.exit(1)
-end
-if not fenv then
-    io.stderr:write("tman: env.list: env file missing\n")
-    os.exit(1)
+function config.check()
+    if not fsysconf then
+        io.stderr:write("tman: sys.conf: system tmanconf missing\n")
+        os.exit(1)
+    end
+    if not fusreconf then
+        io.stderr:write("tman: user.conf: user config missing\n")
+        os.exit(1)
+    end
+    if not fenv then
+        io.stderr:write("tman: env.list: env file missing\n")
+        os.exit(1)
+    end
 end
 
-local function load_structure()
+function config.load()
     local prefix, env
     sysconfig.init(fsysconf)
-    --userconfig.init(fusreconf)
 
     -- get system config values
     prefix = sysconfig.get("prefix")
@@ -55,9 +56,9 @@ local function load_structure()
     -- roachme: maybe it's better to move it to struct.lua
     config.core = {
         name = ".tman",
-        ids = prefix .. "/" .. env .. "/.tman/ids",
+        ids = prefix .. "/" .. env .. "/.tman/ids", -- it's a file
         units = prefix .. "/" .. env .. "/.tman/units/",
-        path = prefix .. "/" .. env .. "/.tman",
+        path = prefix .. "/" .. env .. "/.tman/",
     }
 
     config.aux = {
@@ -78,9 +79,10 @@ end
 ---@param val string
 function config.setsys(key, val)
     sysconfig.set(key, val)
-    load_structure()
+    config.load()
 end
 
-load_structure()
+config.check() -- roachme: should be done in core.lua or setup.lua
+config.load()
 
 return config
