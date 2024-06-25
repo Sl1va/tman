@@ -2,9 +2,8 @@
 -- @module config
 
 local utils = require("aux.utils")
--- roachme: gotta move these two into aux dir.
-local sysconfig = require("misc.sysconfig")
-local userconfig = require("misc.userconfig")
+local sysconfig = require("aux.sysconfig")
+local userconfig = require("aux.userconfig")
 
 local config = {}
 
