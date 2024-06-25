@@ -13,11 +13,10 @@ local curr, prev
 local status = {
     CURR = 0,
     PREV = 1,
-    ACTV = 2, -- roachme: rename it.
+    ACTV = 2,
 }
 
 local function unset(name)
-    --local prev = envdb.getcurr()
     envdb.set(name, status.ACTV)
 end
 
@@ -72,10 +71,6 @@ function env.add(name, desc)
     local prefix = config.getsys("prefix")
     local envname = config.getsys("env")
     local envdir = prefix .. "/" .. envname
-    io.stderr:write("name: ", name, "\n")
-    io.stderr:write("envname: ", envname, "\n")
-    io.stderr:write("prefix: ", prefix, "\n")
-    io.stderr:write("envdir: ", envdir, "\n")
 
     utils.mkdir(envdir)
     utils.mkdir(envdir .. "/.tman")
@@ -168,7 +163,6 @@ function env.setcurr(name)
 end
 
 function env.init(fenv)
-    --io.stderr:write("fenv: ", fenv, "\n")
     envdb.init(fenv)
     load_spec_envs()
 end

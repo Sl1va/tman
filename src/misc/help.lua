@@ -13,12 +13,12 @@ List of available commands:
 System:
   archive - backup and restore metadata
   config  - config your workflow
+  get     - get parameters like curr, prev tasks, size, etc
   init    - init util structure
 
 Basic:
   cat     - cat task info
   env     - define or display environments
-  get     - get parameters like curr, prev tasks, etc
   list    - list tasks
   prev    - switch to previous task
   use     - mark a task as current
