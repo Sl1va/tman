@@ -28,11 +28,16 @@ end
 --- Create symlinks to repos.
 -- @param id task ID
 local function link_repos(id)
-    -- roachme: has a problem if link exists and its wrong.
     for _, repo in pairs(config.user.repos) do
         local reponame = repo.name
         local target = config.aux.code .. "/" .. reponame
         local linkname = config.aux.tasks .. "/" .. id .. "/" .. reponame
+
+        -- check if there's invalid link, if so then delete it.
+        if not utils.access(linkname) then
+            -- use module os cuz it might delete repo itself.
+            os.remove(linkname)
+        end
         utils.link(target, linkname)
     end
 end
