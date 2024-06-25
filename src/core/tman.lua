@@ -4,7 +4,7 @@
 
 -- Tman main components.
 local git = require("git")
-local env = require("misc.env")
+local env = require("env")
 local core = require("core")
 local config = require("config")
 local struct = require("struct")
