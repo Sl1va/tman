@@ -4,7 +4,7 @@
 
 local taskunit = require("taskunit")
 local config = require("config")
-local ids = require("aux.ids")
+local ids = require("aux.iddb")
 
 local taskid = {}
 
