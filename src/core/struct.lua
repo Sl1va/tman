@@ -75,8 +75,8 @@ end
 -- @return on success - true
 -- @return on failure - false
 function struct.rename(oldid, newid)
-    local old_dir = config.units .. oldid
-    local new_dir = config.units .. newid
+    local old_dir = config.core.units .. oldid
+    local new_dir = config.core.units .. newid
     return utils.rename(old_dir, new_dir) == 0
 end
 
