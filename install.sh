@@ -31,19 +31,18 @@ generate_system_config()
     local userconf="$confdir/tman_conf.lua" # FIXME: should be user.conf
 
     # create tman base directory
-    mkdir -p -v "$prefix/$tmanbase"
+    mkdir -p "$prefix/$tmanbase"
 
     # create tman core directory (core migth be inside base)
-    mkdir -p -v "$prefix/$tmancore"
+    mkdir -p "$prefix/$tmancore"
 
     # create system and user configs
-    mkdir -p -v "$confdir"
+    mkdir -p "$confdir"
     touch "$tmanconf"
     touch "$userconf"
 
     # fill tman system config
     echo "# NOT recommended to change this file manually." > "$tmanconf"
-    echo "env = work" >> "$tmanconf"
     echo "prefix = $prefix" >> "$tmanconf"
     echo "install = $tmaninst" >> "$tmanconf"
 
@@ -105,8 +104,7 @@ install_system_utils()
 install_shell()
 {
     echo "Add: 'source $(pwd)/tman.sh' into yer shell config .bashrc or .zshrc"
-    echo "Whatever shell ya use."
-    echo "And restart your current shell"
+    echo "And restart your current shell and execute 'tman init'."
 
     return 1
     # env SHELL might be not set
