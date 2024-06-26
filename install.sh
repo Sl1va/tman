@@ -20,6 +20,7 @@ generate_system_config()
 {
     # roachme: User defined pathes.
     # Add flags to change 'em from script interface.
+    local fenv="${HOME}/.config/tman/env.list"
     local confdir="${HOME}/.config/tman"
     local prefix="${HOME}/work"
     local tmanbase="tman"
@@ -42,13 +43,15 @@ generate_system_config()
 
     # fill tman system config
     echo "# NOT recommended to change this file manually." > "$tmanconf"
+    echo "env = work" >> "$tmanconf"
     echo "prefix = $prefix" >> "$tmanconf"
-    echo "base = $tmanbase" >> "$tmanconf"
-    echo "core = $tmancore" >> "$tmanconf"
     echo "install = $tmaninst" >> "$tmanconf"
 
     # fill tman user config
     echo "return {}" > "$userconf"
+
+    # fill default env name
+    echo "0 work: main work env" > "$fenv"
 
     # create task ID database file
     touch "$prefix/$tmancore/taskids"
