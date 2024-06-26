@@ -2,7 +2,7 @@
 -- @module env
 
 local envdb = require("aux.envdb")
-local config = require("config")
+local config = require("core.config")
 local utils = require("aux.utils")
 
 local env = {}

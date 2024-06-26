@@ -3,13 +3,13 @@
 -- @module TMan
 
 -- Tman main components.
-local git = require("git")
-local env = require("env")
-local core = require("core")
-local config = require("config")
-local struct = require("struct")
-local taskid = require("taskid")
-local taskunit = require("taskunit")
+local git = require("core.git")
+local env = require("core.env")
+local core = require("core.core")
+local config = require("core.config")
+local struct = require("core.struct")
+local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 
 -- Tman misc components.
 local help = require("misc.help")

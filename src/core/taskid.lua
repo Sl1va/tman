@@ -2,8 +2,8 @@
 -- Like add, delete, list task IDs and so on.
 -- @module TaskID
 
-local taskunit = require("taskunit")
-local config = require("config")
+local taskunit = require("core.taskunit")
+local config = require("core.config")
 local ids = require("aux.iddb")
 
 local taskid = {}

@@ -1,11 +1,11 @@
 --- Common module for the rest of commands.
 -- @module common
 
-local git = require("git")
+local git = require("core.git")
 local help = require("misc.help")
-local struct = require("struct")
-local taskid = require("taskid")
-local taskunit = require("taskunit")
+local struct = require("core.struct")
+local taskid = require("core.taskid")
+local taskunit = require("core.taskunit")
 
 local common = {}
 

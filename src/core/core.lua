@@ -2,8 +2,8 @@
 -- @module core
 
 local utils = require("aux.utils")
-local config = require("config")
-local git = require("git")
+local config = require("core.config")
+local git = require("core.git")
 
 --- Init system to use a util.
 local function core_init()

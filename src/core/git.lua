@@ -1,8 +1,8 @@
 --- Git wrapper.
 -- @module Git
 
-local config = require("config")
-local taskunit = require("taskunit")
+local config = require("core.config")
+local taskunit = require("core.taskunit")
 local utils = require("aux.utils")
 
 local repos = config.user.repos
