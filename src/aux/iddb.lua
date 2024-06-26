@@ -12,7 +12,7 @@ local ids = {}
 -- @return on failure - false
 local function _db_check()
     for _, item in pairs(db) do
-        if item.id == nil or item.status == nil then
+        if type(item.id) ~= "string" or type(item.status) ~= "number" then
             return false
         end
     end
