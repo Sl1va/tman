@@ -15,13 +15,13 @@ local function main()
     -- POSIX getopt() does not let permutations as GNU version.
     table.remove(arg, 1)
 
-    setup.setup()
-
     -- Check that util's ok to run.
-    if corecheck == 1 and cmd ~= "init" then
-        io.stderr:write("tman: structure not inited\n")
-        return 1
+    if corecheck == 1 then
+        core.init()
     end
+
+    -- setup util before use.
+    setup.setup()
 
     -- Call command.
     for name, func in pairs(builtin) do

@@ -74,6 +74,7 @@ function env.add(name, desc)
 
     utils.mkdir(envdir)
     utils.mkdir(envdir .. "/.tman")
+    return true
 end
 
 function env.get(name)

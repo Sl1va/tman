@@ -4,6 +4,8 @@
 local utils = require("aux.utils")
 local config = require("core.config")
 local git = require("core.git")
+local env = require("core.env")
+
 
 --- Init system to use a util.
 local function core_init()
@@ -16,8 +18,22 @@ local function core_init()
     utils.mkdir(config.aux.code)
     utils.mkdir(config.aux.tasks)
 
+    -- env file
+    utils.touch(config.sys.fenv)
+
+    -- add default env
+    local defenv = "work"
+    env.init(config.sys.fenv)
+    if not env.exists(defenv) then
+        if not env.add(defenv, "main tman env") then
+            io.stderr:write("couldn't add default env\n")
+            os.exit(1)
+        end
+    end
+
     -- download repos
     git.repo_clone()
+    return 1
 end
 
 --- Check tman dir ain't corrupted and exists.
@@ -34,7 +50,7 @@ local function core_check()
     local dirs = {
         config.core.units,
         config.core.path,
-        config.aux.coce,
+        config.aux.code,
         config.aux.tasks,
     }
 

@@ -53,9 +53,6 @@ local function envdb_init(fname)
 end
 
 local function envdb_exists(name)
-    if not name then
-        return false
-    end
     for _, item in pairs(myenvdb) do
         if item.name == name then
             return true

@@ -67,7 +67,7 @@ function config.load()
 
     -- roachme: hotfixes
     config.sys.fenv = fenv
-    config.sys.env = env
+    config.sys.env = env -- current env name
 end
 
 ---@param key string
