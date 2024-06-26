@@ -49,9 +49,6 @@ end
 -- @return on success - true
 -- @return on failure - false
 function ids.exist(id)
-    if not id then
-        return false
-    end
     for _, item in pairs(db) do
         if item.id == id then
             return true
