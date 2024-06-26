@@ -2,7 +2,7 @@ local env = require("core.env")
 local core = require("core.core")
 local common = require("core.common")
 local config = require("core.config")
---local help = require("misc.help")
+--local help = require("core.help")
 --local getopt = require("posix.unistd").getopt
 
 env.init(config.sys.fenv)

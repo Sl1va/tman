@@ -1,4 +1,4 @@
-local help = require("misc.help")
+local help = require("core.help")
 
 local function tman_help()
     return help.usage(arg[1])

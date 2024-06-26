@@ -2,7 +2,7 @@
 -- @module common
 
 local git = require("core.git")
-local help = require("misc.help")
+local help = require("core.help")
 local struct = require("core.struct")
 local taskid = require("core.taskid")
 local taskunit = require("core.taskunit")

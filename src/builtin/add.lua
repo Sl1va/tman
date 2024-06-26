@@ -3,7 +3,7 @@ local taskid = require("core.taskid")
 local struct = require("core.struct")
 local taskunit = require("core.taskunit")
 local common = require("core.common")
-local help = require("misc.help")
+local help = require("core.help")
 local getopt = require("posix.unistd").getopt
 
 --- Add a new task.

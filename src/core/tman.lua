@@ -5,7 +5,7 @@
 local core = require("core.core")
 --local setup = require("core.setup")
 local builtin = require("core.builtin")
-local help = require("misc.help")
+local help = require("core.help")
 
 --- Util interface.
 local function main()
