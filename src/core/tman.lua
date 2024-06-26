@@ -1,13 +1,10 @@
---- Task manager.
+--- Terminal task manager.
 -- Simplify workflow when working with many repos.
 -- @module TMan
 
--- Tman main components.
 local core = require("core.core")
 --local setup = require("core.setup")
 local builtin = require("core.builtin")
-
--- Tman misc components.
 local help = require("misc.help")
 
 --- Util interface.
