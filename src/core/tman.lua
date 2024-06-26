@@ -3,7 +3,7 @@
 -- @module TMan
 
 local core = require("core.core")
---local setup = require("core.setup")
+local setup = require("core.setup")
 local builtin = require("core.builtin")
 local help = require("core.help")
 
@@ -14,6 +14,8 @@ local function main()
 
     -- POSIX getopt() does not let permutations as GNU version.
     table.remove(arg, 1)
+
+    setup.setup()
 
     -- Check that util's ok to run.
     if corecheck == 1 and cmd ~= "init" then

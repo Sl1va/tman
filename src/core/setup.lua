@@ -1,3 +1,10 @@
+local ids = require("aux.iddb")
+local utils = require("aux.utils")
+local units = require("aux.unitdb")
+local config = require("core.config")
+local common = require("core.common")
+
+local setup = {}
 
 --[[
 Found the logic in git project. File name setup.c:
@@ -15,3 +22,67 @@ Found the logic in git project. File name setup.c:
         a) unit file
         b) task dir
 ]]
+
+--[[
+local function ids_check()
+    return true
+end
+
+local function ids_repair() end
+]]
+
+function setup.setup_ids()
+    local fids = config.core.ids
+
+    if not ids.init(fids) then
+        common.die(1, "couldn't find file ids\n", "setup")
+    end
+
+    if not ids.check() then
+        common.die(1, "file ids corrupted\n", "setup")
+    end
+end
+
+function setup.setup_units()
+    -- check that file exists and structure's ok
+    -- also IIs match unit files
+    local dirunit = config.core.units
+
+    if not utils.access(dirunit) then
+        common.die(1, "couldn't find directory units\n", "setup")
+    end
+
+    -- check that each task IDs has a file
+    -- and its structure's ok
+    for i = 1, ids.size() do
+        local item = ids.getidx(i)
+        local fname = dirunit .. item.id
+
+        if not units.init(fname) then
+            common.die(
+                1,
+                "couldn't find unit file for task id '%s'\n",
+                "setup",
+                item.id
+            )
+        elseif not units.check() then
+            common.die(1, "%s: unit file ids corrupted\n", "setup", item.id)
+        end
+    end
+end
+
+function setup.setup_env()
+    -- check that file exists and structure's ok
+end
+
+function setup.setup_config()
+    -- check that file exists and structure's ok
+    -- on: system and user
+end
+
+function setup.setup()
+    setup.setup_ids()
+    setup.setup_units()
+end
+
+return setup

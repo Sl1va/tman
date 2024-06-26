@@ -7,18 +7,6 @@ local idregex = "(.*) (.*)"
 local idfmt = "%s %s\n"
 local ids = {}
 
---- Check that variable entry's safe to save.
--- @return on success - true
--- @return on failure - false
-local function _db_check()
-    for _, item in pairs(db) do
-        if type(item.id) ~= "string" or type(item.status) ~= "number" then
-            return false
-        end
-    end
-    return true
-end
-
 --- Load task IDs from database.
 -- @return on success - true
 -- @return on failure - false
@@ -41,7 +29,19 @@ end
 -- @param fname database filename
 function ids.init(fname)
     idfile = fname
-    _db_load()
+    return _db_load()
+end
+
+--- Check that variable entry's safe to save.
+-- @return on success - true
+-- @return on failure - false
+function ids.check()
+    for _, item in pairs(db) do
+        if type(item.id) ~= "string" or type(item.status) ~= "number" then
+            return false
+        end
+    end
+    return true
 end
 
 --- Check that task ID exist in database.
@@ -66,7 +66,7 @@ function ids.save()
     if not f then
         return false
     end
-    if not _db_check() then
+    if not ids.check() then
         return false
     end
 

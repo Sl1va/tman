@@ -84,4 +84,9 @@ function unit.set(key, val)
     units[key] = val
 end
 
+function unit.check()
+    -- roachme: value can be nil. Gotta find a better logic.
+    return true
+end
+
 return unit
