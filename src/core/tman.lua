@@ -10,17 +10,14 @@ local help = require("core.help")
 --- Util interface.
 local function main()
     local cmd = arg[1] or "help"
-    local corecheck = core.check()
 
     -- POSIX getopt() does not let permutations as GNU version.
     table.remove(arg, 1)
 
-    -- Check that util's ok to run.
-    if corecheck == 1 then
-        core.init()
-    end
+    -- init util if needed
+    core.init()
 
-    -- setup util before use.
+    -- setup tasks structure before use.
     setup.setup()
 
     -- Call command.

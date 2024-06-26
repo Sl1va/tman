@@ -6,9 +6,9 @@ local config = require("core.config")
 local git = require("core.git")
 local env = require("core.env")
 
+local core = {}
 
---- Init system to use a util.
-local function core_init()
+function core.struct()
     -- tman core structure
     utils.mkdir(config.core.path)
     utils.touch(config.core.ids)
@@ -20,9 +20,11 @@ local function core_init()
 
     -- env file
     utils.touch(config.sys.fenv)
+end
 
-    -- add default env
+function core.env()
     local defenv = "work"
+
     env.init(config.sys.fenv)
     if not env.exists(defenv) then
         if not env.add(defenv, "main tman env") then
@@ -30,15 +32,11 @@ local function core_init()
             os.exit(1)
         end
     end
-
-    -- download repos
-    git.repo_clone()
-    return 1
 end
 
 --- Check tman dir ain't corrupted and exists.
 -- @return true on success, otherwise false
-local function core_check()
+function core.check()
     -- roachme:
     -- return 1: tman core stuff are corrupted
     -- retrun 2: tman base stuff are corrupted
@@ -67,9 +65,25 @@ local function core_check()
     return 0
 end
 
-local function core_repair() end
+--- Init system to use a util.
+function core.init()
+    if core.check() == 0 then
+        return 1
+    end
+    -- create tman structure
+    core.struct()
 
-local function core_show_config()
+    -- add default env
+    core.env()
+
+    -- download repos if needed
+    git.repo_clone()
+    return 1
+end
+
+function core.repair() end
+
+function core.show_config()
     print("base", config.base)
     print("install", config.install)
     print("brpanchpatt", config.branchpatt)
@@ -96,7 +110,7 @@ end
 -- @param repo_included whether or not include repos in archive
 -- @return on success - true
 -- @return on failure - false
-local function core_backup(fname, repo_included)
+function core.backup(fname, repo_included)
     -- roachme: run git gc before including repos in archive so it takes less place.
     -- roachme: Replace codebase with value from config
     local cmd
@@ -116,7 +130,7 @@ end
 -- @param fname archive fname
 -- @return on success - true
 -- @return on failure - false
-local function core_restore(fname)
+function core.restore(fname)
     local cmd = ("tar -xf %s -C %s"):format(fname, config.base)
 
     if not utils.access(fname) then
@@ -137,11 +151,4 @@ local function core_restore(fname)
     return true
 end
 
-return {
-    init = core_init,
-    check = core_check,
-    repair = core_repair,
-    showconf = core_show_config,
-    backup = core_backup,
-    restore = core_restore,
-}
+return core
