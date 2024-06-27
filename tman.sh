@@ -139,12 +139,12 @@ function tman()
 
     TMAN_CWD="$(pwd)"
 
-    eval $TMAN $@
+    eval "$TMAN" "$*"
     retcode="$?"
 
     if [ $retcode -ne 0 ]; then
         return $retcode
     fi
 
-    _tman_handle_command $@
+    _tman_handle_command "$@"
 }
