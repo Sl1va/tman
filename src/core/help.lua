@@ -43,9 +43,11 @@ local cmds = {
     {
         name = progname,
         desc = [[
-`tman' stands for task manager. Used to switch between tasks, git branches and
-make the workflow easy and less confusing. You no longer need to memerize task
-IDs, branche names, cd between directories, lose task notes, but instead look
+tman - terminal task manager.
+
+Util to switch between tasks, git branches and make the workflow easy and
+less confusing. You no longer need to memerize task IDs, branche names,
+cd between directories, lose task notes, but instead look
 for 'em in nice structured way.
 ]],
     },
