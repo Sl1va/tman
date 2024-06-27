@@ -9,7 +9,7 @@ local function builtin_list()
     local cmdname = "list"
     local active = true
     local completed = false
-    local optstring = "Aaech"
+    local optstring = "Aach"
     local keyhelp
 
     for optopt, _, optind in getopt(arg, optstring) do
