@@ -52,10 +52,16 @@ for 'em in nice structured way.
 ]],
     },
     {
-        name = "init",
+        name = "add",
         desc = [[
-Usage: tman init
-Initialize util.
+Usage: tman add [OPTION] ID
+Add new task.
+
+Options:
+    -d      set task description (under development)
+    -h      show this help message.
+    -p      set task priority. Values: [highest|high|mid|low|lowest]
+    -t      set task type. Values: [bugfix|hotfix|feature]
 ]],
     },
     {
@@ -72,6 +78,18 @@ Options:
 ]],
     },
     {
+        name = "cat",
+        desc = [[
+Usage: tman cat [OPTION] [ID]
+Show task units.
+ID - task ID (default is current task).
+
+Options:
+    -k   cat specific task unit
+    -h   Show this help message.
+]],
+    },
+    {
         name = "config",
         desc = [[
 Usage: tman config OPTION
@@ -85,24 +103,97 @@ Options:
 ]],
     },
     {
-        name = "add",
-        desc = [[
-Usage: tman add [OPTION] ID
-Add new task.
-
-Options:
-    -d      set task description (under development)
-    -h      show this help message.
-    -p      set task priority. Values: [highest|high|mid|low|lowest]
-    -t      set task type. Values: [bugfix|hotfix|feature]
-]],
-    },
-    {
         name = "del",
         desc = [[
 Usage: tman del [ID]
 Delete task.
 ID - default is current task.
+]],
+    },
+    {
+        name = "env",
+        desc = [[
+Usage: tman env COMMAND [ENVNAME]
+Define or display environments.
+
+ENVNAME - environment name
+
+COMMANDs:
+    add     - add new environment
+    curr    - show current environment
+    del     - delete an environment
+    list    - list environments
+    prev    - switch to previous environment
+    use     - use environment
+]],
+    },
+    {
+        name = "get",
+        desc = [[
+Usage: tman get PARAM
+Get parameters like curr, prev tasks, current env, etc
+
+Notes:
+PARAM can have one of the next values
+    env     - current env
+    curr    - current task ID
+    prev    - previous task ID
+]],
+    },
+    {
+        name = "help",
+        desc = [[
+Usage: tman help [COMMAND]
+Show help message. If `COMMAND' applied then show info about command.
+]],
+    },
+    {
+        name = "init",
+        desc = [[
+Usage: tman init
+Initialize util.
+]],
+    },
+    {
+        name = "list",
+        desc = [[
+Usage: tman list [OPTION]
+List task IDs with description.
+
+Options:
+    -c   List only complete tasks.
+    -a   List only active tasks (default).
+    -A   List all tasks: active and complete.
+    -h   Show this help message.
+
+Notes:
+    *   Marks current task.
+    -   Makrs previous task.
+]],
+    },
+    {
+        name = "pack",
+        desc = [[
+Usage: tman pack OPTION [ID]
+Pack commits in repos for review.
+
+Options:
+    -c      - create commit, update fuckunig changelog (default)
+    -m      - run commands from the Makefile (read 'em from user config)
+    -p      - push branch to remote repo
+    -P      - push branch to remote repo with force
+]],
+    },
+    {
+        name = "prev",
+        desc = [[
+Usage: tman prev [ENVNAME]
+Switch to previous task if set.
+
+ENVNAME - environment name. Under development (pro'ly).
+
+Options:
+    -h   Show this help message.
 ]],
     },
     {
@@ -132,11 +223,12 @@ Notes: Add support for other task cuz another task might be broken so
 
 Options:
     -s      - synchronize task structure
-    -r      - git pull from remote repo
+    -r      - git pull from remote repo, and rebase against task branch
     -t      - synchronize task status (active, completed)
+              move finished task into status completed, and delete branch
+    -w      - wd command emulator.
 ]],
     },
-
     {
         name = "use",
         desc = [[
@@ -144,97 +236,7 @@ Usage: tman use ID
 Switch to specified task. Use `tman list` to see existing tasks.
 
 Notes:
-    ID - taks ID. Default is current task.
-]],
-    },
-    {
-        name = "get",
-        desc = [[
-Usage: tman get PARAM
-Get parameters like curr, prev tasks, current env, etc
-
-Notes:
-PARAM can have one of the next values
-    env     - current env
-    curr    - current task ID
-    prev    - previous task ID
-]],
-    },
-    {
-        name = "env",
-        desc = [[
-Usage: tman env COMMAND [ENVNAME]
-Define or display environments.
-
-ENVNAME - environment name
-
-COMMANDs:
-    add     - add new environment
-    curr    - show current environment
-    del     - delete an environment
-    list    - list environments
-    prev    - switch to previous environment
-    use     - use environment
-]],
-    },
-    {
-        name = "prev",
-        desc = [[
-Usage: tman prev [ENVNAME]
-Switch to previous task if set.
-
-ENVNAME - environment name. Under development (pro'ly).
-
-Options:
-    -h   Show this help message.
-]],
-    },
-    {
-        name = "pack",
-        desc = [[
-Usage: tman pack OPTION [ID]
-Pack commits in repos for review.
-
-Options:
-    -c      - create commit (default)
-    -m      - run commands from the Makefile
-    -p      - push branch to remote repo
-]],
-    },
-    {
-        name = "list",
-        desc = [[
-Usage: tman list [OPTION]
-List task IDs with description.
-
-Options:
-    -c   List only complete tasks.
-    -a   List only active tasks (default).
-    -A   List all tasks: active and complete.
-    -h   Show this help message.
-
-Notes:
-    *   Marks current task.
-    -   Makrs previous task.
-]],
-    },
-    {
-        name = "cat",
-        desc = [[
-Usage: tman cat [OPTION] [ID]
-Show task units.
-ID - task ID (default is current task).
-
-Options:
-    -k   cat specific task unit
-    -h   Show this help message.
-]],
-    },
-    {
-        name = "help",
-        desc = [[
-Usage: tman help [COMMAND]
-Show help message. If `COMMAND' applied then show info about command.
+    ID - taks ID
 ]],
     },
     {
