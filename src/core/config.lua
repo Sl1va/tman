@@ -35,8 +35,12 @@ function config.check()
         os.exit(1)
     end
     if not fenv then
-        io.stderr:write("tman: env.list: env file missing\n")
-        os.exit(1)
+        -- roachme: should be in prefix, cuz user might prefix.
+        -- If so then env.list get rewritten.
+        if not utils.touch(fenv) then
+            io.stderr:write("tman: env.list: couldn't create\n")
+            os.exit(1)
+        end
     end
 end
 
