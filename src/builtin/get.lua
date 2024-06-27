@@ -14,7 +14,7 @@ local function builtin_get()
         print(taskid.getprev() or "")
         return 0
     elseif item == "env" then
-        print(env.getprev() or "")
+        print(env.getcurr() or "")
         return 0
     end
 
