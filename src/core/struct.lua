@@ -21,7 +21,7 @@ end
 -- @param base file structure base
 local function create_files(base)
     for _, file in pairs(config.user.struct.files) do
-        utils.touch(base .. "/" .. file)
+        utils.touch(base .. file)
     end
 end
 
@@ -30,8 +30,8 @@ end
 local function link_repos(id)
     for _, repo in pairs(config.user.repos) do
         local reponame = repo.name
-        local target = config.aux.code .. "/" .. reponame
-        local linkname = config.aux.tasks .. "/" .. id .. "/" .. reponame
+        local target = config.aux.code .. reponame
+        local linkname = config.aux.tasks .. id .. "/repos/" .. reponame
 
         -- check if there's invalid link, if so then delete it.
         if not utils.access(linkname) then
@@ -51,11 +51,16 @@ end
 -- @return on success - true
 -- @return on failure - false
 function struct.create(id)
-    local taskdir = config.aux.tasks .. "/" .. id
+    local taskdir = config.aux.tasks .. id
+    local notedir = config.aux.tasks .. id .. "/notes/"
+    local repodir = config.aux.tasks .. id .. "/repos/"
 
+    utils.mkdir(notedir)
     utils.mkdir(taskdir)
+    utils.mkdir(repodir)
+
     create_dirs(taskdir)
-    create_files(taskdir)
+    create_files(notedir)
     link_repos(id)
     return true
 end
