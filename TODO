@@ -28,6 +28,7 @@ In progress:
     45.  `tman get prev' delete extra newline if no previous task ID exists.
     46. On config update it is required delete workspace
     47. utils.exec returns bool value, not number (on MAC)
+    48. Create local environments on `tman init` like git does
 
 Gotta work on (still):
     4.   Maybe there's a better config file than Lua module.
